@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const Author = new mongoose.Schema({
+  license:{ type: Boolean, trim: true, default: false},
   name: { type: String, trim: true, required: true, unique: true },
   image: {
     url: { type: String, default: "" },
