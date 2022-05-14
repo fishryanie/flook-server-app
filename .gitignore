@@ -1,6 +1,11 @@
 node_modules/
 package-lock.json
 yarn.lock
-
+yarn-error.log
+/*.env
+/*.log
+log/
+.env
+.nyc_output/
 # macOs
 .DS_Store

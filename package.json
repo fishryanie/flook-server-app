@@ -5,41 +5,40 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --recursive test --timeout 10000 "
   },
   "keywords": [],
   "author": "Phan Hồng Quân",
   "license": "ISC",
   "dependencies": {
-    "@yawetse/socket.io-adapter-mongo": "^0.1.8",
-    "aws-sdk": "^2.1048.0",
     "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
+<<<<<<< HEAD
     "build": "^0.1.4",
     "chai": "^4.3.6",
     "chai-http": "^2.0.1",
+=======
+    "chai-http": "^4.3.0",
+>>>>>>> dev-sample-data
     "cloudinary": "^1.27.1",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "fix": "0.0.6",
     "jsonwebtoken": "^8.5.1",
     "mocha": "^10.0.0",
     "mongodb": "^4.2.0",
     "mongoose": "^6.0.12",
     "mongoose-sequence": "^5.3.1",
+    "morgan": "^1.10.0",
     "multer": "^1.4.3",
-    "mysql": "^2.17.1",
-    "nodemailer": "^6.6.3",
-    "nodemon": "^2.0.14",
-    "password-validator": "^5.2.1",
-    "socket.io": "^4.4.1",
-    "socket.io-adapter": "^2.3.3",
-    "socket.io-client": "^4.4.1",
-    "socket.io-emitter": "^3.2.0",
-    "them": "0.0.4",
-    "to": "^0.2.9",
-    "validator": "^13.7.0"
+    "nodemailer": "^6.6.3"
+  },
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "chai-as-promised": "^7.0.0",
+    "jest": "^28.0.3",
+    "mocha": "^10.0.0",
+    "nodemon": "^2.0.14"
   }
 }
