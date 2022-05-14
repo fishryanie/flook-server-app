@@ -1,0 +1,9 @@
+node_modules/
+.env
+.nyc_output/
+coverage/
+log/
+Dockerfile
+.dockerignore
+yarn-error.log
+data/
