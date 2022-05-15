@@ -108,10 +108,10 @@ const CreateNewController = async (req, res) => {
   }
 };
 
+
 const UpdateUserController = async (req, res) => {
   const id = req.params.id;
   const avatar = req.body.avatar;
-  console.log("update user");
   const option = { new: true };
   let avatarUpload
   try {
@@ -174,6 +174,7 @@ const ForgotPasswordController = async (req, res) => {
   try {
     const id = req.user._id
     const email = req.user.email
+
     const newPassword = generator();
     const result = await MODEL_USERS.findByIdAndUpdate(
       { _id: id },
@@ -192,6 +193,7 @@ const ForgotPasswordController = async (req, res) => {
 const ChangePasswordController = async (req, res) => {
   const userId = req.userId;
   const passwordNew = req.result.password
+  
   try {
     const result = await MODEL_USERS.findOneAndUpdate(
       { _id: userId },

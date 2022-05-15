@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
 const AutoIncrement = require('mongoose-sequence')(mongoose);
 
-const ChapterNovel = new mongoose.Schema({
+const ChapterChat = new mongoose.Schema({
   name: { type: Number, unique: false },
   bookId: { type: mongoose.Schema.Types.ObjectId, ref: 'ebooks', required: true },
-  content: {type: String, default: "" },
   numLikes: [{ type: mongoose.Schema.Types.ObjectId, ref: "users", index: true }],
   numViews: { type: Number, default: 0},
   status: [{ type: mongoose.Schema.Types.ObjectId, ref:'status'}],
@@ -14,6 +13,6 @@ const ChapterNovel = new mongoose.Schema({
   updateAt: { type: Date, default: Date.now, commit: String },
 });
 
-ChapterNovel.plugin(AutoIncrement, { inc_field: 'name' });
+// ChapterChat.plugin(AutoIncrement, { inc_field: 'name' });
 
-module.exports = ChapterNovel;
+module.exports = ChapterChat;

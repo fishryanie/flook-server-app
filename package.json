@@ -14,13 +14,7 @@
     "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
-<<<<<<< HEAD
-    "build": "^0.1.4",
-    "chai": "^4.3.6",
-    "chai-http": "^2.0.1",
-=======
     "chai-http": "^4.3.0",
->>>>>>> dev-sample-data
     "cloudinary": "^1.27.1",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",

@@ -1,11 +1,10 @@
 const mongoose = require("mongoose");
 
 const status = new mongoose.Schema({
-  status: { type: String, default: null },
-  
+  name: { type: String, default: '' },
   createAt: { type: Date, default:Date.now, },
   deleteAt: { type: Date, default:Date.now, },
-  updateAt: { type: Date, default:Date.now, commit:String, }
+  updateAt: { type: Date, default:Date.now, }
 })
 
 

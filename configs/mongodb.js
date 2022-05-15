@@ -1,14 +1,15 @@
-const USERNAME = 'TicketMovie'
-const PASSWORD = 'TZ3vRyqRqMiAwPmQ'
-const DATABASE = 'flex-flook-app'
-
+const mongoose = require('mongoose');
+const { mongoUrlLocal, mongoUrlAlat } = require('./service')
 
 const configsMongodb = {
-  url:`mongodb+srv://${USERNAME}:${PASSWORD}@cluster0.lqsyp.mongodb.net/${DATABASE}?retryWrites=true&w=majority`,
+  url: mongoUrlLocal ,
   options: {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   }
 }
 
-module.exports = configsMongodb;
+const database = mongoose.connect(configsMongodb.url, configsMongodb.options)
+
+
+module.exports = database;

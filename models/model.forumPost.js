@@ -5,7 +5,7 @@ const ForumPost = new mongoose.Schema({
   itemId: [{ type: mongoose.Schema.Types.ObjectId, ref: "topics", required: true }],
   title: { type: String, trim: true, required: true, unique: true },
   content: {type: String, default: "" },
-  image: [
+  images: [
     {
       url: { type: String, default: "" },
       id: { type: String, default: "" }
