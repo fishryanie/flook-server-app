@@ -1,12 +1,12 @@
 const messages = require("../../constants/Messages");
 const handleError = require("../../error/HandleError");
-const { MODEL_GENRES, MODEL_MANGAS } = require("../../models");
+const models = require("../../models");
 
 module.exports = {
 
   findGenre: async (req, res) => {
     try {
-      const result = await MODEL_GENRES.find();
+      const result = await models.genres.find();
       return res.status(200).send(result);
     } catch (error) {
       handleError.ServerError(error, res);
@@ -18,9 +18,9 @@ module.exports = {
     const dataGenreBook = req.body.name;
   
     try {
-      const name = await MODEL_GENRES.findOne({ name: dataGenreBook });
+      const name = await models.genres.findOne({ name: dataGenreBook });
   
-      const newGenreBook = new MODEL_GENRES({
+      const newGenreBook = new models.genres({
         ...req.body
       });
   
@@ -45,10 +45,10 @@ module.exports = {
 
   updateGenre: async (req, res) => {
     const id = req.query.id
-    const GenreBook = new MODEL_GENRES({ ...req.body, _id: id});
+    const GenreBook = new models.genres({ ...req.body, _id: id});
     const option = { new: true };
     try {
-      const result = await MODEL_GENRES.findByIdAndUpdate(id, GenreBook, option);
+      const result = await models.genres.findByIdAndUpdate(id, GenreBook, option);
       if (!result) {
         console.log(messages.NotFound);
         return res.status(404).send(messages.NotFound);
@@ -64,7 +64,7 @@ module.exports = {
   deleteGenre: async (req, res) => {
     try {
       const id = req.params.id;
-      const row = await MODEL_GENRES.findByIdAndRemove(id).exec();
+      const row = await models.genres.findByIdAndRemove(id).exec();
       console.log(id)
       if (!row) {
         console.log(messages.NotFound);

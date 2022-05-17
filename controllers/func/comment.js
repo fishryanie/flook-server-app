@@ -1,4 +1,4 @@
-const { MODEL_COMMENTS } = require("../../models");
+const models = require("../../models");
 const messages = require("../../constants/messages");
 const handleError = require("../../error/HandleError");
 
@@ -11,7 +11,7 @@ const addComment = async (req, res) => {
   if (req.body.content.trim().length === 0) {
     res.status(400).send({ message: messages.validateContenComment });
   } else {
-    const Comment = new MODEL_COMMENTS({ ...req.body, idUser });
+    const Comment = new models.comments({ ...req.body, idUser });
     Comment.save()
       .then((data) =>
         res.status(200).send({
@@ -36,8 +36,8 @@ const updateComment = async (req, res) => {
 
   if (commentUserId === commentUserIdBody) {
     try {
-      const Comment = new MODEL_COMMENTS({ ...req.body, _id: commentId });
-      const result = await MODEL_COMMENTS.findByIdAndUpdate(
+      const Comment = new models.comments({ ...req.body, _id: commentId });
+      const result = await models.comments.findByIdAndUpdate(
         commentId,
         Comment,
         option
@@ -65,7 +65,7 @@ const deleteComment = async (req, res) => {
 
   try {
     if (commentUserId === commentUserIdBody) {
-      const row = await MODEL_COMMENTS.findByIdAndRemove(id).exec();
+      const row = await models.comments.findByIdAndRemove(id).exec();
       if (!row) {
         handleError.NotFoundError(id, res);
       }
@@ -92,7 +92,7 @@ const likeAndDislike = async (req, res) => {
   if (like === "like") {
     console.log(req.body.likes);
     try {
-      const result = await MODEL_COMMENTS.updateOne(
+      const result = await models.comments.updateOne(
         { _id: commentId },
         {
           $addToSet: {
@@ -110,7 +110,7 @@ const likeAndDislike = async (req, res) => {
   } else if (like === "dislike") {
     console.log(req.body.likes);
     try {
-      const result = await MODEL_COMMENTS.updateOne(
+      const result = await models.comments.updateOne(
         { _id: commentId },
         {
           $addToSet: {
@@ -129,7 +129,7 @@ const likeAndDislike = async (req, res) => {
   } else if (like === "unlike") {
     console.log(req.body.likes);
     try {
-      const result = await MODEL_COMMENTS.updateOne(
+      const result = await models.comments.updateOne(
         { _id: commentId },
 
         { $pull: { likes: req.body.likes } }
@@ -146,7 +146,7 @@ const likeAndDislike = async (req, res) => {
   } else {
     console.log(req.body.likes);
     try {
-      const result = await MODEL_COMMENTS.updateOne(
+      const result = await models.comments.updateOne(
         { _id: commentId },
 
         { $pull: { disLikes: req.body.disLikes } }
@@ -176,14 +176,14 @@ const getAllCommentSort = async (req, res) => {
   } else {
     if (page && !sort) {
       console.log("get all phân trang");
-      const result = await MODEL_COMMENTS.find({ idMovie: movieId })
+      const result = await models.comments.find({ idMovie: movieId })
         .populate(["idMovie", "likes", "disLikes"])
         .skip(skip)
         .limit(PAGE_SIZE);
       return res.status(200).send({ data: result });
     } else if (page && sort) {
       console.log("Sắp xếp");
-      const result = await MODEL_COMMENTS.find({ idMovie: movieId })
+      const result = await models.comments.find({ idMovie: movieId })
         .populate(["idMovie", "likes", "disLikes"])
         .skip(skip)
         .limit(PAGE_SIZE)
@@ -191,13 +191,13 @@ const getAllCommentSort = async (req, res) => {
       return res.status(200).send({ data: result });
     } else if (rating) {
       console.log(`rating ${rating}`);
-      const result = await MODEL_COMMENTS.find({ idMovie: movieId, rating })
+      const result = await models.comments.find({ idMovie: movieId, rating })
         .populate(["idMovie", "likes", "disLikes"])
         .limit(10);
       return res.status(200).send({ data: result });
     } else {
       console.log(`like ${like}`);
-      let result = await MODEL_COMMENTS.find({ idMovie: movieId }).populate([
+      let result = await models.comments.find({ idMovie: movieId }).populate([
         "idMovie",
         "likes",
         "disLikes",

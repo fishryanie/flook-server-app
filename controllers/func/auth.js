@@ -1,4 +1,4 @@
-const { MODEL_ROLES, MODEL_USERS } = require("../../models");
+const models = require("../../models");
 const cloudinary = require('../../configs/cloudnary')
 const jwt = require("jsonwebtoken");
 const SendMail = require("../../utils/SendMail");
@@ -62,10 +62,10 @@ const RegisterController = async (req, res) => {
     return res.status(400).send({messages: messages.NotMatchPassword})
   }
   try {
-    const USER = new MODEL_USERS({ 
+    const USER = new models.users({ 
       userName, email, phoneNumber, password,
     });
-    const rolesName = await MODEL_ROLES.find({name:'user'})
+    const rolesName = await models.roles.find({name:'user'})
     console.log(rolesName)
     USER.roles = await rolesName?.map((role) => role._id)
     const result = await USER.save()
@@ -82,16 +82,16 @@ const CreateNewController = async (req, res) => {
 
   try {
 
-    const userName = await MODEL_USERS.findOne({ userName: dataUser })
+    const userName = await models.users.findOne({ userName: dataUser })
     if(userName){
       console.log("userName đã tồn tại!!!");
       return res.status(400).send(userName);
     }
 
     const avatarUpload = await cloudinary.uploader.upload(req.file?.path, folder);
-    const USER = new MODEL_USERS({ ... req.body, avatarId: avatarUpload.public_id, avatar: avatarUpload.secure_url });
+    const USER = new models({ ... req.body, avatarId: avatarUpload.public_id, avatar: avatarUpload.secure_url });
     
-    const rolesName = await MODEL_ROLES.find({ name: { $in: req.body.roles } });
+    const rolesName = await models.roles.find({ name: { $in: req.body.roles } });
     USER.roles = rolesName?.map((role) => role._id);
 
     const result = await USER.save();
@@ -115,7 +115,7 @@ const UpdateUserController = async (req, res) => {
   const option = { new: true };
   let avatarUpload
   try {
-    const userFind = await MODEL_USERS.findById(id);
+    const userFind = await models.users.findById(id);
     if(req.file){
       await cloudinary.uploader.destroy(userFind.avatarId);
       avatarUpload = await cloudinary.uploader.upload(req.file?.path, folder);
@@ -123,10 +123,10 @@ const UpdateUserController = async (req, res) => {
       avatarUpload = await cloudinary.uploader.upload(avatar, folder);
       await cloudinary.uploader.destroy(userFind.avatarId);
     }
-    const Users = new MODEL_USERS({ ...req.body, _id: id, avatarId: avatarUpload?.public_id, avatar: avatarUpload.secure_url });
-    const roles = await MODEL_ROLES.find({ name: { $in: req.body.roles } });
+    const Users = new models.users({ ...req.body, _id: id, avatarId: avatarUpload?.public_id, avatar: avatarUpload.secure_url });
+    const roles = await models.roles.find({ name: { $in: req.body.roles } });
     Users.roles = roles?.map((role) => role._id);
-    const result = await MODEL_USERS.findByIdAndUpdate(id, Users, option);
+    const result = await models.users.findByIdAndUpdate(id, Users, option);
     if (!result) {
       return handleError.NotFoundError(id, res)
     }
@@ -140,8 +140,8 @@ const AddListFavoriteController = async (req, res) => {
   const userId = req.userId;
   const movieId = req.body.movieId;
   try {
-    const movie = await MODEL_USERS.findOne({listMovieFavorite: { $eq: movieId }});
-    const result = await MODEL_USERS.findOneAndUpdate(
+    const movie = await models.users.findOne({listMovieFavorite: { $eq: movieId }});
+    const result = await models.users.findOneAndUpdate(
       { _id: userId },
       movie ? { $pull: { listMovieFavorite: movieId }} : { $push: { listMovieFavorite: movieId }},
       { new: true }
@@ -159,7 +159,7 @@ const ActiveUserController = async (req, res) => {
     if (!userId) {
       return res.status(400).send({ messages: "not userId or isActive" });
     }
-    const result = await MODEL_USERS.findOneAndUpdate(
+    const result = await models.users.findOneAndUpdate(
       { _id: userId },
       { isActive: true },
       { new: true, upsert: true }
@@ -176,9 +176,9 @@ const ForgotPasswordController = async (req, res) => {
     const email = req.user.email
 
     const newPassword = generator();
-    const result = await MODEL_USERS.findByIdAndUpdate(
+    const result = await models.users.findByIdAndUpdate(
       { _id: id },
-      { password: await MODEL_USERS.hashPassword(newPassword)},
+      { password: await models.users.hashPassword(newPassword)},
       { new: true }
     );
     if (!result) {
@@ -195,9 +195,9 @@ const ChangePasswordController = async (req, res) => {
   const passwordNew = req.result.password
   
   try {
-    const result = await MODEL_USERS.findOneAndUpdate(
+    const result = await models.users.findOneAndUpdate(
       { _id: userId },
-      { password: await MODEL_USERS.hashPassword(passwordNew) },
+      { password: await models.users.hashPassword(passwordNew) },
       { new: true, upsert: true }
     );
     if (!result) {
@@ -213,7 +213,7 @@ const FindUserNotActive = async (req, res) => {
   const userRoleName = req.roleName;
   try {
     if (userRoleName === "admin" || userRoleName === "moderator") {
-      const users = await MODEL_USERS
+      const users = await models.users
       .find({ isActive: false })
       .populate("roles");
       if (users.length <= 0) {
@@ -228,7 +228,7 @@ const FindUserNotActive = async (req, res) => {
 
 const FindAllUserController = async (req, res) => {
   try {
-    const role = await MODEL_ROLES.find({
+    const role = await models.roles.find({
       $or: [{ name: "admin" }, { name: "user" }],
     });
     let find = {};
@@ -242,7 +242,7 @@ const FindAllUserController = async (req, res) => {
     } else if (req.roleName === "admin") {
       find = { roles: { $in: role[0]["_id"] } };
     }
-    const result = await MODEL_USERS.find(find).populate("roles");
+    const result = await models.users.find(find).populate("roles");
     res.status(200).send(result);
   } catch (error) {
     return handleError.ServerError(error, res)
@@ -252,7 +252,7 @@ const FindAllUserController = async (req, res) => {
 const FindByIdUserController = async (req, res) => {
   const id = req.userId;
   try {
-    const data = await MODEL_USERS.findById(id);
+    const data = await models.users.findById(id);
     data.length && res.status(200).send(data);
   } catch (error) {
     if (error.kind === "ObjectId") {
@@ -266,7 +266,7 @@ const FindByIdUserController = async (req, res) => {
 const FindListMovieFavorite = async (req, res) => {
   try {
     const idUser = req.userId;
-    const User = await MODEL_USERS
+    const User = await models.users
     .findById(idUser)
     .populate("listMovieFavorite", "-__v");
     if (!User) {
@@ -282,7 +282,7 @@ const FindListMovieFavorite = async (req, res) => {
 const DeleteUserController = async (req, res) => {
   try {
     const id = req.params.id;
-    const row = await MODEL_USERS.findByIdAndRemove(id).exec();
+    const row = await models.users.findByIdAndRemove(id).exec();
     if (!row) {
       console.log(messages.NotFound);
       return res.status(404).send({ messages: messages.NotFound + id });

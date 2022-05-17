@@ -1,4 +1,4 @@
-const { MODEL_CHAPTERS } = require("../../models");
+const models = require("../../models");
 const messages = require("../../constants/messages");
 const handleError = require("../../error/HandleError");
 
@@ -6,7 +6,7 @@ const findChapterById = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const result = await MODEL_CHAPTERS.findById(id).populate('book');
+    const result = await models.chaptercomics.findById(id).populate('book');
 
     // const sort1 = result[0].image;
     // console.log("sort1", sort1)
@@ -30,10 +30,10 @@ const findChapterByMangaId = async (req, res) => {
   try {
     const sortChapter = sort === 'name' ? {name: 1} : null;
 
-    const count = await MODEL_CHAPTERS.find({ book: comicId }).count();
+    const count = await models.chaptercomics.find({ book: comicId }).count();
     // console.log(count)
 
-    const result = await MODEL_CHAPTERS.find({ book: {$eq: comicId }})
+    const result = await models.chaptercomics.find({ book: {$eq: comicId }})
     // .populate('book')
     .skip(skip)
     .limit(PAGE_SIZE)
@@ -52,12 +52,12 @@ const addChapter = async (req, res) => {
   try {
     const data = req.body;
 
-    const result = await new MODEL_CHAPTERS({ ...data }).save();
+    const result = await new models.chaptercomics({ ...data }).save();
     // console.log("result", result._id)
 
     if (result) {
       console.log("result")
-      const update = await MODEL_CHAPTERS.updateOne(
+      const update = await models.chaptercomics.updateOne(
         { name: result._id },
         { $inc: { "image.number": 1 } }
       )

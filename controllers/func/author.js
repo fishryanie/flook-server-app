@@ -1,4 +1,4 @@
-const { MODEL_BOOKS, MODEL_AUTHORS } = require("../../models");
+const models = require("../../models");
 const cloudinary = require('../../configs/cloudnary')
 const handleError = require("../../error/HandleError");
 const messages = require("../../constants/messages");
@@ -9,7 +9,7 @@ const FormatDate = require('../../utils/FormatDate')
 
 const findMany = async (req, res) => {
   try {
-    const result = await MODEL_AUTHORS.find();
+    const result = await models.authors.find();
     return res.status(200).json({data: result});
   } catch (error) {
     handleError.ServerError(error, res);
@@ -20,16 +20,16 @@ const findMany = async (req, res) => {
 const addAuthor = async (req, res) => {
   const dataAuther = req.body.name;
   try {
-    const name = await MODEL_AUTHORS.findOne({ name: dataAuther });
+    const name = await models.authors.findOne({ name: dataAuther });
     if (name) {
       console.log("tên tác giả tồn tại!!!");
       return res.status(400).send(name);
     }
     const imageUpload = await cloudinary.uploader.upload(req.file?.path, folder);
-    const newAuthor = new MODEL_AUTHORS({
+    const newAuthor = new models.authors({
       ...req.body, image: { id: imageUpload.public_id, url: imageUpload.secure_url }, createAt: Date.now()
     });
-    const book = await MODEL_BOOKS.find({ title: { $in: req.body.book } })
+    const book = await models.ebooks.find({ title: { $in: req.body.book } })
     newAuthor.book = book?.map((book) => book._id);
     const result = await newAuthor.save();
     if (result) {

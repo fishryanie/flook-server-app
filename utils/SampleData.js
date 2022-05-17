@@ -82,29 +82,29 @@ function SampleData() {
           }
           // MAP CATEGORIES FOR EBOOKS
           for (let ic in CATEGORIES) {
-            if(dataDefaults.ebooks[ib].categoryId === CATEGORIES[ic].name){
-              dataDefaults.ebooks[ib].categoryId = CATEGORIES[ic]._id
+            if(dataDefaults.ebooks[ib].categorysId === CATEGORIES[ic].name){
+              dataDefaults.ebooks[ib].categorysId = CATEGORIES[ic]._id
             }
           }
           // MAP GENRES FOR EBOOKS
           for (let ig in GENRES) {
-            for (let ibg in dataDefaults.ebooks[ib].genreId) {
-              if(dataDefaults.ebooks[ib].genreId[ibg] === GENRES[ig].name){
-                dataDefaults.ebooks[ib].genreId[ibg] = GENRES[ig]._id
+            for (let ibg in dataDefaults.ebooks[ib].genresId) {
+              if(dataDefaults.ebooks[ib].genresId[ibg] === GENRES[ig].name){
+                dataDefaults.ebooks[ib].genresId[ibg] = GENRES[ig]._id
               }
             }
           } 
           // MAP GENRES FOR AUTHOR
           for (let ia in AUTHORS) {
-            for (let iba in dataDefaults.ebooks[ib].authorId) {
-              if(dataDefaults.ebooks[ib].authorId[iba] === AUTHORS[ia].name){
-                dataDefaults.ebooks[ib].authorId[iba] = AUTHORS[ia]._id
+            for (let iba in dataDefaults.ebooks[ib].authorsId) {
+              if(dataDefaults.ebooks[ib].authorsId[iba] === AUTHORS[ia].name){
+                dataDefaults.ebooks[ib].authorsId[iba] = AUTHORS[ia]._id
               }
             }
           }
         }
       }
-
+      // console.log(dataDefaults.ebooks)
       Promise.all([
         models.users.insertMany(dataDefaults.users),
         models.ebooks.insertMany(dataDefaults.ebooks)
