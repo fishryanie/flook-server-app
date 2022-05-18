@@ -1,27 +1,22 @@
+require('dotenv/config')
 const nodemailer = require('nodemailer');
-const RenderMailRegister = require('../Views/mail.signup')
-const RenderMailPassword = require('../Views/mail.password')
-
-const adminEmail = 'flex.bookingzz@gmail.com'
-const adminPassword = 'flex123456'
-const mailHost = 'smtp.gmail.com'
-const mailPort = 465
-
+const RenderMailRegister = require('../emails/active-account')
+const RenderMailPassword = require('../emails/send-password')
 
 const SendMail = async (toMail, subject, newPassword, userId) => {
   const transporter = nodemailer.createTransport({
-    host: mailHost,
-    port: mailPort,
+    host: process.env.FLOOK_EMAIL_HOST,
+    port: process.env.FLOOK_EMAIL_PORT,
     secure: true,
     auth: {
-      user: adminEmail,
-      pass: adminPassword
+      user: process.env.FLOOK_EMAIL_USERNAME,
+      pass: process.env.FLOOK_EMAIL_PASSWORD
     },
   });
   const linkActiveAccount = `http://localhost:8000/api/user-management/setActiveUser/${userId}`
 
   const options = {
-    from: adminEmail,
+    from: process.env.FLOOK_EMAIL_USERNAME,
     to: toMail,
     subject: subject, 
     html: userId ? RenderMailRegister(linkActiveAccount) : RenderMailPassword(newPassword)

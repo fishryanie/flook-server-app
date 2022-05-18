@@ -1,7 +1,7 @@
-'use strict';
+require('dotenv/config')
 const chaiHttp = require('chai-http');
 const chai = require('chai');
-const app = 'http://localhost:8000'
+const app = 'http://localhost:' + process.env.PORT
 const expect = chai.expect;
 
 // const { MODEL_AUTHORS } = require('../models')

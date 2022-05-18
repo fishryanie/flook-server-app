@@ -5,12 +5,12 @@ module.exports = app => {
     res.send({ message: "Welcome to Flook-app." });
   });
 
-  require('./Router.auth')(app)
-  require('./Router.cast')(app)
-  require('./Router.movie')(app)
-  require('./Router.comment')(app)
-  require('./Router.manga')(app)
-  require('./Router.genre')(app)
-  require('./Router.author')(app)
-  require('./Router.chapter')(app)
+  require('./auth/user')(app)
+  require('./movie/cast')(app)
+  require('./movie/movie')(app)
+  require('./review/comment')(app)
+  require('./storybook/ebooks')(app)
+  require('./storybook/genre')(app)
+  require('./storybook/author')(app)
+  require('./storybook/chapter')(app)
 }

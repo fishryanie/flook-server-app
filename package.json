@@ -1,11 +1,12 @@
 {
-  "name": "Booking-ticket-movie",
+  "name": "flook-server-app",
   "version": "1.0.0",
-  "description": "Node.js Restful CRUD API with Node.js, Express and mongodb",
+  "description": "Mạng xã hội đọc truyện flook",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index",
-    "test": "mocha --recursive test --timeout 10000 "
+    "dev": "nodemon app.js",
+    "test": "mocha --recursive test --timeout 10000 ",
+    "start": "pm2 start 'yarn run serve' --name flook-server-app --no-daemon --log-date-format='MM-DD hh:mm:ss.SSS A'"
   },
   "keywords": [],
   "author": "Phan Hồng Quân",

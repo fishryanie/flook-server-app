@@ -1,5 +1,5 @@
-const middlewares = require("../middlewares");
-const Controller = require("../controllers");
+const middlewares = require("../../middlewares");
+const Controller = require("../../controllers");
 
 module.exports = app => {
   // Thêm bình luận

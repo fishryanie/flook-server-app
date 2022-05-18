@@ -2,13 +2,13 @@
 const models = require('../models')
 const FormatDate = require('./FormatDate');
 const dataDefaults = {
-  users: require('../data/user.json'),
-  roles: require('../data/roles.json'),
-  ebooks: require('../data/ebooks.json'),
-  status: require('../data/status.json'),
-  genres: require('../data/genres.json'),
-  authors: require('../data/author.json'),
-  categories: require('../data/categories.json'),
+  users: require('../jsons/user.json'),
+  roles: require('../jsons/roles.json'),
+  ebooks: require('../jsons/ebooks.json'),
+  status: require('../jsons/status.json'),
+  genres: require('../jsons/genres.json'),
+  authors: require('../jsons/author.json'),
+  categories: require('../jsons/categories.json'),
 }
 
 const InsertedSuccess = collectionString => `Inserted ${collectionString} Success`
@@ -36,7 +36,7 @@ async function edit_date_ebooks () {
   console.log(result ? UpdatedSuccess('EBOOKS') : UpdatedFailure('EBOOKS'))
 }
 
-function SampleData() {
+const SampleData = () => {
   Promise.all([
     models.users.deleteMany(),
     models.roles.deleteMany(),

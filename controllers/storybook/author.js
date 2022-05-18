@@ -1,10 +1,9 @@
-const models = require("../../models");
 const cloudinary = require('../../configs/cloudnary')
+const models = require("../../models");
 const handleError = require("../../error/HandleError");
 const messages = require("../../constants/messages");
-
 const folder = { folder: 'Flex-ticket/ImageAuther' }
-const FormatDate = require('../../utils/FormatDate')
+const FormatDate = require('../../functions/FormatDate')
 
 
 const findMany = async (req, res) => {

@@ -1,6 +1,5 @@
 require('dotenv/config')
 
-
 module.exports = {
   port: process.env.PORT || '8888',
   userName: process.env.USERNAME,

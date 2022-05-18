@@ -1,4 +1,4 @@
-const FormatDate = require('../utils/FormatDate')
+const FormatDate = require('../functions/FormatDate')
 
 const configsToken = {
   secret: "bezkoder-secret-key",

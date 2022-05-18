@@ -1,11 +1,12 @@
 const models = require("../../models");
 const cloudinary = require('../../configs/cloudnary')
 const jwt = require("jsonwebtoken");
-const SendMail = require("../../utils/SendMail");
+const SendMail = require("../../functions/SendMail");
+const generator = require("../../functions/Generator");
+
 const configsToken = require("../../configs/token");
 const messages = require("../../constants/messages");
 const handleError = require('../../error/HandleError')
-const generator = require("../../utils/Generator");
 const folder = { folder: 'Flex-ticket/ImageUser' }
 
 
