@@ -10,8 +10,6 @@ const configsMongodb = {
     useUnifiedTopology: true,
   }
 }
-
-const database = mongoose.connect(configsMongodb.url, configsMongodb.options)
-
+const database = new mongoose.connect(configsMongodb.url, configsMongodb.options)
 
 module.exports = database;

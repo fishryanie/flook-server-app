@@ -12,16 +12,25 @@ const Users = new mongoose.Schema({
   createAt: { type: Date, default:Date.now, },
   deleteAt: { type: Date, default:Date.now, },
   updateAt: { type: Date, default:Date.now, },
-  isActive: { type: Boolean, trim: true, default: false },
+  isActive: { type: Boolean, default: false },
   deleted: { type: Boolean, default: false },  
   status: [{ type: mongoose.Schema.Types.ObjectId, ref:'status'}],
   roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "roles", required: true }],
   email: { type: String, trim:true, required: true, unique: true },
   userName: { type:String, trim:true, required:true, unique:true, minlength: 8, maxlength: 16, match: [noSpace_special, messages.validateUserName]},
   password: { type:String, trim:true, required:true, match:[password_pattern, messages.validatePassword]},
-  phoneNumber: { type: String, trim: true, default: null, unique: false},
+  phoneNumber: { type: String, trim: true, required:true, unique: false},
   displayName: { type: String, trim: true, default: null },
   gender: { type: Boolean, trim: true, default: true },
+  vip: { type: Boolean, trim: true, default: false },
+  history: {
+    read: [{type: mongoose.Schema.Types.ObjectId, ref:'ebooks'}],
+    download: [{type: mongoose.Schema.Types.ObjectId, ref:'ebooks'}],
+  },
+  subscribe: {
+    ebooks: [{type: mongoose.Schema.Types.ObjectId, ref:'ebooks'}],
+    author: [{type: mongoose.Schema.Types.ObjectId, ref:'authors'}]
+  },
   images: {
     wallPaper: {
       url: { type: String, default: ""},
@@ -46,7 +55,6 @@ Users.pre('save', function(next){
 
 
 Users.static('verifyPassword', (password, hash) => {
-  console.log(password)
   if (password && hash) {
     let passwordIsValid = bcrypt.compareSync(password, hash)
     if (!passwordIsValid) {

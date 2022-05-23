@@ -14,7 +14,9 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 // parse requests of content-type - application/json
+app.use(bodyParser.text());
 app.use(bodyParser.json());
+app.use(bodyParser.json({ type: 'application/json'}));
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -22,11 +24,11 @@ app.use(morgan('dev'))
 
 database.then(() => {
   require('./routes')(app)
-  sampleData()
+
+  // sampleData()
   app.listen(process.env.PORT || 8000, () => console.log('Server is running on port ' + process.env.PORT));
 }).catch(error => console.error(error))
 
 
+
 module.exports = app
-
-

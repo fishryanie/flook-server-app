@@ -3,7 +3,6 @@ mongoose.Promise = global.Promise;
 
 
 const model = {
-  vips: mongoose.model('vips', require('./other/vip')),
   casts: mongoose.model('casts', require('./movie/cast')),
   users: mongoose.model('users', require('./auth/user')),
   roles: mongoose.model('roles', require('./auth/roles')),

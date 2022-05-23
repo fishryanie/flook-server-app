@@ -17,14 +17,14 @@ const ServerError = (err, res) => {
     err: err,
     message: message.ServerError
   }
-  console.log(response)
+  // console.log(response)
   return res.status(500).send(response)
 }
 
 const NotFoundError = (params, res) => {
   const response = {
-    status: 400,
-    message: message.NotFound + ' ' + params
+    success: false,
+    message: `${message.NotFound} ${params}`
   }
   return res.status(400).send(response)
 }
@@ -34,7 +34,7 @@ const AlreadyExistsError = (params, res) => {
     status: 400,
     message: message.AlreadyExists + ' ' + params
   }
-  console.log(response)
+  // console.log(response)
   return res.status(400).send(response)
 }
 
@@ -43,16 +43,16 @@ const PermissionError = res => {
     status: 403,
     message: message.checkPermission
   }
-  console.log(response)
+  // console.log(response)
   return res.status(403).send(response)
 }
 
 const HashPasswordError = (verifyPassword, res) => {
   const response = {
-    status: 400,
+    success: false,
     message: verifyPassword.messageError
   }
-  console.log(response)
+  // console.log(response)
   return res.status(400).send(response);
 }
 

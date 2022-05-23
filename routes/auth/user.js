@@ -1,6 +1,7 @@
 const upload = require("../../functions/UploadImage");
 const middlewares = require("../../middlewares");
 const Controller = require('../../controllers');
+const routesString = require('../../constants/routes');
 
 module.exports = app => {
 
@@ -29,13 +30,13 @@ module.exports = app => {
   app.get("/api/user-management/setActiveUser/:id",
   Controller.auth.ActiveUserController);
 
-  app.post("/api/user-management/login",[
+  app.post(routesString.login,[
     middlewares.auth.VerifyUserName, 
     middlewares.auth.VerifyPassword,
   ], Controller.auth.LoginController);
 
 
-  app.post("/api/user-management/register",[
+  app.post(routesString.register,[
     middlewares.auth.VerifyEmail,
     middlewares.auth.VerifyPhoneNumber,
     middlewares.auth.VerifyUserName,

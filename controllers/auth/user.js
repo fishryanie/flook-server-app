@@ -68,7 +68,7 @@ const RegisterController = async (req, res) => {
     });
     const rolesName = await models.roles.find({name:'user'})
     console.log(rolesName)
-    USER.roles = await rolesName?.map((role) => role._id)
+    USER.roles = rolesName?.map((role) => role._id)
     const result = await USER.save()
     await SendMail(email, null, null, result._id);
     result && res.status(200).send({messages: 'sign up successfully'});
@@ -309,11 +309,11 @@ module.exports = {
     }
     const data = {
       displayName: result.displayName,
-      avatar: result.avatar,
+      images: result.images,
       roles: authorities[0],
       accessToken: token,
     };
-    return res.status(200).send({data, message:  messages.LoginSuccessfully});
+    return res.status(200).send({data, success: true, message: messages.LoginSuccessfully});
   },
 
   RegisterController,

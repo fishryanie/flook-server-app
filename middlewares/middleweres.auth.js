@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const message = require("../constants/Messages");
 const config = require("../configs/token");
 const handleError = require("../error/HandleError");
-const { MODEL_USERS } = require("../models");
+const models = require("../models");
 
 const VerifyToken = (req, res, next) => {
   const token = req.headers.authorization;
@@ -23,7 +23,7 @@ const CheckAuth = async (req, res, next) => {
   console.log("auth");
   try {
     const id = req.userId;
-    const userlogining = await MODEL_USERS.findById(req.userId).populate(
+    const userlogining = await models.users.findById(req.userId).populate(
       "roles"
     );
     if (!userlogining) {
@@ -69,7 +69,7 @@ const VerifyPassword = async (req, res, next) => {
   try {
     const password = req.body.password;
     const hash = req.result.password;
-    const verifyPassword = await MODEL_USERS.verifyPassword(password, hash);
+    const verifyPassword = await models.users.verifyPassword(password, hash);
     if (verifyPassword !== undefined) {
       return handleError.HashPasswordError(verifyPassword, res);
     }
@@ -80,14 +80,10 @@ const VerifyPassword = async (req, res, next) => {
 };
 
 const VerifyUserName = async (req, res, next) => {
-  console.log("name");
   try {
     const userName = req.body.userName;
     const type = req.body.type;
-    const result = await MODEL_USERS.findOne({ userName }).populate(
-      "roles",
-      "-__v"
-    );
+    const result = await models.users.findOne({userName}).populate("roles","-__v");
     if (type === "LOGIN_APP") {
       if (!result) {
         return handleError.NotFoundError(userName, res);
@@ -106,11 +102,10 @@ const VerifyUserName = async (req, res, next) => {
 };
 
 const VerifyEmail = async (req, res, next) => {
-  console.log("email");
   try {
     const email = req.body.email;
     const type = req.body.type;
-    const USER = await MODEL_USERS.findOne({ email: email });
+    const USER = await models.users.findOne({ email: email });
     if (type === "CREATE_APP" && !USER) {
       next();
     }
@@ -124,10 +119,9 @@ const VerifyEmail = async (req, res, next) => {
 };
 
 const VerifyPhoneNumber = async (req, res, next) => {
-  console.log("phone");
   const phoneNumber = req.body.phoneNumber;
   try {
-    const USER = await MODEL_USERS.findOne({ phoneNumber });
+    const USER = await models.users.findOne({ phoneNumber });
     if (USER) {
       return handleError.AlreadyExistsError(phoneNumber, res);
     }

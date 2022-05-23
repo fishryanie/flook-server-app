@@ -4,9 +4,9 @@
   "description": "Mạng xã hội đọc truyện flook",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon app.js",
+    "dev": "nodemon index.js",
     "test": "mocha --recursive test --timeout 10000 ",
-    "start": "pm2 start 'yarn run serve' --name flook-server-app --no-daemon --log-date-format='MM-DD hh:mm:ss.SSS A'"
+    "start": "pm2 start index.js --name flook-server-app --no-daemon --log-date-format='MM-DD hh:mm:ss.SSS A'"
   },
   "keywords": [],
   "author": "Phan Hồng Quân",

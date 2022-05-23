@@ -67,6 +67,7 @@ const SampleData = () => {
           for (let ir in ROLES) {
             if(dataDefaults.users[iu].roles === ROLES[ir].name) {
               dataDefaults.users[iu].roles = ROLES[ir]._id
+              new models.users({...dataDefaults.users[iu]}).save()
             }
           } 
         }
@@ -106,11 +107,11 @@ const SampleData = () => {
       }
       // console.log(dataDefaults.ebooks)
       Promise.all([
-        models.users.insertMany(dataDefaults.users),
+        // models.users.insertMany(dataDefaults.users),
         models.ebooks.insertMany(dataDefaults.ebooks)
       ]).then((result) => {
-        console.log(result[0].length > 0 ? InsertedSuccess('USER') : InsertedFailure('USER'));
-        console.log(result[1].length > 0 ? InsertedSuccess('EBOOKS') : InsertedFailure('EBOOKS'));
+        // console.log(result[0].length > 0 ? InsertedSuccess('USER') : InsertedFailure('USER'));
+        console.log(result[0].length > 0 ? InsertedSuccess('EBOOKS') : InsertedFailure('EBOOKS'));
         edit_date_ebooks()
       })
 
