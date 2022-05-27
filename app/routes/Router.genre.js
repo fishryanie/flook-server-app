@@ -12,6 +12,15 @@ module.exports = app => {
   app.delete('/api/genre-management/deleteGenre/:id', 
   Controller.genre.deleteGenre)
 
+  app.delete('/api/genre-management/deleteGenreMany/:id', 
+  Controller.genre.deleteGenreMany)
+
+  app.delete('/api/genre-management/deletedGenre/:id', 
+  Controller.genre.deletedGenre)
+
+  app.delete('/api/genre-management/deletedGenreMany/:id', 
+  Controller.genre.deletedGenreMany)
+
   app.put('/api/genre-management/updateGenre', 
   Controller.genre.updateGenre)
   
