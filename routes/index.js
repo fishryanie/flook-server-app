@@ -1,6 +1,6 @@
 
 module.exports = app => {
-  
+
   app.get("/", (req, res) => {
     res.send({ message: "Welcome to Flook-app." });
   });
@@ -13,4 +13,6 @@ module.exports = app => {
   require('./storybook/genre')(app)
   require('./storybook/author')(app)
   require('./storybook/chapter')(app)
+  require('./storybook/categories')(app)
+
 }
