@@ -1,19 +1,43 @@
 require('dotenv/config')
 const chaiHttp = require('chai-http');
+const jwt = require("jsonwebtoken");
+const user = require('../../jsons/user.json')
 const app = require('../../index')
 const chai = require('chai');
 const message = require('../../constants/messages')
 const routesString = require('../../constants/routes')
-
+const configsToken = require("../../configs/token");
 const expect = chai.expect;
-
+const models = require('../../models');
+const database = require('../../configs/mongodb');
+const mongoose = require('mongoose');
 chai.use(chaiHttp);
 
+jest.useFakeTimers();
+
+const typeToken = userId => {
+  const token = jwt.sign(
+    { id: userId }, 
+    configsToken.secret, 
+    { expiresIn: configsToken.jwtExpiration }
+  );
+  return token;
+}
+
+
 describe('Route: Auth', () => {
-  describe('GET', () => {
-    describe('FIND MANY USER BY ROLE', () => {})
-    describe('FIND ONE USER', () => {})
-  })
+  let TestCollection
+  beforeEach((done) => {
+    const testCollectionSchema = new Schema({}, { strict: false })
+
+    TestCollection = mongoose.Schema.model('test_collection', testCollectionSchema)
+    database.then(() => {
+    
+
+      return done()
+    })
+  });
+
   describe('POST', () => {
     describe('LOGIN', () => {
       const loginSuccess = {
@@ -32,43 +56,38 @@ describe('Route: Auth', () => {
         type: 'LOGIN_APP',
       }
       it('Should return true if login successfull', done => {
-        setTimeout(() => {
-          chai.request(app).post(routesString.login).send(loginSuccess).end((req, res) => {
-            expect(res.status).to.equal(200);
-            expect(res.body.success).to.equal(true)
-            expect(res.body.data).to.be.an('object');
-            expect(res.body.data).to.have.all.keys('displayName','images','roles','accessToken');
-            expect(res.body.data.images).to.be.a('object')
-            expect(res.body.data.images).to.have.all.keys('wallPaper', 'background')
-            expect(res.body.message).to.equal(message.LoginSuccessfully);
-            return done()
-          })
-        }, 500);
+        chai.request(app).post(routesString.login).send(loginSuccess).end((req, res) => {
+          expect(res.status).to.equal(200);
+          expect(res.body.success).to.equal(true) 
+          expect(res.body.data).to.be.an('object');
+          expect(res.body.data).to.have.all.keys('displayName','images','roles','accessToken');
+          expect(res.body.data.images).to.be.a('object')
+          expect(res.body.data.images).to.have.all.keys('wallPaper', 'background')
+          expect(res.body.message).to.equal(message.LoginSuccessfully);
+          return done()
+        })
       })
       it('Should return true if login failure with password dose not exist', done => {
-        // setTimeout(() => {
-          chai.request(app).post(routesString.login).send(loginFailedWithUserName).end((req, res) => {
-            expect(res.status).to.equal(400);
-            expect(res.body.success).to.equal(false)
-            expect(res.body.message).to.equal(`${message.NotFound} ${loginFailedWithUserName.userName}`);
-            return done()
-          })
-        // }, 500);
+        chai.request(app).post(routesString.login).send(loginFailedWithUserName).end((req, res) => {
+          expect(res.status).to.equal(400);
+          expect(res.body.success).to.equal(false)
+          expect(res.body.message).to.equal(`${message.NotFound} ${loginFailedWithUserName.userName}`);
+          return done()
+        })
       })
       it('Should return true if login failure with username dose not exist', done => {
-        // setTimeout(() => {
-          chai.request(app).post(routesString.login).send(loginFailedWithPassword).end((req, res) => {
-            expect(res.status).to.equal(400);
-            expect(res.body.success).to.equal(false)
-            expect(res.body.message).to.equal(message.InvalidPassword);
-            return done()
-          })
-        // }, 500);
-      })
+        chai.request(app).post(routesString.login).send(loginFailedWithPassword).end((req, res) => {
+          expect(res.status).to.equal(400);
+          expect(res.body.success).to.equal(false)
+          expect(res.body.message).to.equal(message.InvalidPassword);
+          return done()
+        })
+      }) 
 
     })    
   })
 
-})
 
+})
+ 
 

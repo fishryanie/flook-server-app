@@ -33,7 +33,6 @@ const findMangaById = async (req, res) => {
     manga = await models.ebooks.findById(id).populate('author');
     chapter = await models.chaptercomics.find({book: id});
     data = {manga, chapter}
-
     return res.status(200).send(data);
   } catch (error) {
     handleError.ServerError(error, res);
@@ -41,10 +40,8 @@ const findMangaById = async (req, res) => {
 };
 
 const findManga = async (req, res) => {
-
   const deleted = req.query.deleted;
   let result;
-
   try {
     (deleted === "true")
       ? result = await models.ebooks.find({ deleted: { $in: true } })
@@ -151,19 +148,20 @@ const addManga = async (req, res) => {
 
 
 const filterMany = async (req, res) => {
-  let find, sortBook, result, populate = ['authors', 'genres', 'status', 'categories']
   const PAGE_SIZE = 12;
   const numPages = parseInt(req.query.page)
   const skip = numPages ? (numPages-1) * PAGE_SIZE : null
   const { author, genre, status, allowedAge, chapter } = req.body;
+  let find, sortBook, result=[], populate = ['authorsId', 'genresId', 'statusId', 'categorysId']
 
   switch (req.query.sort) {
     case 'view': sortBook={view: -1}; break;
     case 'title': sortBook={title: -1}; break;
     case 'rating': break;
-    default: sortBook={title: -1}; break   
+    default: break;
   }
-  if (author[0] === 'All' && genre[0] === 'All' && status[0] === 'All' && allowedAge[0] === 'All') {
+  
+  if (author[0]==='All' && genre[0]==='All' && status[0]==='All' && allowedAge[0]==='All') {
     find = null
   } else {
     find = { $or: [
@@ -176,35 +174,20 @@ const filterMany = async (req, res) => {
   }
   try {
     const count = await models.ebooks.find(find).count();
-    if (req.query.sort && req.query.page) {
+    if (req.query.sort > 0 && req.query.page > 0) {
       result = await models.ebooks.find(find).populate(populate).skip(skip).limit(PAGE_SIZE).sort(sortBook);
-    } else if (req.query.page) {
+    }
+    if (req.query.sort == 0) {
       result = await models.ebooks.find(find).populate(populate).skip(skip).limit(PAGE_SIZE);
     }
-    return res.status(200).send({data: result, count: count, success:true, count: count})
+    result.length > 0 && res.status(200).send({data: result, count: count, success:true})
   } catch (error) {
     return handleError.ServerError(error, res)
   }
 }
 
-// Filter Book test
-const filterMangaTest = async (req, res) => {
-  // const { status, genre, author } = req.body;
-  // console.log(status, genre, author);
 
-  // const filter = [];
-  // if (status != "") filter.push({ status: status });
-  // if (genre.length > 0) filter.push({ genre: { $in: genre } });
-  // if (author.length > 0) filter.push({ author: { $in: author } });
-
-  // const listBook = await models.ebooks.find({
-  //   $or: filter
-  // });
-
-  return res.status(200).send({ data: listBook });
-}
 const deleteMangaById = async (req, res) => {
-
   const id = req.params.id;
   const bookFind = await models.ebooks.findById(id);
   let row;
@@ -296,7 +279,4 @@ module.exports = {
   deletedManga,
   updateManga,
   filterMany,
-  filterMangaTest
-
-
 }

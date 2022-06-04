@@ -1,0 +1,18 @@
+[
+  {
+    "featureName": "login",
+    "featureGroupId": "6293a1cbeff5b820ec121992",
+    "roles": ["admin", "moderator"]
+  },
+  {
+    "featureName": "register",
+    "featureGroupId": "6293a1cbeff5b820ec121992",
+    "roles": ["admin", "moderator"]
+  },
+  {
+    "featureName": "findManyBook",
+    "featureGroupId": "6293a1cbeff5b820ec121993",
+    "roles": []
+  }
+]
+

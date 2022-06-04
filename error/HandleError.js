@@ -11,13 +11,20 @@ const TokenError = (err, res) => {
   return res.status(401).send({ message: "Unauthorized!" });
 }
 
+const NoTokenError = res => {
+  const response = {
+    success: false,
+    message: "No token provided!"
+  }
+  return res.status(403).send(response);
+}
+
 const ServerError = (err, res) => {
   const response = {
-    status: 500,
     err: err,
     message: message.ServerError
   }
-  // console.log(response)
+  console.log(response)
   return res.status(500).send(response)
 }
 
@@ -40,7 +47,7 @@ const AlreadyExistsError = (params, res) => {
 
 const PermissionError = res => {
   const response = {
-    status: 403,
+    success: false,
     message: message.checkPermission
   }
   // console.log(response)
@@ -58,6 +65,7 @@ const HashPasswordError = (verifyPassword, res) => {
 
 const handleError = {
   TokenError,
+  NoTokenError,
   ServerError,
   NotFoundError,
   PermissionError,

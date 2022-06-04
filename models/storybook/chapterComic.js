@@ -7,6 +7,7 @@ const ChapterComic = new mongoose.Schema({
   image: [
     {
       number: { type: Number },
+      
       url: { type: String, default: "" },
       id: { type: String, default: "" }
     }

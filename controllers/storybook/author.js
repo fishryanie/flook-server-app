@@ -8,8 +8,12 @@ const FormatDate = require('../../functions/FormatDate')
 
 const findMany = async (req, res) => {
   try {
-    const result = await models.authors.find();
-    return res.status(200).json({data: result});
+    Promise.all([
+      models.authors.find(),
+      models.authors.find().count()
+    ]).then((result) => {
+      return res.status(200).send({data: result[0], count: result[1], success: true});
+    })
   } catch (error) {
     handleError.ServerError(error, res);
   }

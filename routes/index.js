@@ -1,3 +1,5 @@
+const models = require('../models')
+
 
 module.exports = app => {
   
@@ -5,7 +7,10 @@ module.exports = app => {
     res.send({ message: "Welcome to Flook-app." });
   });
 
+  require('./auth/role')(app)
   require('./auth/user')(app)
+  require('./auth/feature')(app)
+  require('./auth/featureGroup')(app)
   require('./movie/cast')(app)
   require('./movie/movie')(app)
   require('./review/comment')(app)

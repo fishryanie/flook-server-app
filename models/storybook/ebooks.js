@@ -4,9 +4,9 @@ const rating = /^(?:[1-9]|0[1-9]|10)$/;
 
 const Ebooks = new mongoose.Schema({
   createAt: { type: Date, default: Date.now },
-  deleteAt: { type: Date, default: Date.now },
-  updateAt: { type: Date, default: Date.now },
-  launchDate: {type: Date, default: Date.now},
+  deleteAt: { type: Date, default: null },
+  updateAt: { type: Date, default: null },
+  launchDate: {type: Date, default: null},
   categorysId: { type: mongoose.Schema.Types.ObjectId, ref: "categories" },
   authorsId: [{ type: mongoose.Schema.Types.ObjectId, ref: "authors", }],
   genresId: [{ type: mongoose.Schema.Types.ObjectId, ref: "genres",}],

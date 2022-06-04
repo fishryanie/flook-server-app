@@ -5,9 +5,11 @@ const routesString = require('../../constants/routes');
 
 module.exports = app => {
 
-  app.get("/api/user-management/getAllListUser",[
-    middlewares.auth.VerifyToken, 
-    middlewares.auth.CheckAuth
+  app.get("/api/user-management/findMany",[
+    // middlewares.auth.VerifyToken, 
+    // middlewares.auth.CheckAuth, 
+    // middlewares.auth.CheckPermission,
+    // middlewares.auth.accessPermission
   ], Controller.auth.FindAllUserController);
 
 
@@ -45,9 +47,10 @@ module.exports = app => {
 
   app.post("/api/user-management/create",[
     upload.single("avatar"),
-    middlewares.auth.VerifyToken,
-    middlewares.auth.CheckAuth,
-    middlewares.auth.CheckPermission,
+    // middlewares.auth.VerifyToken,
+    // middlewares.auth.CheckAuth,
+    // middlewares.auth.CheckPermission,
+    middlewares.auth.accessPermission,
     middlewares.auth.VerifyEmail,
     middlewares.auth.VerifyUserName,
     middlewares.auth.VerifyPhoneNumber,

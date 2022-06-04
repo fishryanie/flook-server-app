@@ -6,7 +6,6 @@ const models = require("../models");
 
 const VerifyToken = (req, res, next) => {
   const token = req.headers.authorization;
-  console.log(req.headers);
   if (!token) {
     return res.status(403).send({ message: "No token provided!" });
   }
@@ -19,8 +18,40 @@ const VerifyToken = (req, res, next) => {
   });
 };
 
+
+const accessPermission = async (req, res, next) => {
+  // send an array into body the permissions you want
+  const token = req.headers?.authorization;
+  const permissions = req.body?.permissionsApp
+  if (!token && !permissions) {
+    next()
+  } else if (token && !permissions) {
+    return handleError.PermissionError(res)
+  } else if (!token && permissions){  
+    return handleError.NoTokenError(res)
+  } else {
+    jwt.verify(token, config.secret, async (err, decoded) => {
+      if (err) {
+        return handleError.TokenError(err, res);
+      }
+      const USER = await models.users.findById(decoded.id).populate('roles')
+      if(USER){
+        const newArray = USER.roles.map((role) => role.name)
+        const accessPermission = permissions.filter(x => newArray.includes(x))
+        if(accessPermission.length > 0){
+          req.accessPermission = accessPermission; next()
+        }else {
+          return handleError.PermissionError(res)
+        }
+      }else {
+        return handleError.NotFoundError(decoded.id, res)
+      }
+    })
+  }
+}
+
+
 const CheckAuth = async (req, res, next) => {
-  console.log("auth");
   try {
     const id = req.userId;
     const userlogining = await models.users.findById(req.userId).populate(
@@ -44,7 +75,7 @@ const CheckPermission = (req, res, next) => {
   const action = req.body.action;
   switch (roleName) {
     case "user": {
-      handleError.PermissionError(res);
+      return handleError.PermissionError(res);
     }
     case "admin": {
       action === "USER_ACTION"
@@ -60,8 +91,7 @@ const CheckPermission = (req, res, next) => {
         ? handleError.PermissionError(res)
         : next();
     }
-    default:
-      console.log("check permission");
+    default: break;
   }
 };
 
@@ -139,4 +169,5 @@ module.exports = {
   VerifyPassword,
   VerifyPhoneNumber,
   CheckPermission,
+  accessPermission
 };

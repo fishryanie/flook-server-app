@@ -7,9 +7,9 @@ module.exports = {
   findGenre: async (req, res) => {
     try {
       const result = await models.genres.find();
-      return res.status(200).send(result);
+      return res.status(200).send({data: result, success: true});
     } catch (error) {
-      handleError.ServerError(error, res);
+      return handleError.ServerError(error, res);
     }
   },
 

@@ -1,0 +1,11 @@
+
+### LOGIN APP
+POST http://localhost:8000/api/user-management/login HTTP/1.1
+Content-Type: application/json
+Accept:  application/json
+
+{
+  "userName":"user123456",
+  "password":"User123456@",
+  "type": "LOGIN_APP"
+}

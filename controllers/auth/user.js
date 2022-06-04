@@ -53,6 +53,11 @@ const RefreshTokenController = async (req, res) => {
   }
 };
 
+const RegisterByPhoneNumber = (req, res) => {}
+const RegisterByGoogle = (req, res) => {}
+const RegisterByFacebook = (req, res) => {}
+
+
 const RegisterController = async (req, res) => {
   const userName = req.body.userName;
   const email = req.body.email;
@@ -78,23 +83,16 @@ const RegisterController = async (req, res) => {
 };
 
 const CreateNewController = async (req, res) => {
-
   const dataUser = req.body.userName;
-
   try {
-
-    const userName = await models.users.findOne({ userName: dataUser })
+    const userName = await models.users.findOne({userName: dataUser})
     if(userName){
-      console.log("userName đã tồn tại!!!");
       return res.status(400).send(userName);
     }
-
     const avatarUpload = await cloudinary.uploader.upload(req.file?.path, folder);
     const USER = new models({ ... req.body, avatarId: avatarUpload.public_id, avatar: avatarUpload.secure_url });
-    
     const rolesName = await models.roles.find({ name: { $in: req.body.roles } });
     USER.roles = rolesName?.map((role) => role._id);
-
     const result = await USER.save();
     if(result){
       const response = {
@@ -228,23 +226,33 @@ const FindUserNotActive = async (req, res) => {
 };
 
 const FindAllUserController = async (req, res) => {
-  try {
-    const role = await models.roles.find({
-      $or: [{ name: "admin" }, { name: "user" }],
-    });
-    let find = {};
-    if (req.roleName === "moderator") {
-      find = {
-        $or: [
-          { roles: { $in: role[0]["_id"] } },
-          { roles: { $in: role[1]["_id"] } },
-        ]
-      };
-    } else if (req.roleName === "admin") {
-      find = { roles: { $in: role[0]["_id"] } };
-    }
-    const result = await models.users.find(find).populate("roles");
-    res.status(200).send(result);
+  try {    
+    const result = await models.users.find().populate('roles')
+    return res.status(200).send({data : result, success: true})
+    
+    
+    // const role = await models.roles.find({
+    //   $or: [{ name: "admin" }, { name: "user" }],
+    // });
+    // if (req.roleName === "moderator") {
+    //   find = {
+    //     $or: [
+    //       { roles: { $in: role[0]["_id"] } },
+    //       { roles: { $in: role[1]["_id"] } },
+    //     ]
+    //   };
+    // } else if (req.roleName === "admin") {
+    //   find = { roles: { $in: role[1]["_id"] } };
+    // }
+    // Promise.all([
+    //   models.users.count(),
+    //   models.users.find(find).populate("roles")
+    // ]).then((result) => {
+    //   const response = {
+    //     count: result[0], data: result[1], success: true
+    //   }
+    //   return res.status(200).send(response); 
+    // })
   } catch (error) {
     return handleError.ServerError(error, res)
   }

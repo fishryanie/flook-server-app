@@ -13,6 +13,8 @@ const model = {
   authors: mongoose.model('authors', require('./storybook/author')),
   reviews: mongoose.model('reviews', require('./review/reviews')),
   comments: mongoose.model('comments', require('./review/comment')),
+  features: mongoose.model('features', require('./auth/feature')),
+  featuresGroups: mongoose.model('featuresGroups', require('./auth/featureGroup')),
   categories: mongoose.model('categories', require('./other/categories')),
   chapterchats: mongoose.model('chapterchats', require('./storybook/chapterChat')),
   chaptercomics: mongoose.model('chapterComic', require('./storybook/chapterComic')),
