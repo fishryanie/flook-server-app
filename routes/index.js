@@ -3,6 +3,8 @@ const models = require('../models')
 
 module.exports = app => {
   
+  
+
   app.get("/", (req, res) => {
     res.send({ message: "Welcome to Flook-app." });
   });

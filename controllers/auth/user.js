@@ -225,34 +225,17 @@ const FindUserNotActive = async (req, res) => {
   }
 };
 
-const FindAllUserController = async (req, res) => {
+const FindManyUser = async (req, res) => {
   try {    
-    const result = await models.users.find().populate('roles')
-    return res.status(200).send({data : result, success: true})
-    
-    
-    // const role = await models.roles.find({
-    //   $or: [{ name: "admin" }, { name: "user" }],
-    // });
-    // if (req.roleName === "moderator") {
-    //   find = {
-    //     $or: [
-    //       { roles: { $in: role[0]["_id"] } },
-    //       { roles: { $in: role[1]["_id"] } },
-    //     ]
-    //   };
-    // } else if (req.roleName === "admin") {
-    //   find = { roles: { $in: role[1]["_id"] } };
-    // }
-    // Promise.all([
-    //   models.users.count(),
-    //   models.users.find(find).populate("roles")
-    // ]).then((result) => {
-    //   const response = {
-    //     count: result[0], data: result[1], success: true
-    //   }
-    //   return res.status(200).send(response); 
-    // })
+    Promise.all([
+      models.users.count(),
+      models.users.find().populate("roles")
+    ]).then((result) => {
+      const response = {
+        count: result[0], data: result[1], success: true
+      }
+      return res.status(200).send(response); 
+    })
   } catch (error) {
     return handleError.ServerError(error, res)
   }
@@ -332,7 +315,7 @@ module.exports = {
   ChangePasswordController,
   UpdateUserController,
   DeleteUserController,
-  FindAllUserController,
+  FindManyUser,
   FindByIdUserController,
   FindUserNotActive,
   FindListMovieFavorite,

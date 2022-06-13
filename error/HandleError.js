@@ -16,6 +16,7 @@ const NoTokenError = res => {
     success: false,
     message: "No token provided!"
   }
+  console.log(response)
   return res.status(403).send(response);
 }
 
@@ -41,7 +42,7 @@ const AlreadyExistsError = (params, res) => {
     status: 400,
     message: message.AlreadyExists + ' ' + params
   }
-  // console.log(response)
+  console.log(response)
   return res.status(400).send(response)
 }
 
@@ -50,7 +51,7 @@ const PermissionError = res => {
     success: false,
     message: message.checkPermission
   }
-  // console.log(response)
+  console.log(response)
   return res.status(403).send(response)
 }
 
@@ -59,7 +60,7 @@ const HashPasswordError = (verifyPassword, res) => {
     success: false,
     message: verifyPassword.messageError
   }
-  // console.log(response)
+  console.log(response)
   return res.status(400).send(response);
 }
 

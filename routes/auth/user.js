@@ -5,81 +5,49 @@ const routesString = require('../../constants/routes');
 
 module.exports = app => {
 
-  app.get("/api/user-management/findMany",[
-    // middlewares.auth.VerifyToken, 
-    // middlewares.auth.CheckAuth, 
-    // middlewares.auth.CheckPermission,
-    // middlewares.auth.accessPermission
-  ], Controller.auth.FindAllUserController);
+  app.get(routesString.findManyUser, middlewares.auth.accessPermission('findManyUser'), Controller.auth.FindManyUser);
 
+  app.get(routesString.findOneUser, middlewares.auth.accessPermission('findOneUser'), Controller.auth.FindByIdUserController);
 
-  app.get("/api/user-management/listMovieFavorite",[
-    middlewares.auth.VerifyToken
-  ], Controller.auth.FindListMovieFavorite);
+  app.get(routesString.setActiveUser, Controller.auth.ActiveUserController);
 
-
-  app.get("/api/user-management/getProfile",[
-    middlewares.auth.VerifyToken
-  ], Controller.auth.FindByIdUserController);
-
-
-  app.get("/api/user-management/findUsersNotActive", [
-    middlewares.auth.VerifyToken, 
-    middlewares.auth.CheckAuth
-  ], Controller.auth.FindUserNotActive);
-
-
-  app.get("/api/user-management/setActiveUser/:id",
-  Controller.auth.ActiveUserController);
+  app.delete(routesString.deleteOneUser, middlewares.auth.accessPermission('deleteOneUser'), Controller.auth.DeleteUserController );
 
   app.post(routesString.login,[
-    middlewares.auth.VerifyUserName, 
+    middlewares.auth.verifyUserName('login_app'),
     middlewares.auth.VerifyPassword,
   ], Controller.auth.LoginController);
 
-
   app.post(routesString.register,[
-    middlewares.auth.VerifyEmail,
-    middlewares.auth.VerifyPhoneNumber,
-    middlewares.auth.VerifyUserName,
+    middlewares.auth.VerifyEmail('create_new'),
+    middlewares.auth.verifyUserName('create_new'),
   ], Controller.auth.RegisterController);
 
-
-  app.post("/api/user-management/create",[
+  app.post(routesString.insertOneUser,[
     upload.single("avatar"),
-    // middlewares.auth.VerifyToken,
-    // middlewares.auth.CheckAuth,
-    // middlewares.auth.CheckPermission,
-    middlewares.auth.accessPermission,
-    middlewares.auth.VerifyEmail,
-    middlewares.auth.VerifyUserName,
+    middlewares.auth.accessPermission('create_new'),
+    middlewares.auth.verifyUserName('create_new'),
+    middlewares.auth.VerifyEmail('create_new'),
     middlewares.auth.VerifyPhoneNumber,
   ], Controller.auth.CreateNewController);
 
 
-  app.put("/api/user-management/forgotPassword",[
-    middlewares.auth.VerifyEmail
+  app.put(routesString.forgotPassword, [
+    middlewares.auth.VerifyEmail('forgotPassword')
   ], Controller.auth.ForgotPasswordController);
 
 
-  app.put("/api/user-management/changePassword",[
-    middlewares.auth.VerifyToken,
+  app.put(routesString.changePassword,[
+    middlewares.auth.accessPermission('changePassword'),
     middlewares.auth.VerifyPassword
   ], Controller.auth.ChangePasswordController );
 
 
-  app.put("/api/user-management/update/:id",[
+  app.put(routesString.updateOneUser,[
     upload.single("avatar"),
-    middlewares.auth.VerifyToken,
-    middlewares.auth.CheckAuth,
-    middlewares.auth.CheckPermission,
-    middlewares.auth.VerifyEmail,
+    middlewares.auth.accessPermission('updateOneUser'),
+    middlewares.auth.VerifyEmail('updateOneUser'),
   ], Controller.auth.UpdateUserController );
 
 
-  app.delete("/api/user-management/deleteUser/:id",[
-    middlewares.auth.VerifyToken,
-    middlewares.auth.CheckAuth,
-    middlewares.auth.CheckPermission,
-  ], Controller.auth.DeleteUserController );
 };

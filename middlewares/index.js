@@ -1,8 +1,7 @@
-const auth = require('./middleweres.auth')
-const cast = require('./middleweres.cast')
+const auth = require('./auth')
 
 
 const middlewares = {
-  auth, cast
+  auth
 }
 module.exports = middlewares

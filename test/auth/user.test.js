@@ -10,10 +10,9 @@ const configsToken = require("../../configs/token");
 const expect = chai.expect;
 const models = require('../../models');
 const database = require('../../configs/mongodb');
-const mongoose = require('mongoose');
-chai.use(chaiHttp);
 
-jest.useFakeTimers();
+
+chai.use(chaiHttp);
 
 const typeToken = userId => {
   const token = jwt.sign(
@@ -25,35 +24,52 @@ const typeToken = userId => {
 }
 
 
+
 describe('Route: Auth', () => {
-  let TestCollection
+  let token
   beforeEach((done) => {
-    const testCollectionSchema = new Schema({}, { strict: false })
+    Promise.all([
+      models.users.findOne({userName: 'moderator123456'})
 
-    TestCollection = mongoose.Schema.model('test_collection', testCollectionSchema)
-    database.then(() => {
-    
-
+    ]).then((doc) => {
+      token = typeToken(doc[0]._id)
       return done()
-    })
-  });
+    })    
+  }); 
 
+  describe('GET', () => { 
+    describe('FIND MANY USER', () => {
+      it('Should return true if find many user successfully', (done) => {
+        chai.request(app).get(routesString.findManyUser)
+        .set('Authorization', token)
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          expect(res.body.success).to.equal(true);
+          expect(res.body).to.be.an('object')
+          expect(res.body).to.have.all.keys('data', 'count', 'success')
+          expect(res.body.data).to.be.an('array')
+          expect(res.body.data.length).to.greaterThan(0, "result null")    
+          return done()
+        })
+      });
+    })  
+  })
+
+
+  
   describe('POST', () => {
     describe('LOGIN', () => {
       const loginSuccess = {
         userName: 'moderator123456',
         password: 'Moderator123456@',
-        type: 'LOGIN_APP',
       }
       const loginFailedWithUserName = {
         userName: 'moderator1234567890',
         password: 'Moderator123456@',
-        type: 'LOGIN_APP',
       }
       const loginFailedWithPassword = {
         userName: 'moderator123456',
         password: 'Moderator1234567890@',
-        type: 'LOGIN_APP',
       }
       it('Should return true if login successfull', done => {
         chai.request(app).post(routesString.login).send(loginSuccess).end((req, res) => {
@@ -84,10 +100,9 @@ describe('Route: Auth', () => {
         })
       }) 
 
-    })    
+    })
+
   })
-
-
 })
  
 

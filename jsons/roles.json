@@ -1,8 +1,5 @@
 [
-  { 
-    "name": "moderator",
-    "feature": ""
-  },
+  { "name": "moderator" },
   { "name": "admin" },
   { "name": "user" }
 ]
