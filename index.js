@@ -19,14 +19,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(morgan('dev'))
 
-database.then(() => {
-  require('./routes')(app)
+database.then(() => {}).catch(error => console.error(error))
 
-  sampleData()
-  if (process.env.NODE_ENV !== 'test') {
-    app.listen(process.env.PORT || 8000, () => console.log('Server is running on port ' + process.env.PORT));
-  }
-}).catch(error => console.error(error))
+sampleData()
 
+
+require('./routes')(app)
+
+
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(process.env.PORT || 8000, () => console.log('Server is running on port ' + process.env.PORT));
+}
 
 module.exports = app
