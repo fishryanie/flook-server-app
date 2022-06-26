@@ -4,7 +4,7 @@
   "description": "Mạng xã hội đọc truyện flook",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
+    "dev": "node index.js",
     "test": "jest --watchAll",
     "start": "pm2 start index.js --name flook-server-app --no-daemon --log-date-format='MM-DD hh:mm:ss.SSS A'"
   },
