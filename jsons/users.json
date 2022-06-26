@@ -1,0 +1,12 @@
+[
+	{
+		"isActive":true,
+    "roles": ["Moderator", "Admin", "User", "Author"],
+		"email":"flook_moderator@gmail.com",
+		"userName":"moderator", 
+		"password":"Moderator@113355",
+		"phoneNumber":"0908112233",
+		"displayName":"Moderator",
+		"gender":true
+	}
+]

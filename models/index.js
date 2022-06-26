@@ -8,17 +8,13 @@ const model = {
   roles: mongoose.model('roles', require('./auth/roles')),
   movies: mongoose.model('movies', require('./movie/movie')),
   genres: mongoose.model('genres', require('./storybook/genre')),
-  status: mongoose.model('status', require('./other/status')),
   ebooks: mongoose.model('ebooks', require('./storybook/ebooks')),
   authors: mongoose.model('authors', require('./storybook/author')),
+  chapters: mongoose.model('chapters', require('./storybook/chapter')),
   reviews: mongoose.model('reviews', require('./review/reviews')),
   comments: mongoose.model('comments', require('./review/comment')),
   features: mongoose.model('features', require('./auth/feature')),
   featuresGroups: mongoose.model('featuresGroups', require('./auth/featureGroup')),
-  categories: mongoose.model('categories', require('./other/categories')),
-  chapterchats: mongoose.model('chapterchats', require('./storybook/chapterChat')),
-  chaptercomics: mongoose.model('chapterComic', require('./storybook/chapterComic')),
-  chapternovels: mongoose.model('chapterNovel', require('./storybook/chapterNovel'))
 }
 
 

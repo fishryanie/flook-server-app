@@ -13,6 +13,7 @@ const accessPermission = typefunc => async (req, res, next) => {
       // should return if token error
       if (err) return handleError.TokenError(err, res)
       // Find user is logged
+      console.time('log')
       const userIsLogged = await models.users.findById(decoded.id).populate('roles')
       // Shold returns if no logged in user is found
       if (!userIsLogged) return handleError.NotFoundError(decoded.id, res)
@@ -31,6 +32,7 @@ const accessPermission = typefunc => async (req, res, next) => {
         })
       }
       array.length > 0 ? next() : handleError.PermissionError(res)
+      console.timeEnd('log')
     })
   }
 }

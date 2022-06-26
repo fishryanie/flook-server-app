@@ -1,0 +1,24 @@
+[
+  {
+    "_id": "idComment01",
+    "userId": "admin",
+    "reviewId": "idReview01",
+    "bookId": "a",
+    "commentId": null
+  },
+  {
+    "_id": "idComment02",
+    "userId": "admin",
+    "reviewId": "idReview01",
+    "bookId": "a",
+    "commentId": "idComment01"
+  },
+  {
+    "_id": "idComment03",
+    "userId": "admin",
+    "reviewId": "idReview01",
+    "bookId": "a",
+    "commentId": "idComment01"
+  }
+
+]

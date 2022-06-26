@@ -1,15 +1,14 @@
 const mongoose = require("mongoose");
 
 const Reviews = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
-  bookId: { type: mongoose.Schema.Types.ObjectId, ref: "ebooks" },
-  rating: { type: Number, trim: true },
-  content: { type: String, trim: true },
-  status: [{ type: mongoose.Schema.Types.ObjectId, ref:'status'}],
+  users: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+  ebooks: { type: mongoose.Schema.Types.ObjectId, ref: "ebooks" },
+  rating: { type: Number, required: true},
+  content: { type: String, trim: true, default: ''},
   deleted: { type: Boolean, default: false },
   createAt: { type: Date, default: Date.now },
-  deleteAt: { type: Date, default: Date.now },
-  updateAt: { type: Date, default: Date.now, commit: String },
+  deleteAt: { type: Date, default: null },
+  updateAt: { type: Date, default: null },
 });
 
 module.exports = Reviews;

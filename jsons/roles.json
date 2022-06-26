@@ -1,5 +1,18 @@
 [
-  { "name": "moderator" },
-  { "name": "admin" },
-  { "name": "user" }
+  {
+    "name": "Moderator",
+    "description": "Admin cấp 1, người nắm quyền quản lý cao nhất của hệ thống."
+  },
+  {
+    "name": "Admin",
+    "description": "Admin cấp 2, người quản lý hệ thống nhưng chịu sự quản lý của moderator."
+  },
+  {
+    "name": "User",
+    "description": "Người dùng đã đăng ký tài khoản và đăng nhập để sử dụng ứng dụng."
+  },
+  {
+    "name": "Author",
+    "description": "Tác giả cộng tác với Flook, đã được admin phê duyệt để trở thành nhà phát triển nội dung."
+  }
 ]
