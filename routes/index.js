@@ -1,6 +1,7 @@
 const models = require('../models')
 const cloudinary = require('../configs/cloudnary')
 const handleError = require('../error/HandleError')
+const path = require('path');
 
 module.exports = app => {
   
@@ -21,9 +22,11 @@ module.exports = app => {
       handleError.ServerError(error, res)
     }
   })
- 
+
   app.get("/", (req, res) => {
-    res.send({ message: "Welcome to Flook-app." });
+    // res.sendFile('file:///Users/mac/Documents/Project/flook-server-app/coverage/lcov-report/index.html',  { root: __dirname });
+    // res.send({message: path.join(__dirname.slice(0, 45), '/views/web-hook.html')})
+    res.sendFile(path.join(__dirname.slice(0,45), '/views/web-hook.html'))
   });
 
   require('./auth/role')(app)

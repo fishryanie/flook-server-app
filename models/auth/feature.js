@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const Features = new mongoose.Schema({
   featureName: {type:String, trim: true},
-  featureGroupId: {type: mongoose.Schema.Types.ObjectId, ref:'featureGroups', default: null},
+  featureGroup: {type: mongoose.Schema.Types.ObjectId, ref:'featureGroups', default: null},
   roles: [{type: mongoose.Schema.Types.ObjectId, ref:'roles', default: null}],
   deleted: { type: Boolean, default: false},
   createAt: { type: Date, default:Date.now,},

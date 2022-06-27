@@ -16,12 +16,11 @@ module.exports = app => {
   app.post(routesString.login,[
     middlewares.auth.verifyUserName('login_app'),
     middlewares.auth.VerifyPassword,
-  ], Controller.auth.LoginController);
+  ], Controller.auth.Login);
 
   app.post(routesString.register,[
     middlewares.auth.VerifyEmail('create_new'),
-    middlewares.auth.verifyUserName('create_new'),
-  ], Controller.auth.RegisterController);
+  ], Controller.auth.Register);
 
   app.post(routesString.insertOneUser,[
     upload.single("avatar"),
