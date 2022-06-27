@@ -5,7 +5,10 @@ const handleError = require("../error/HandleError");
 const models = require("../models");
 
 const accessPermission = typefunc => async (req, res, next) => {
+  console.log('typefunc', typefunc);
+
   const array=[], token = req.headers?.authorization;
+ 
   if (!token) {
     return handleError.NoTokenError(res)
   } else {

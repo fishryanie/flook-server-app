@@ -37,9 +37,8 @@ require('./routes')(app)
 
 
 
-const PORT = process.env.PORT || 8081;
 
-// if (process.env.NODE_ENV !== 'test') {
-app.listen(PORT , () => console.info('Server is running on port ' + PORT));
-// }
+if (process.env.NODE_ENV !== 'test') {
+app.listen(process.env.PORT || 8000 , () => console.info('Server is running on port ' + process.env.PORT || 8000));
+}
 

@@ -3,9 +3,7 @@ const Controller = require('../../controllers')
 
 module.exports = app => {
 
-  app.get('/api/genre-management/getGenre', [
-    middlewares.auth.accessPermission
-  ], Controller.genre.findGenre)
+  app.get('/api/genre-management/findMany', Controller.genre.findGenre)
 
   app.post('/api/genre-management/addGenre',
   Controller.genre.addGenre)
