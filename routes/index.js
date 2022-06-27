@@ -16,7 +16,9 @@ module.exports = app => {
   })
 
   app.get("/", (req, res) => {
-    const response = __dirname.slice(0,45) + '/views/web-hook.html'
+    // const response = __dirname.slice(0,45) + '/views/web-hook.html'
+    const response = process.cwd() + '/views/web-hook.html'
+
     res.sendFile(response)
   });
 
