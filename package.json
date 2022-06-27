@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "description": "Mạng xã hội đọc truyện flook",
   "main": "index.js",
-  "engines": {
-    "node": "6.11.1"
-  },
+
   "scripts": {
     "test": "jest --watchAll",
     "start": "node index.js"
