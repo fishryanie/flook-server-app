@@ -26,16 +26,14 @@ app.use("/uploads", express.static("uploads"));
 
 app.use(morgan('dev'))
 
-database.then(() => { 
-  
-}).catch(error => console.error(error))
+database.then(() => {}).catch(error => console.error(error))
 
 require('./routes')(app)
 
 formatData()
 
 // if (process.env.NODE_ENV !== 'test') {
-app.listen(process.env.PORT || 8000, "0.0.0.0" , () => console.info('Server is running on port ' + process.env.PORT || 8000));
+app.listen(process.env.PORT || 8000 , () => console.info('Server is running on port ' + process.env.PORT || 8000));
 // }
 
 module.exports = app
