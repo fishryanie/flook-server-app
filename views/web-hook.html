@@ -7,10 +7,10 @@
   <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/4231/4231635.png" />
   <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css'>
   <link rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons'>
-  <link rel='stylesheet'
-    href='https://fonts.googleapis.com/css?family=Architects+Daughter|Roboto&amp;subset=latin,devanagari'>
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Architects+Daughter|Roboto&amp;subset=latin,devanagari'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
   <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css'>
-
 
   <style>
     body {
@@ -65,14 +65,53 @@
       height: 56px;
       position: absolute;
       left: 50%;
-      top: 50%;
+      top: 30%;
       overflow: hidden;
       opacity: 0;
       transform: translate(-50%, -50%);
       border-radius: 50%;
       animation: init 0.5s 0.2s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards, moveDown 1s 0.8s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards, moveUp 1s 1.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, materia 0.5s 2.7s cubic-bezier(0.86, 0, 0.07, 1) forwards, hide 2s 2.9s ease forwards;
     }
-
+    .dropdown-button {
+      width: 300px;
+    }
+    .animation {
+      opacity: 0;
+      animation: moveIn 2s 3.1s ease forwards;
+    }
+    .input {
+      text-align: left; 
+      margin-top: 10px; 
+      border: 1px solid rgba(255,255,255,0.5); 
+      border-radius: 5px; 
+      padding: 0px 10px; 
+      width: 600px;
+     
+    }
+    .parameter {
+      margin-top: 10px; 
+      display: flex; 
+      justify-content: space-between;
+      align-items: center;
+      width: 600px;
+    }
+    @media screen and (max-width: 768px) {
+      .dropdown-button {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      .parameter {
+        width: 100%;
+      }
+      .input {
+        width: 100%;
+      }
+    }
+    .doamin {
+      margin-top: 40px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
     /* moveIn */
     .welcome header,
     .welcome a.btn {
@@ -80,11 +119,18 @@
       animation: moveIn 2s 3.1s ease forwards;
     }
 
-    .input {
+   
+    input {
+      color: white;
+      border-color: transparent !important;
+      border: 0 none !important; outline: none !important; box-sizing: border-box !important; margin: 0 !important; padding: 0px !important;
+    }
+    strong {
+      text-decoration: underline;
+      margin-top: 20px; display: block; margin-left: 5px;
       opacity: 0;
       animation: moveIn 2s 3.1s ease forwards;
     }
-
     @keyframes init {
       0% {
         width: 0px;
@@ -201,23 +247,33 @@
     <span id="splash-overlay" class="splash"></span>
     <span id="welcome" class="z-depth-4"></span>
 
+    <!-- <div style="height: 100vh; width: 85%; background-color: transparent; position: absolute; top: 0; right: 0; z-index: 999;">
+      <div style="height: 100vh; width: 5%; background-color: transparent; padding-top: 70px">
+        <div style="background-color: yellow; width: 100%; height: 50px; border-radius: 25px 0px 0px 25px;padding-left: 15px; font-size: 30px;">x</div>
+      </div>
+    
+    </div> -->
     <header class="navbar-fixed">
       <nav class="row deep-purple darken-3">
         <div class="col s12">
           <ul>
             <li style="margin: 10px"><img src="https://cdn-icons-png.flaticon.com/512/4231/4231635.png" width="30px"
                 alt=""></li>
-            <li class="title">Flook</li>
+            <li class="title">Flook-server</li>
           </ul>
           <ul class="right">
+            <li class="right">
+              <a href="https://www.facebook.com/fishryanie/" target="_blank" class="fa-solid fa-arrow-right-to-bracket fa-2x waves-effect waves-light bx-fade-right"><span class="icon-text"></span></a>
+            </li>
             <li class="right">
               <a href="https://www.facebook.com/fishryanie/" target="_blank"
                 class="fa fa-facebook-square fa-2x waves-effect waves-light"><span class="icon-text"></span></a>
             </li>
             <li class="right">
-              <a href="https://github.com/fishryanie/flook-server-app" target="_blank"
+              <a href="https://github.com/fishryanie" target="_blank"
                 class="fa fa-github-square fa-2x waves-effect waves-light"><span class="icon-text"></span></a>
             </li>
+           
           </ul>
         </div>
       </nav>
@@ -229,36 +285,33 @@
         <p class="flow-text">Welcome to</p>
         <h1 class="title grey-text text-lighten-3">Flook Inbound Webhook</h1>
 
-        <blockquote class="flow-text">A place to create an inbound webhook to process your Flook-app data using the API.
-        </blockquote>
+        <blockquote class="flow-text">A place to create an inbound webhook to process your Flook-app data using the API.</blockquote>
 
         <div>
           <!-- Dropdown Trigger -->
-          <a class="btn dropdown-button" href="" data-activates="exams">Select request builder<i class="material-icons right">expand_more</i></a>
+          <a class="btn dropdown-button" data-activates="exams" id="select-domain">Select request builder<i class="material-icons right">expand_more</i></a>
           <!-- Dropdown Structure -->
           <ul id="exams" class="dropdown-content doamin"></ul>
-          <!-- Dropdown Trigger -->
-          <a class="btn dropdown-button" href="" data-activates="study">Assign permissions<i class="material-icons right">expand_more</i></a>
-          <!-- Dropdown Structure -->
-          <ul id="study" class="dropdown-content">
-            <li><a href="#!">mathematics</a></li>
-            <li><a href="#!">reading</a></li>
-            <li><a href="#!">science</a></li>
-            <li><a href="#!">social studies</a></li>
-            <li><a href="#!">writing</a></li>
-          </ul>
 
-          <div class="input" style="text-align: left; margin-top: 40px">
-            <label style="display: block; margin: 10px" for="">Parameter</label>
-            <input style="border: 1px solid rgba(255,255,255,0.5); border-radius: 5px; padding: 0px 10px; width: 50%" type="text" placeholder="Parameter" value="">
-          </div>
+          <a class="btn" id="addParam">+ Add parameter</a>
 
-          <div class="input" style="text-align: left; margin-top: 10px">
-            <label style="display: block; margin: 10px" for="">URL</label>
-            <input id="url" style="border: 1px solid rgba(255,255,255,0.5); border-radius: 5px; padding: 0px 10px; width: 50%; color: #fff" type="text" placeholder="URL">
+          <a class="btn">+ Add body</a>
+
+          <strong style="margin-top: 30px">Parameter</strong>
+          <div class="renderParamter animation" style="max-height: 120px; overflow-y: auto;"></div>
+          <!-- <div class="parameter animation">
+            <div class="input" style="width: 24%;"><input type="text" placeholder="key" value=""></div>
+            <div class="input" style="width: 74%;">
+              <input id="parameter" type="text" placeholder="value" value="">
+            </div>
+          </div> -->
+          
+          <strong>Url</strong>
+          <div class="input animation">
+            <input id="url" type="text" placeholder="URL">
           </div>
-          <div style="text-align: left; margin-top: 10px">
-            <a class="btn">Execute</a>
+          <div style="text-align: left; margin-top: 30px">
+            <a class="btn" id="execute">Execute</a>
           </div>
         </div>
 
@@ -294,25 +347,85 @@
   </body>
   <!-- partial -->
 
+  <!-- Messenger Plugin chat Code -->
+  <div id="fb-root"></div>
+
+  <!-- Your Plugin chat code -->
+  <div id="fb-customer-chat" class="fb-customerchat">
+  </div>
+
+  <script>
+    var chatbox = document.getElementById('fb-customer-chat');
+    chatbox.setAttribute("page_id", "101399909296622");
+    chatbox.setAttribute("attribution", "biz_inbox");
+  </script>
+
+  <!-- Your SDK code -->
+  <script>
+    window.fbAsyncInit = function() {
+      FB.init({
+        xfbml            : true,
+        version          : 'v14.0'
+      });
+    };
+
+    (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = 'https://connect.facebook.net/vi_VN/sdk/xfbml.customerchat.js';
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+  </script>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js'></script>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js'></script>
   <script type='module'>
     $(document).ready(function () { $(`.modal-tigger`).leanModal() })
 
     const arrayDomain = [
-      { title: 'GET&trade; Role List', link: '/api/role-management/findMany' },
-      { title: 'GET&trade; Genre List', link: '/api/genre-management/findMany' }
+      { title: 'GET&trade; Roles List', link: '/api/role-management/findMany' },
+      { title: 'GET&trade; Genres List', link: '/api/genre-management/findMany' },
+      { title: 'GET&trade; Users List', link: '/api/user-management/findManyUser' },
+      { title: 'GET&trade; Authors List', link: '/api/author-management/findMany' },
+      { title: 'GET&trade; Manga List', link: '/api/ebooks-management/findManyManga?page=1&sort=0' },
+      { title: 'GET&trade; Chapters List', link: '' },
+      { title: 'GET&trade; Reviews List', link: '' },
+      { title: 'GET&trade; Comments List', link: '' },
+      { title: 'GET&trade; Manga Get', link: '/api/ebooks-management/fineOneManga' },
     ]
 
-    const contentPhone = arrayDomain.reduce((content, item) => {
-      return content += ` <li><a id="aaa" href=${item.link} target="_blank">${item.title}</a></li>`
+    const contentOpsion = arrayDomain.reduce((content, item) => {
+      return content += `<li><a id="aaa" onclick="clickOptions('${item.title}','${item.link}')">${item.title}</a></li>`
     }, "")
+    document.querySelector('.doamin').innerHTML = contentOpsion
 
-    document.querySelector('.doamin').innerHTML = contentPhone
-    document.getElementById("aaa").onclick = function() {
-      document.getElementById('url').value = this.href
+    let numParams = 0
+    document.getElementById('addParam').onclick = () => {
+      numParams ++
+      const listParameter = Array.from({length: numParams}).reduce((content, item) => {
+        return content += `
+          <div class="parameter">
+            <div class="input" style="width: 24%;"><input type="text" placeholder="key" value=""></div>
+            <div class="input" style="width: 74%;">
+              <input id="parameter" type="text" placeholder="value" value="">
+            </div>
+          </div>
+        `
+      }, "")
+      document.querySelector('.renderParamter').innerHTML = listParameter
     }
-   
+
+    window.clickOptions = (title, link) => {
+      document.getElementById('select-domain').innerHTML = title
+      document.getElementById('url').value = window.location.origin + link
+    }
+
+    document.getElementById('execute').onclick = () => {
+      const valueUrl = document.getElementById('url').value
+      const valueParams = document.getElementById('parameter').value
+      window.open(valueParams === '' ? valueUrl : `${valueUrl}?id=${valueParams}`, "_blank");
+      
+    }
 
 
 

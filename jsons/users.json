@@ -8,5 +8,16 @@
 		"phoneNumber":"0908112233",
 		"displayName":"Moderator",
 		"gender":true
+	},
+	{
+		"isActive":true,
+    "roles": ["Admin", "User", "Author"],
+		"email":"flook_admin@gmail.com",
+		"userName":"admin123456", 
+		"password":"Admin@113355",
+		"phoneNumber":"0908112233",
+		"displayName":"Admin",
+		"gender":true
 	}
+
 ]

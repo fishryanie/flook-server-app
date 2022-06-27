@@ -27,13 +27,12 @@ const findNewUpdate = (req, res, next) => {
 }
 
 const findMangaById = async (req, res) => {
-  const id = req.params.id;
-  let manga, chapter, data;
+  const id = req.query.id;
+  console.log(id);
   try {
-    manga = await models.ebooks.findById(id).populate('author');
-    chapter = await models.chaptercomics.find({book: id});
-    data = {manga, chapter}
-    return res.status(200).send(data);
+    const result = await models.ebooks.findOne({_id: id})
+    console.log(result);
+    return res.status(200).send({success: true, data: result});
   } catch (error) {
     handleError.ServerError(error, res);
   }
@@ -152,7 +151,7 @@ const filterMany = async (req, res) => {
   const numPages = parseInt(req.query.page)
   const skip = numPages ? (numPages-1) * PAGE_SIZE : null
   const { author, genre, status, allowedAge, chapter } = req.body;
-  let find, sortBook, result=[], populate = ['authorsId', 'genresId', 'statusId', 'categorysId']
+  let find, sortBook, result=[], populate = ['authors', 'genres']
 
   switch (req.query.sort) {
     case 'view': sortBook={view: -1}; break;
@@ -160,8 +159,12 @@ const filterMany = async (req, res) => {
     case 'rating': break;
     default: break;
   }
-  
-  if (author[0]==='All' && genre[0]==='All' && status[0]==='All' && allowedAge[0]==='All') {
+
+  if(author === undefined){
+    console.log('a');
+
+    find = null
+  } else if (author?.length >= 0 && author[0]==='All' && genre[0]==='All' && status[0]==='All' && allowedAge[0]==='All') {
     find = null
   } else {
     find = { $or: [

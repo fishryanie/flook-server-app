@@ -56,15 +56,15 @@ const formatData = () => {
    
       const arrayUsers = await insert_many_user(arrayRoles)
 
-      // const arrayAuthors = await insert_many_author(arrayUsers)
+      const arrayAuthors = await insert_many_author(arrayUsers)
       
-      // const arrayEbooks = await insert_many_ebooks(arrayGenres, arrayAuthors)
+      const arrayEbooks = await insert_many_ebooks(arrayGenres, arrayAuthors)
      
-      // const arrayChapters = await insert_many_chapter(arrayEbooks, arrayUsers)
+      const arrayChapters = await insert_many_chapter(arrayEbooks, arrayUsers)
 
-      // const arrayReviews = await insert_many_reviews(arrayEbooks, arrayUsers)
+      const arrayReviews = await insert_many_reviews(arrayEbooks, arrayUsers)
 
-      // const arrayFeatures = await insert_many_features(arrayRoles, arrayFeatureGroups)
+      const arrayFeatures = await insert_many_features(arrayRoles, arrayFeatureGroups)
 
       // const arrayComments = await insert_many_comments(arrayReviews, arrayChapters, arrayPosts)
 
@@ -77,15 +77,19 @@ const formatData = () => {
 
       arrayGenres && console.log('insertMany genres successfully')
 
-      // arrayUsers && console.log('insertMany users successfully')
+      arrayUsers && console.log('insertMany users successfully')
 
-      // arrayAuthors && console.log('insertMany authors successfully')
+      arrayAuthors && console.log('insertMany authors successfully')
 
-      // arrayEbooks && console.log('insertMany ebooks successfully')
+      arrayEbooks && console.log('insertMany ebooks successfully')
 
-      // arrayReviews && console.log('insertMany reviews successfully')
+      arrayChapters && console.log('insertMany chapters successfully')
 
-      // arrayFeatures && console.log('insertMany features successfully')
+      arrayReviews && console.log('insertMany reviews successfully')
+
+      arrayFeatures && console.log('insertMany features successfully')
+
+      arrayFeatureGroups && console.log('insertMany feature groups successfully')
 
       // arrayComments && console.log('insertMany comments successfully')
 
@@ -101,6 +105,7 @@ module.exports = formatData
 /** =======================||FUNCTIONS INSERT SAMPLE DATA ||=============================*/
 
 async function insert_many_user(arrayRoles){
+  const arrayUsers = []
   for (const user of dataDefaults.users) {
     for (const x in arrayRoles) { 
       for (const y in user.roles) {
@@ -109,8 +114,9 @@ async function insert_many_user(arrayRoles){
         }
       }
     } 
-    new models.users({...user}).save()
+    arrayUsers.push(await new models.users({...user}).save())
   }
+  return arrayUsers
 }
 
 async function insert_many_author(arrayUsers){

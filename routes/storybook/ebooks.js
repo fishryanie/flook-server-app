@@ -4,9 +4,9 @@ const Controller = require('../../controllers')
 
 module.exports = app => {
 
-  app.get('/api/manga-management/getMangaById/:id', Controller.ebooks.findMangaById)
+  app.get('/api/ebooks-management/fineOneManga', Controller.ebooks.findMangaById)
 
-  app.get('/api/manga-management/getManga', Controller.ebooks.findManga)
+  app.get('/api/ebooks-management/findManyManga', Controller.ebooks.filterMany)
 
   app.get('/api/manga-management/getMangaByGenre', Controller.ebooks.findMangaByGenre)
 
