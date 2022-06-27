@@ -75,7 +75,7 @@ const formatData = () => {
 
       arrayRoles && console.log('insertMany roles successfully')
 
-      // arrayGenres && console.log('insertMany genres successfully')
+      arrayGenres && console.log('insertMany genres successfully')
 
       // arrayUsers && console.log('insertMany users successfully')
 

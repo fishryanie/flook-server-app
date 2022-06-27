@@ -2,8 +2,7 @@ require('dotenv/config')
 const mongoose = require('mongoose');
 
 
-// const mongooseUrlLocal = process.env.MONGO_URL_LOCAL + process.env.DATABASE
-const mongooseUrlLocal = 'mongodb://localhost:27017/flex-flook-app'
+const mongooseUrlLocal = process.env.MONGO_URL_LOCAL + process.env.DATABASE
 
 const mongooseUrlGloble = `mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@cluster0.lqsyp.mongodb.net/${process.env.DATABASE}?retryWrites=true&w=majority`;
 

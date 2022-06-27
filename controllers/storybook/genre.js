@@ -6,6 +6,7 @@ module.exports = {
 
   findGenre: async (req, res) => {
     try {
+      console.log('123');
       const result = await models.genres.find();
       return res.status(200).send({data: result, success: true});
     } catch (error) {

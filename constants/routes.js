@@ -1,4 +1,5 @@
 
+const role = '/api/role-management'
 const user = '/api/user-management'
 const author = '/api/author-management'
 
@@ -24,7 +25,8 @@ const routesString = {
   deleteOneAuthor: `${author}/deleteOne`,
   deleteManyAuthor: `${author}/deleteMany`,
 
-  
+  //role
+  findManyRole: `${role}/findManyRole`
 }
 
 module.exports = routesString
