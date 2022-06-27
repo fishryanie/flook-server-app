@@ -1,0 +1,25 @@
+[
+  {
+    "featureName": "finduser",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "insertUser",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "updateUser",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "deleteUser",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator"]
+  }
+]
+
+
+

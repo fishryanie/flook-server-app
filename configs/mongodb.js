@@ -1,10 +1,12 @@
 require('dotenv/config')
 const mongoose = require('mongoose');
-const mongooseUrlTest = process.env.MONGO_URL_LOCAL + process.env.DATABASE
-const mongooseUrl = `mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@cluster0.lqsyp.mongodb.net/${process.env.DATABASE}?retryWrites=true&w=majority`;
+
+
+const mongooseUrlLocal = process.env.MONGO_URL_LOCAL + process.env.DATABASE
+const mongooseUrlGloble = `mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@cluster0.lqsyp.mongodb.net/${process.env.DATABASE}?retryWrites=true&w=majority`;
 
 const configsMongodb = {
-  url: mongooseUrlTest ,
+  url: mongooseUrlLocal ,
   options: {
     useNewUrlParser: true,
     useUnifiedTopology: true,

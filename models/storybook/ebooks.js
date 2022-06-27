@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const messages = require("../../constants/Messages");
-const rating = /^(?:[1-9]|0[1-9]|10)$/;
 
 const Ebooks = new mongoose.Schema({
   createAt: { type: Date, default: Date.now },

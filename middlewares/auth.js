@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const message = require("../constants/Messages");
+const message = require("../constants/messages");
 const config = require("../configs/token");
 const handleError = require("../error/HandleError");
 const models = require("../models");

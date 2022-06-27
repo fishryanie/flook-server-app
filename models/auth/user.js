@@ -1,10 +1,6 @@
 const bcrypt = require('bcrypt');
-const messages = require('../../constants/Messages')
-const avataMale = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
-const avataFemale = 'https://cdn-icons-png.flaticon.com/512/2922/2922565.png'
+const messages = require('../../constants/messages')
 const password_pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$@!%&*?])[A-Za-z\d#$@!%&*?]{8,30}$/
-const noSpace_special = /^[a-zA-Z0-9]*$/
-const phone_pattern = /^\d{10}$/
 const mongoose = require("mongoose");
 
 
@@ -17,9 +13,9 @@ const Users = new mongoose.Schema({
   status: { type: String, default: null },
   roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "roles", default: [] }],
   email: { type: String, trim:true, required: true, unique: true },
-  userName: { type:String, trim:true, required:true, unique:true, minlength: 8, maxlength: 16, match: [noSpace_special, messages.validateUserName]},
+  userName: { type:String, trim:true, required:true, unique:true, minlength: 8, maxlength: 30},
   password: { type:String, trim:true, required:true, match:[password_pattern, messages.validatePassword]},
-  phoneNumber: { type: String, trim: true, required:true, unique: false},
+  phoneNumber: { type: String, trim: true, default: null },
   displayName: { type: String, trim: true, default: null },
   gender: { type: Boolean, trim: true, default: true },
   vip: { type: Boolean, trim: true, default: false },

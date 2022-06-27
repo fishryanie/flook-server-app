@@ -58,30 +58,6 @@ const RegisterByGoogle = (req, res) => {}
 const RegisterByFacebook = (req, res) => {}
 
 
-const RegisterController = async (req, res) => {
-  const userName = req.body.userName;
-  const email = req.body.email;
-  const phoneNumber = req.body.phoneNumber;
-  const password = req.body.password
-  const passwordComfirm = req.body.passwordComfirm
-  if(password !== passwordComfirm) {
-    return res.status(400).send({messages: messages.NotMatchPassword})
-  }
-  try {
-    const USER = new models.users({ 
-      userName, email, phoneNumber, password,
-    });
-    const rolesName = await models.roles.find({name:'user'})
-    console.log(rolesName)
-    USER.roles = rolesName?.map((role) => role._id)
-    const result = await USER.save()
-    await SendMail(email, null, null, result._id);
-    result && res.status(200).send({messages: 'sign up successfully'});
-  } catch (error) {
-    return handleError.ServerError(error, res)
-  }
-};
-
 const CreateNewController = async (req, res) => {
   const dataUser = req.body.userName;
   try {
@@ -287,7 +263,7 @@ const DeleteUserController = async (req, res) => {
 };
 
 module.exports = {
-  LoginController: async (req, res) => {
+  Login: async (req, res) => {
     const result = req.result;
     const token = jwt.sign(
       { id: result.id }, 
@@ -307,7 +283,25 @@ module.exports = {
     return res.status(200).send({data, success: true, message: messages.LoginSuccessfully});
   },
 
-  RegisterController,
+  Register: async (req, res) => {
+    const newPassword = generator()
+    try {
+      const USER = new models.users({
+        email: req.body.email,
+        userName: req.body.email,
+        password: newPassword
+      })
+
+      const rolesName = await models.roles.find({name: 'user'});
+      USER.roles = rolesName?.map((role) => role._id);
+      const register = await USER.save();
+      const sendMail = await SendMail(req.body.email, 'Register', newPassword, register._id);
+      register && sendMail && res.status(200).send({success: true, messages: 'sign up successfully, check your mail to get password'});
+    } catch (error) {
+      return handleError.ServerError(error, res)
+    }
+  },
+
   CreateNewController,
   RefreshTokenController,
   ActiveUserController,

@@ -1,7 +1,7 @@
 const cloudinary = require('../../configs/cloudnary');
 
 const models = require("../../models");
-const message = require("../../constants/Messages");
+const message = require("../../constants/messages");
 const handleError = require("../../error/HandleError");
 const FormatDate = require("../../functions/FormatDate");
 const folder_image = { folder: 'Flex-ticket/ImageMovie/image' }

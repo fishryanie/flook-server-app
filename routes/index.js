@@ -1,6 +1,7 @@
 const models = require('../models')
 const cloudinary = require('../configs/cloudnary')
 const handleError = require('../error/HandleError')
+const path = require('path');
 
 module.exports = app => {
   
@@ -14,16 +15,13 @@ module.exports = app => {
     } 
   })
 
-  app.post('/api/update-image-chapter', async (req, res) => {
-    try {
-      models.chapters.findOneAndUpdate()
-    } catch (error) {
-      handleError.ServerError(error, res)
-    }
+  app.get('/api/test', (req, res) => { 
+    res.json({messages: 'test'})
   })
- 
+
   app.get("/", (req, res) => {
-    res.send({ message: "Welcome to Flook-app." });
+    const response = process.cwd() + '/views/web-hook.html'
+    res.sendFile(response)
   });
 
   require('./auth/role')(app)

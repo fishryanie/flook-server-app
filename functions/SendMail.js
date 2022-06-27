@@ -1,17 +1,21 @@
 require('dotenv/config')
 const nodemailer = require('nodemailer');
-const RenderMailRegister = require('../emails/active-account')
-const RenderMailPassword = require('../emails/send-password')
+const RenderMailRegister = require('../views/active-account')
+const RenderMailPassword = require('../views/send-password')
 
 const SendMail = async (toMail, subject, newPassword, userId) => {
   const transporter = nodemailer.createTransport({
     host: process.env.FLOOK_EMAIL_HOST,
     port: process.env.FLOOK_EMAIL_PORT,
-    secure: true,
+    // secure: true,
+    services: 'gmail',
     auth: {
       user: process.env.FLOOK_EMAIL_USERNAME,
       pass: process.env.FLOOK_EMAIL_PASSWORD
     },
+    tls: {
+      rejectUnauthorized: false
+    }
   });
   const linkActiveAccount = `http://localhost:8000/api/user-management/setActiveUser/${userId}`
 

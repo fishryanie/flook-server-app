@@ -1,4 +1,4 @@
-const messages = require("../../constants/Messages");
+const messages = require("../../constants/messages");
 const handleError = require("../../error/HandleError");
 const models = require("../../models");
 

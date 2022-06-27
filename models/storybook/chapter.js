@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const AutoIncrement = require('mongoose-sequence')(mongoose);
-
 
 const Chapter = new mongoose.Schema({
   createAt: { type: Date, default: Date.now },
@@ -12,7 +10,7 @@ const Chapter = new mongoose.Schema({
   numLikes: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
   numViews: { type: Number, default: 0 },
   status: { type: String, default: null },
-  name: { type: Number, unique: false, default: 0 },
+  name: { type: String, unique: false,},
   images: [
     {
       number: { type: Number, default: 0 },
@@ -22,6 +20,5 @@ const Chapter = new mongoose.Schema({
   ],
 });
 
-Chapter.plugin(AutoIncrement, { inc_field: 'name' }); 
 
 module.exports = Chapter;

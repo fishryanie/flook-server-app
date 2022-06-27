@@ -10,51 +10,84 @@ const dataDefaults = {
   authors: require('../jsons/authors.json'),
   reviews: require('../jsons/reviews.json'),
   chapters: require('../jsons/chapters.json'),
+  features: require('../jsons/features.json'),
+  featuresGroups: require('../jsons/featureGroups.json'),
 }
 
 
+const formatData = () => {
 
-const SampleData = () => {
   console.time()
+
   Promise.all([
     models.users.deleteMany(),
+
     models.roles.deleteMany(),
+
     models.ebooks.deleteMany(),
+
     models.genres.deleteMany(),
+
     models.authors.deleteMany(),
+
     models.chapters.deleteMany(),
+
     models.reviews.deleteMany(),
+
     models.comments.deleteMany(),
+
     models.features.deleteMany(),
+
     models.featuresGroups.deleteMany()
+
   ]).then(response => {
+
     Promise.all([...response,
+
       models.roles.insertMany(dataDefaults.roles),
-      models.genres.insertMany(dataDefaults.genres)
+
+      models.genres.insertMany(dataDefaults.genres),
+
+      models.featuresGroups.insertMany(dataDefaults.featuresGroups)
+
     ]).then(async response => {
-      const arrayRoles = response[10], arrayGenres = response[11]
+
+      const arrayRoles = response[10], arrayGenres = response[11], arrayFeatureGroups = response[12], arrayPosts = []
    
       const arrayUsers = await insert_many_user(arrayRoles)
 
-      const arrayAuthors = await insert_many_author(arrayUsers)
-
-      const arrayEbooks = await insert_many_ebooks(arrayGenres, arrayAuthors)
+      // const arrayAuthors = await insert_many_author(arrayUsers)
+      
+      // const arrayEbooks = await insert_many_ebooks(arrayGenres, arrayAuthors)
      
       // const arrayChapters = await insert_many_chapter(arrayEbooks, arrayUsers)
 
       // const arrayReviews = await insert_many_reviews(arrayEbooks, arrayUsers)
 
+      // const arrayFeatures = await insert_many_features(arrayRoles, arrayFeatureGroups)
+
+      // const arrayComments = await insert_many_comments(arrayReviews, arrayChapters, arrayPosts)
+
+      
 
       // update_history_users(arrayEbooks)
 
 
       arrayRoles && console.log('insertMany roles successfully')
-      arrayGenres && console.log('insertMany genres successfully')
-      arrayUsers && console.log('insertMany users successfully')
-      arrayAuthors && console.log('insertMany authors successfully')
-      arrayEbooks && console.log('insertMany ebooks successfully')
+
+      // arrayGenres && console.log('insertMany genres successfully')
+
+      // arrayUsers && console.log('insertMany users successfully')
+
+      // arrayAuthors && console.log('insertMany authors successfully')
+
+      // arrayEbooks && console.log('insertMany ebooks successfully')
+
       // arrayReviews && console.log('insertMany reviews successfully')
 
+      // arrayFeatures && console.log('insertMany features successfully')
+
+      // arrayComments && console.log('insertMany comments successfully')
 
       console.timeEnd()
 
@@ -62,17 +95,22 @@ const SampleData = () => {
   }).catch(error => console.error(error)) 
 }
 
+module.exports = formatData
+
+
+/** =======================||FUNCTIONS INSERT SAMPLE DATA ||=============================*/
+
 async function insert_many_user(arrayRoles){
-  dataDefaults.users.forEach(user => { 
+  for (const user of dataDefaults.users) {
     for (const x in arrayRoles) { 
       for (const y in user.roles) {
         if(user.roles[y] === arrayRoles[x].name) {
           user.roles[y] = arrayRoles[x]._id
         }
       }
-    }   
-  })
-  return await models.users.insertMany(dataDefaults.users) || []
+    } 
+    new models.users({...user}).save()
+  }
 }
 
 async function insert_many_author(arrayUsers){
@@ -113,11 +151,13 @@ async function insert_many_chapter(arrayEbooks, arrayUsers){
         chapter.ebooks = ebook._id
       }
     })
-    arrayUsers.forEach(user => {
-      if(chapter.users === user.email){
-        chapter.users = user._id
+    for (const x in chapter.numLikes) {
+      for (const y in arrayUsers) {
+        if (chapter.numLikes[x] === arrayUsers[y].email) {
+          chapter.numLikes[x] = arrayUsers[y]._id          
+        }
       }
-    })
+    }
   })
   return await models.chapters.insertMany(dataDefaults.chapters)
 }
@@ -138,9 +178,31 @@ async function insert_many_reviews(arrayEbooks, arrayUsers){
   return await models.reviews.insertMany(dataDefaults.reviews)
 }
 
+async function insert_many_features(arrayRoles, arrayFeatureGroups){
+  dataDefaults.features.forEach(feature => {
+    for (const x in feature.roles) {
+      for (const y in arrayRoles) {
+        if(feature.roles[x] === arrayRoles[y].name){
+          feature.roles[x] = arrayRoles[y]._id
+        }
+      }
+    }
+    arrayFeatureGroups.forEach(featureGroup => {
+      if (feature.featureGroup === featureGroup.name) {
+        feature.featureGroup = featureGroup._id        
+      }
+    })
+  })
+  return await models.features.insertMany(dataDefaults.features)
+}
+
 async function insert_many_comments(arrayReviews, arrayChapters, arrayPosts){
   
 }
+
+
+/** =======================||FUNCTIONS FORMAT UPDATE SAMPLE DATA ||=============================*/
+
 
 async function edit_date_ebooks () {
   let tam = -1, result=[]
@@ -187,4 +249,3 @@ function random_elems(arr, count) {
 }
 
 
-module.exports = SampleData

@@ -1,5 +1,9 @@
 [ 
-  {"featureGroupName": "users"},
-  {"featureGroupName": "ebooks"},
-  {"featureGroupName": "authors"}
+  {"name": "auth"},
+  {"name": "ebooks"},
+  {"name": "authors"},
+  {"name": "genres"},
+  {"name": "chapters"},
+  {"name": "reviews"},
+  {"name": "comments"}
 ]
