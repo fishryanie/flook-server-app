@@ -5,6 +5,7 @@ const routesString = require('../../constants/routes')
 const mongoose = require('mongoose')
 
 module.exports = app => {
+ 
   app.get(routesString.findManyAuthor, Controller.author.findMany)
   
   app.post(routesString.insertOneAuthor,[

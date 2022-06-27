@@ -2,6 +2,7 @@ require('dotenv/config')
 const cors = require("cors");
 const morgan = require('morgan');
 const express = require("express");
+const favicon = require('serve-favicon');
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const formatData = require('./functions/formatData')
@@ -22,7 +23,7 @@ app.use(bodyParser.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use("/uploads", express.static("uploads"));
+// app.use(favicon(__dirname + '/faviicon.png'));
 
 app.use(morgan('dev'))
 

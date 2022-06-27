@@ -73,7 +73,7 @@ const formatData = () => {
       // update_history_users(arrayEbooks)
 
 
-      // arrayRoles && console.log('insertMany roles successfully')
+      arrayRoles && console.log('insertMany roles successfully')
 
       // arrayGenres && console.log('insertMany genres successfully')
 
