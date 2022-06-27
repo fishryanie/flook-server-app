@@ -16,7 +16,8 @@ module.exports = app => {
   })
 
   app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname.slice(0,45), '/views/web-hook.html'))
+    const response = __dirname.slice(0,45) + '/views/web-hook.html'
+    res.sendFile(response)
   });
 
   require('./auth/role')(app)
