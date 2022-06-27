@@ -1,10 +1,6 @@
 const bcrypt = require('bcrypt');
-const messages = require('../../constants/Messages')
-const avataMale = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
-const avataFemale = 'https://cdn-icons-png.flaticon.com/512/2922/2922565.png'
+const messages = require('../../constants/messages')
 const password_pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$@!%&*?])[A-Za-z\d#$@!%&*?]{8,30}$/
-const noSpace_special = /^[a-zA-Z0-9]*$/
-const phone_pattern = /^\d{10}$/
 const mongoose = require("mongoose");
 
 
