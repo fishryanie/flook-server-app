@@ -32,9 +32,13 @@ database.then(() => {
   console.log('Database connected');
 }).catch(error => console.error(error))
 
+require('./routes')(app)
+
+
 
 const PORT = process.env.PORT || 8081;
 
 // if (process.env.NODE_ENV !== 'test') {
 app.listen(PORT , () => console.info('Server is running on port ' + PORT));
 // }
+

@@ -15,17 +15,7 @@ module.exports = app => {
     } 
   })
 
-  app.post('/api/update-image-chapter', async (req, res) => {
-    try {
-      models.chapters.findOneAndUpdate()
-    } catch (error) {
-      handleError.ServerError(error, res)
-    }
-  })
-
   app.get("/", (req, res) => {
-    // res.sendFile('file:///Users/mac/Documents/Project/flook-server-app/coverage/lcov-report/index.html',  { root: __dirname });
-    // res.send({message: path.join(__dirname.slice(0, 45), '/views/web-hook.html')})
     res.sendFile(path.join(__dirname.slice(0,45), '/views/web-hook.html'))
   });
 
