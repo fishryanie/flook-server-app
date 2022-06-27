@@ -33,10 +33,10 @@ database.then(() => {
 }).catch(error => console.error(error))
 
 
-
+const PORT = process.env.PORT || 8081;
 
 // if (process.env.NODE_ENV !== 'test') {
-app.listen(process.env.PORT || 8000 , () => console.info('Server is running on port ' + process.env.PORT || 8000));
+app.listen(PORT , () => console.info('Server is running on port ' + PORT));
 // }
 
 module.exports = app
