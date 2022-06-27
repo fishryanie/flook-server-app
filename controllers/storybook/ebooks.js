@@ -1,6 +1,6 @@
 const cloudinary = require('../../configs/cloudnary');
 const handleError = require("../../error/HandleError");
-const messages = require("../../constants/Messages");
+const messages = require("../../constants/messages");
 const FormatDate = require('../../functions/FormatDate')
 const folder = { folder: 'Flex-ticket/ImageBook' }
 const models = require("../../models");
