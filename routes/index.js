@@ -31,6 +31,7 @@ module.exports = app => {
   require('./movie/cast')(app)
   require('./movie/movie')(app)
   require('./review/comment')(app)
+  require('./review/review')(app)
   require('./storybook/ebooks')(app)
   require('./storybook/genre')(app)
   require('./storybook/author')(app)
