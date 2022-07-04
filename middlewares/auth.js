@@ -36,7 +36,7 @@ const accessPermission = typefunc => async (req, res, next) => {
         }) 
       })
 
-      req.userIsLoggedId = userIsLogged._id
+      req.userIsLoggedId = userIsLogged
       array.length > 0 ? next() : handleError.PermissionError(res)
       console.timeEnd('log')
     })

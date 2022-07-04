@@ -12,7 +12,7 @@ const addReview = async (req, res) => {
   if (req.body.content.trim().length === 0) {
     res.status(400).send({ message: messages.validateContenComment });
   } else {
-    const review = new models.reviews({ ...req.body, users:idUser });
+    const review = new models.reviews({ ...req.body, users: idUser });
     review.save()
       .then((data) =>
         res.status(200).send({
@@ -30,50 +30,87 @@ const addReview = async (req, res) => {
 
 // update review
 const updateReview = async (req, res) => {
-  const userId = req.userIsLoggedId.toHexString();
-  const userIdBody = req.body.users;
-  const reviewId = req.params.id;
-  
+  const user = req.userIsLoggedId;
+  const reviewId = req.query.id;
   const option = { new: true };
-  
-  if (userId === userIdBody) {
+  let find
+  for (const role of user.roles) {
+    if (role.name == "Moderator" || role.name == "Admin") {
+      find = { _id: reviewId }
+      break;
+    } else {
+      find = { _id: reviewId, users: user._id }
+      break;
+    }
+  }
+ 
     try {
-      const review = { ...req.body, updateAt:Date.now()};
-      const result = await models.reviews.findByIdAndUpdate(
-        reviewId,
-        review, 
+      const review = { ...req.body, updateAt: Date.now() };
+      const result = await models.reviews.findOneAndUpdate(
+        find,
+        review,
         option
       );
+      if(!result) {
+        return res.status(400).send({ success: false,message: messages.UpdateNotSuccessfully});
+      }
       const response = {
         data: result,
-        status: 200,
-        messages: messages.UpdateSuccessfully,
+        success: 200,
+        message: messages.UpdateSuccessfully,
       };
       return res.status(200).send(response);
     } catch (error) {
       handleError.ServerError(error, res);
     }
-  } else {
-    return res
-      .status(404)
-      .send({ messages: "Không thể sửa review của người khác" });
-  }
+  
 };
 
-//delete review
-const deleteReview = async (req, res) => {
-  const userId = req.userIsLoggedId.toHexString();
-  const userIdBody = req.body.users;
-  const reviewId = req.params.id;
-  
+//remove one review
+const removeOneReview = async (req, res) => {
+  const user = req.userIsLoggedId;
+  const reviewId = req.query.id;
   const option = { new: true };
+  let find
+  for (const role of user.roles) {
+    if (role.name == "Moderator" || role.name == "Admin") {
+      find = { _id: reviewId }
+      break;
+    } else {
+      find = { _id: reviewId, users: user._id }
+      break;
+    }
+  }
+  // console.log("🚀 ~ file: review.js ~ line 73 ~ find ~ find", find)
+  try {
+    const review = { deleted:true, deleteAt:Date.now()};
+    const result = await models.reviews.findOneAndUpdate(find,review, option);
+    if(!result) {
+      return res.status(400).send({ success: false,message: messages.DeleteNotSuccessfully});
+    }
+
+
+    const response = {
+      data: result,
+      success: true,
+      message: messages.DeleteSuccessfully,
+    };
+    return res.status(200).send(response);
   
-  if (userId === userIdBody) {
+  } catch (error) {
+    handleError.ServerError(error, res);
+  }
+
+};
+
+//remove all review
+const removeManyReview = async (req, res) => {
+  const listReviewId = req.body.listReviewId;
+  const option = { new: true };
     try {
-      const review = { ...req.body, deleteAt:Date.now()};
-      const result = await models.reviews.findByIdAndUpdate(
-        reviewId,
-        review, 
+      const result = await models.reviews.updateMany(
+        { "_id": { $in: listReviewId } }, 
+        { $set: { deleted: true, deleteAt: Date.now() } },
         option
       );
       const response = {
@@ -85,11 +122,7 @@ const deleteReview = async (req, res) => {
     } catch (error) {
       handleError.ServerError(error, res);
     }
-  } else {
-    return res
-      .status(404)
-      .send({ messages: "Không thể xóa review của người khác" });
-  }
+ 
 };
 
 
@@ -103,54 +136,50 @@ const getAllReviewSort = async (req, res) => {
   page < 0 ? (page = 1) : (page = page);
   const skip = (page - 1) * PAGE_SIZE;
 
-  try {
-  
-  } catch (error) {
-    
-  }
+ 
 
-  if ( !comicId) {
+  if (!comicId) {
     return res.status(400).send({ messages: messages.NotFound });
   } else {
     if (page && !sort && !rating) {
       console.log("get all phân trang");
       try {
-        const result = await models.reviews.find({ ebooks: comicId , deleted:false})
-        .skip(skip)
-        .limit(PAGE_SIZE);
-      return res.status(200).send({ data: result });
+        const result = await models.reviews.find({ ebooks: comicId, deleted: false })
+          .skip(skip)
+          .limit(PAGE_SIZE);
+        return res.status(200).send({ data: result });
       } catch (error) {
         handleError.ServerError(error, res);
       }
-     
-    } 
+
+    }
     else if (page && sort && !rating) {
       console.log("Sắp xếp");
       try {
-        const result = await models.reviews.find({ ebooks: comicId ,deleted:false})
-        .skip(skip)
-        .limit(PAGE_SIZE)
-        .sort({ createAt: sort === "ASC" ? 1 : -1 });
-      return res.status(200).send({ data: result });
+        const result = await models.reviews.find({ ebooks: comicId, deleted: false })
+          .skip(skip)
+          .limit(PAGE_SIZE)
+          .sort({ createAt: sort === "ASC" ? 1 : -1 });
+        return res.status(200).send({ data: result });
       } catch (error) {
         handleError.ServerError(error, res);
       }
-     
-    } 
+
+    }
     else if (page && rating && sort) {
       console.log(`rating ${rating}`);
 
       try {
-        const result = await models.reviews.find({ ebooks: comicId, deleted:false })
-        .skip(skip)
-        .limit(PAGE_SIZE)
-        .sort({ rating: sort === "ASC" ? 1 : -1 });;
-      return res.status(200).send({ data: result });
+        const result = await models.reviews.find({ ebooks: comicId, deleted: false })
+          .skip(skip)
+          .limit(PAGE_SIZE)
+          .sort({ rating: sort === "ASC" ? 1 : -1 });;
+        return res.status(200).send({ data: result });
       } catch (error) {
         handleError.ServerError(error, res);
-        
+
       }
-      
+
     }
     else return res.status(400).send({ messages: messages.NotFound });
   }
@@ -238,6 +267,7 @@ const getAllReviewSort = async (req, res) => {
 module.exports = {
   addReview,
   updateReview,
-  deleteReview,
+  removeOneReview,
+  removeManyReview,
   getAllReviewSort,
 };

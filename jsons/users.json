@@ -11,13 +11,44 @@
 	},
 	{
 		"isActive":true,
-    "roles": ["Admin", "User", "Author"],
+    	"roles": ["Admin", "User", "Author"],
 		"email":"flook_admin@gmail.com",
 		"userName":"admin123456", 
 		"password":"Admin@113355",
 		"phoneNumber":"0908112233",
 		"displayName":"Admin",
 		"gender":true
+	},
+	{
+		"isActive":true,
+    	"roles": ["User"],
+		"email":"flook_user@gmail.com",
+		"userName":"user123456", 
+		"password":"User@113355",
+		"phoneNumber":"0908112233",
+		"displayName":"user",
+		"gender":true
+	},
+	{
+		"isActive":true,
+    	"roles": ["User"],
+		"email":"flook_sanh@gmail.com",
+		"userName":"sanh123456", 
+		"password":"Sanh@113355",
+		"phoneNumber":"0908112233",
+		"displayName":"Sanh",
+		"gender":true
+	},
+	{
+		"isActive":true,
+    	"roles": ["User"],
+		"email":"flook_tu@gmail.com",
+		"userName":"tu123456", 
+		"password":"Tu@113355",
+		"phoneNumber":"0908112233",
+		"displayName":"Tú",
+		"gender":true
 	}
+
 
 ]

@@ -2,7 +2,49 @@
   {
     "users": "flook_moderator@gmail.com",
     "ebooks": "Thương Nhân Thánh Thần 1",
-    "rating": 10,
+    "rating": 5,
     "content": "So bad"
+  },
+  {
+    "users": "flook_user@gmail.com",
+    "ebooks": "Thương Nhân Thánh Thần 1",
+    "rating": 5,
+    "content": "good"
+  },
+  {
+    "users": "flook_user@gmail.com",
+    "ebooks": "Thương Nhân Thánh Thần 1",
+    "rating": 3,
+    "content": "Te"
+  },
+  {
+    "users": "flook_moderator@gmail.com",
+    "ebooks": "Thương Nhân Thánh Thần 1",
+    "rating": 4,
+    "content": "hay"
+  },
+  {
+    "users": "flook_user@gmail.com",
+    "ebooks": "Thương Nhân Thánh Thần 1",
+    "rating": 1,
+    "content": "Do"
+  },
+  {
+    "users": "flook_moderator@gmail.com",
+    "ebooks": "Thương Nhân Thánh Thần 1",
+    "rating": 2,
+    "content": "So bad"
+  },
+  {
+    "users": "flook_sanh@gmail.com",
+    "ebooks": "Thương Nhân Thánh Thần 1",
+    "rating": 1,
+    "content": "So bad"
+  },
+  {
+    "users": "flook_tu@gmail.com",
+    "ebooks": "Thương Nhân Thánh Thần 1",
+    "rating": 5,
+    "content": "very good"
   }
 ]

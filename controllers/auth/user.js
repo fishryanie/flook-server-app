@@ -278,6 +278,7 @@ module.exports = {
       displayName: result.displayName,
       images: result.images,
       roles: authorities[0],
+      _id: result._id,
       accessToken: token,
     };
     return res.status(200).send({data, success: true, message: messages.LoginSuccessfully});

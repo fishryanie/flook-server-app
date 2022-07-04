@@ -8,20 +8,22 @@ module.exports = app => {
   Controller.review.addReview);
 
   // update review
-  app.put("/api/review-management/updateReview/:id",[
-    middlewares.auth.accessPermission("updateReview"),
+  app.put("/api/review-management/update-review",[
+    middlewares.auth.accessPermission("update-review"),
   ],Controller.review.updateReview);
 
-  // delete comment
-  app.put("/api/review-management/deleteReview/:id",[
-    middlewares.auth.accessPermission("deleteReview"),
-  ],Controller.review.deleteReview);
-  // // like and dislike
-  // app.put("/api/comment-management/likeAndDislikeComment/:id/:likeAndDislike",[
+  // remove one comment
+  app.put("/api/review-management/remove-one-review",[
+    middlewares.auth.accessPermission("remove-one-review"),
+  ],Controller.review.removeOneReview);
 
-  // ],Controller.comment.likeAndDislike);
+    // remove all comment
+    app.put("/api/review-management/remove-many-review",[
+      middlewares.auth.accessPermission("remove-many-review"),
+    ],Controller.review.removeManyReview);
 
-  // danh sách review theo comic sắp xếp theo ngày
+
+  
   app.get("/api/review-management/getAllReviewSort",[
 
   ],Controller.review.getAllReviewSort);
