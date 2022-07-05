@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser');
 const formatData = require('./functions/formatData')
 const database = require('./configs/mongodb')
 const path = require('path');
+const routes = require('./routes');
 
 const app = express();
 const corsOptions = {
@@ -42,3 +43,18 @@ if (process.env.NODE_ENV !== 'test') {
 app.listen(process.env.PORT || 8000 , () => console.info('Server is running on port ' + process.env.PORT || 8000));
 }
 
+
+function subStringX(value){
+  var flag = true;
+  var mess = '';
+  var str = value.toString();
+  if(str.trim() == ''){
+    mess = 'Empty'
+  } else {
+    mess = str.substring(str.lastIndexOf('/')+1,str.length);
+  }
+    return mess;
+}
+
+const routesString = require('./constants/routes')
+console.log(subStringX(routesString.changePassword))
