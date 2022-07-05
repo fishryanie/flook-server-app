@@ -1,7 +1,7 @@
 const messages = {
   // mongoose connect messages
-  MongoDBSuccess : 'MongoDB connected successfully',
-  MongoDBError: 'mongoose connected error',
+  mongoDBSuccess : 'MongoDB connected successfully',
+  mongoDBError: 'mongoose connected error',
 
   
   // validate messages

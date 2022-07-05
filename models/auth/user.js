@@ -13,7 +13,7 @@ const Users = new mongoose.Schema({
   status: { type: String, default: null },
   roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "roles", default: [] }],
   email: { type: String, trim:true, required: true, unique: true },
-  userName: { type:String, trim:true, required:true, unique:true, minlength: 8, maxlength: 30},
+  username: { type:String, trim:true, required:true, unique:true, minlength: 8, maxlength: 30},
   password: { type:String, trim:true, required:true, match:[password_pattern, messages.validatePassword]},
   phoneNumber: { type: String, trim: true, default: null },
   displayName: { type: String, trim: true, default: null },

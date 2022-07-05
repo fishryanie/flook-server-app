@@ -10,6 +10,7 @@ const dataDefaults = {
   authors: require('../jsons/authors.json'),
   reviews: require('../jsons/reviews.json'),
   chapters: require('../jsons/chapters.json'),
+  comments: require('../jsons/comments.json'),
   features: require('../jsons/features.json'),
   featuresGroups: require('../jsons/featureGroups.json'),
 }
@@ -66,7 +67,7 @@ const formatData = () => {
 
       const arrayFeatures = await insert_many_features(arrayRoles, arrayFeatureGroups)
 
-      // const arrayComments = await insert_many_comments(arrayReviews, arrayChapters, arrayPosts)
+      const arrayComments = await insert_many_comments(arrayUsers, arrayReviews, arrayChapters, arrayPosts)
 
       
 
@@ -87,11 +88,11 @@ const formatData = () => {
 
       arrayReviews && console.log('insertMany reviews successfully')
 
+      arrayComments && console.log('insertMany comments successfully')
+
       arrayFeatures && console.log('insertMany features successfully')
 
       arrayFeatureGroups && console.log('insertMany feature groups successfully')
-
-      // arrayComments && console.log('insertMany comments successfully')
 
       console.timeEnd()
 
@@ -202,13 +203,29 @@ async function insert_many_features(arrayRoles, arrayFeatureGroups){
   return await models.features.insertMany(dataDefaults.features)
 }
 
-async function insert_many_comments(arrayReviews, arrayChapters, arrayPosts){
-  
+async function insert_many_comments(arrayUsers, arrayReviews, arrayChapters, arrayPosts){
+  dataDefaults.comments.forEach(comment => { 
+    arrayUsers.forEach(user => {
+      if(comment.userId === user.email){
+        comment.userId = user._id
+      }
+    })
+    arrayReviews.forEach(review => {
+      if(comment.reviewId === review.content){
+        comment.reviewId = review._id
+      }
+    })
+    arrayChapters.forEach(chapter => {
+      if((comment.chapterId?.name === chapter.name) && (comment.chapterId.content === chapter.content)){
+        comment.chapterId = chapter._id
+      }
+    })
+  })
+  return await models.comments.insertMany(dataDefaults.comments)
 }
 
 
 /** =======================||FUNCTIONS FORMAT UPDATE SAMPLE DATA ||=============================*/
-
 
 async function edit_date_ebooks () {
   let tam = -1, result=[]

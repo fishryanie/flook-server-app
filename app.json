@@ -1,0 +1,51 @@
+{
+  "domain": "https://flook-app.herokuapp.com",
+  "api": {
+    "login" : "/api/auth-management/login",
+    "register": "/api/auth-management/register",
+    "activate": "/api/auth-management/set-active-account",
+    "changePassword": "/api/auth-management/change-password",
+    "forgotPassword": "/api/auth-management/forgot-password",
+
+    "findManyUsers": "/api/auth-management/find-many-users",
+    "findManyRoles": "/api/auth-management/find-many-roles",
+    "findManyEbooks": "/api/auth-management/find-many-books",
+    "findManyGenres": "/api/ebooks-management/find-many-genres",
+    "findManyAuthors": "/api/ebooks-management/find-many-authors",
+    "findManyReviews": "/api/auth-management/find-many-reviews",
+    "findManyComments": "/api/auth-management/find-many-comments",
+
+    "findOneUser": "/api/auth-management/find-one-user",
+    "findOneRole": "/api/auth-management/find-one-role",
+    "findOneEbook": "/api/ebooks-management/find-one-ebook",
+    "findOneGenre": "/api/ebooks-management/find-one-genre",
+    "findOneAuthor": "/api/ebooks-management/find-one-author",
+
+    "insertUser": "/api/auth-management/insertUser",
+    "insertRole": "/api/auth-management/insertRole",
+    "insertEbook": "/api/ebooks-management/insertEbook",
+    "insertGenre": "/api/ebooks-management/insertGenre",
+    "insertAuthor": "/api/ebooks-management/insertAuthor",
+
+    "updateUser": "/api/auth-management/update-one-user",
+    "updateRole": "/api/auth-management/update-one-role",
+    "updateManga": "/api/ebooks-management/update-one-manga",
+    "updateGenre": "/api/ebooks-management/update-one-genre",
+    "updateAuthor": "/api/ebooks-management/update-one-author",
+
+    "deleteManyUsers": "/api/management/delete-many-users",
+    "deleteManyRoles": "/api/management/delete-many-roles",
+    "deleteManyEbooks": "/api/management/delete-many-ebooks",
+    "deleteManyGenres": "/api/management/delete-many-genres",
+    "deleteManyAuthors": "/api/management/delete-many-authors",
+
+    "deleteOneUser": "/api/management/delete-one-user",
+    "deleteOneRole": "/api/management/delete-one-role",
+    "deleteOneEbook": "/api/management/delete-one-ebook",
+    "deleteOneGenre": "/api/management/delete-one-genre",
+    "deleteOneAuthor": "/api/management/delete-one-author"
+  },
+  "messages": {
+
+  }
+}

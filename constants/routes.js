@@ -3,12 +3,14 @@ const role = '/api/role-management'
 const user = '/api/user-management'
 const author = '/api/author-management'
 
+
+
 const routesString = {
   login: `${user}/login`,
   register: `${user}/register`,
   forgotPassword: `${user}/forgotPassword`,
   changePassword: `${user}/changePassword`,
-  setActiveUser: `${user}/setActiveUser/:id`,
+  setActiveUser: `${user}/setActiveUser`,
   findManyUser: `${user}/findManyUser`,
   findOneUser: `${user}/findOneUser/:id`,
   insertOneUser: `${user}/insertOneUser`,

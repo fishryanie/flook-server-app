@@ -5,6 +5,7 @@ Content-Type: application/json
 Accept:  application/json
 
 {
-  "userName":"moderator123456",
-  "password":"Moderator123456@"
+  "userName":"moderator",
+  "password":"Moderator@113355"
 }
+

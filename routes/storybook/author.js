@@ -8,6 +8,8 @@ module.exports = app => {
  
   app.get(routesString.findManyAuthor, Controller.author.findMany)
   
+  
+
   app.post(routesString.insertOneAuthor,[
     upload.single("image"), 
     middlewares.auth.accessPermission()

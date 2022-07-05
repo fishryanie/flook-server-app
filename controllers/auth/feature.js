@@ -23,6 +23,4 @@ module.exports = {
       return handleError.ServerError(error, res)
     }
   }
-
-
 }

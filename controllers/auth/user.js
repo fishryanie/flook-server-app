@@ -129,7 +129,7 @@ const AddListFavoriteController = async (req, res) => {
 };
 
 const ActiveUserController = async (req, res) => {
-  const userId = req.params.id;
+  const userId = req.query.id;
   try {
     if (!userId) {
       return res.status(400).send({ messages: "not userId or isActive" });
@@ -285,18 +285,20 @@ module.exports = {
 
   Register: async (req, res) => {
     const newPassword = generator()
+    const email = req.body.email
     try {
       const USER = new models.users({
-        email: req.body.email,
-        userName: req.body.email,
+        email: email,
+        username: email,
         password: newPassword
       })
-
       const rolesName = await models.roles.find({name: 'user'});
       USER.roles = rolesName?.map((role) => role._id);
       const register = await USER.save();
-      const sendMail = await SendMail(req.body.email, 'Register', newPassword, register._id);
-      register && sendMail && res.status(200).send({success: true, messages: 'sign up successfully, check your mail to get password'});
+      const sendMail = await SendMail(req, res, email, 'Register', newPassword, register._id);
+      
+      sendMail && register && res.status(200).send({success: true, messages: 'sign up successfully, check your mail to get password'});
+    
     } catch (error) {
       return handleError.ServerError(error, res)
     }

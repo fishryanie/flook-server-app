@@ -1,24 +1,28 @@
 [
   {
-    "_id": "idComment01",
-    "userId": "admin",
-    "reviewId": "idReview01",
-    "bookId": "a",
-    "commentId": null
+    "userId": "flook_moderator@gmail.com",
+    "reviewId": "So bad",
+    "content": "review hay quá"
   },
   {
-    "_id": "idComment02",
-    "userId": "admin",
-    "reviewId": "idReview01",
-    "bookId": "a",
-    "commentId": "idComment01"
+    "userId": "flook_moderator@gmail.com",
+    "chapterId": {
+      "name": "chapter 1",
+      "content": "Thương Nhân Thánh Thần 1"
+    },
+    "content": "chap này hay quá"
   },
   {
-    "_id": "idComment03",
-    "userId": "admin",
-    "reviewId": "idReview01",
-    "bookId": "a",
-    "commentId": "idComment01"
+    "userId": "flook_admin@gmail.com",
+    "reviewId": "So bad",
+    "content": "review đúng ý mình"
+  },
+  {
+    "userId": "flook_admin@gmail.com",
+    "chapterId": {
+      "name": "chapter 1",
+      "content": "Thương Nhân Thánh Thần 1"
+    },
+    "content": "chap này dở quá"
   }
-
 ]

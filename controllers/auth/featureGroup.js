@@ -8,7 +8,7 @@ module.exports = {
         { $lookup: {
           from:"features",
           localField:"_id",
-          foreignField: "featureGroupId",
+          foreignField: "featureGroup",
           as: "features"
           },
         }

@@ -5,10 +5,7 @@ const handleError = require("../error/HandleError");
 const models = require("../models");
 
 const accessPermission = typefunc => async (req, res, next) => {
-  console.log('typefunc', typefunc);
-
   const array=[], token = req.headers?.authorization;
- 
   if (!token) {
     return handleError.NoTokenError(res)
   } else {
@@ -16,7 +13,6 @@ const accessPermission = typefunc => async (req, res, next) => {
       // should return if token error
       if (err) return handleError.TokenError(err, res)
       // Find user is logged
-      console.time('log')
       const userIsLogged = await models.users.findById(decoded.id).populate('roles')
       // Shold returns if no logged in user is found
       if (!userIsLogged) return handleError.NotFoundError(decoded.id, res)
@@ -35,21 +31,33 @@ const accessPermission = typefunc => async (req, res, next) => {
         })
       }
       array.length > 0 ? next() : handleError.PermissionError(res)
-      console.timeEnd('log')
     })
   }
 }
 
+const verifyLogin = async (username, password, done) => {
+  try {
+    console.log(username);
+    const result = await models.users.findOne({username}).populate("roles","-__v");
+    done(null, result ? result : false)
+  } catch (error) {
+    done(null, error)
+  }
+}
+
+
 const verifyUserName = typeUserName => async (req, res, next) => {
   try {
-    const userName = req.body.userName;
-    const result = await models.users.findOne({userName}).populate("roles","-__v");
+    const username = req.body.username;  
+
+    const result = await models.users.findOne({username}).populate("roles","-__v");
+    
     if(typeUserName === 'login_app') {
-      if (!result) return handleError.NotFoundError(userName, res);
+      if (!result) return handleError.NotFoundError(username, res);
       req.result = result;
       next();
     } else {
-      if (result) return handleError.AlreadyExistsError(userName, res);
+      if (result) return handleError.AlreadyExistsError(username, res);
       next();
     }
   } catch (error) {
@@ -61,13 +69,17 @@ const VerifyEmail = typeEmail => async (req, res, next) => {
   try {
     const email = req.body.email;
     const USER = await models.users.findOne({ email: email });
-    if (typeEmail === 'create_new' && !USER) next();
+    if (typeEmail === 'create_new' && USER){
+      return handleError.AlreadyExistsError(email, res)
+    }else if(typeEmail === 'create_new' && !USER) {
+      next()
+    }
     if (USER) {
       req.user = USER;
       next();
     }
   } catch (error) {
-    return handleError.ServerError(error);
+    return handleError.ServerError(error); 
   }
 };
 
@@ -101,6 +113,7 @@ const VerifyPhoneNumber = async (req, res, next) => {
 
 module.exports = {
   VerifyEmail,
+  verifyLogin,
   verifyUserName,
   VerifyPassword,
   VerifyPhoneNumber,
