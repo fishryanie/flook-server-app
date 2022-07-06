@@ -28,10 +28,15 @@ const messages = {
   LoginSuccessfully : 'Login successfully',
   CreateSuccessfully: 'Create Successfully',
   UpdateSuccessfully: 'Update Successfully',
-  DeleteSuccessfully: 'Delete Successfully',
-
-  DeleteNotSuccessfully: 'Delete Not Successfully',
   UpdateNotSuccessfully: 'Update Not Successfully',
+
+
+  DeleteSuccessfully: 'Delete Successfully',
+  DeleteNotSuccessfully: 'Delete Not Successfully',
+
+  RemoveSuccessfully: 'Remove Successfully',
+  RemoveNotSuccessfully: 'Remove Not Successfully',
+  
 }
 
 

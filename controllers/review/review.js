@@ -43,7 +43,7 @@ const updateReview = async (req, res) => {
       break;
     }
   }
- 
+
     try {
       const review = { ...req.body, updateAt: Date.now() };
       const result = await models.reviews.findOneAndUpdate(
@@ -86,14 +86,14 @@ const removeOneReview = async (req, res) => {
     const review = { deleted:true, deleteAt:Date.now()};
     const result = await models.reviews.findOneAndUpdate(find,review, option);
     if(!result) {
-      return res.status(400).send({ success: false,message: messages.DeleteNotSuccessfully});
+      return res.status(400).send({ success: false,message: messages.RemoveNotSuccessfully});
     }
 
 
     const response = {
       data: result,
       success: true,
-      message: messages.DeleteSuccessfully,
+      message: messages.RemoveSuccessfully,
     };
     return res.status(200).send(response);
   
@@ -116,7 +116,46 @@ const removeManyReview = async (req, res) => {
       const response = {
         data: result,
         status: 200,
-        messages: messages.UpdateSuccessfully,
+        messages: messages.RemoveSuccessfully,
+      };
+      return res.status(200).send(response);
+    } catch (error) {
+      handleError.ServerError(error, res);
+    }
+ 
+};
+
+
+//delete one review
+const deleteOneReview = async (req, res) => {
+  
+  try {
+    const reviewId = req.query.id;
+    const result = await models.reviews.deleteOne({_id:reviewId});
+    if(!result) {
+      return res.status(400).send({ success: false,message: messages.DeleteNotSuccessfully});}
+    const response = {
+      data: result,
+      success: true,
+      message: messages.DeleteSuccessfully,
+    };
+    return res.status(200).send(response);
+  
+  } catch (error) {
+    handleError.ServerError(error, res);
+  }
+};
+
+//delete many review
+const deleteManyReview = async (req, res) => {
+ 
+    try {
+      const listReviewId = req.body.listReviewId;
+      const result = await models.reviews.deleteMany({ "_id":{ $in: listReviewId }});
+      const response = {
+        data: result,
+        status: 200,
+        messages: messages.DeleteSuccessfully,
       };
       return res.status(200).send(response);
     } catch (error) {
@@ -269,5 +308,8 @@ module.exports = {
   updateReview,
   removeOneReview,
   removeManyReview,
-  getAllReviewSort,
+  deleteOneReview,
+  deleteManyReview,
+  getAllReviewSort
+ 
 };

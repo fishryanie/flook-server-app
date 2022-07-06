@@ -53,6 +53,16 @@
     "featureName": "remove-many-review",
     "featureGroup": "auth",
     "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "delete-one-review",
+    "featureGroup": "auth",
+    "roles": [ "Moderator"]
+  },
+  {
+    "featureName": "delete-many-review",
+    "featureGroup": "auth",
+    "roles": ["Moderator"]
   }
 ]
 
