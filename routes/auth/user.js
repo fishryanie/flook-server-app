@@ -3,6 +3,8 @@ const middlewares = require("../../middlewares");
 const Controller = require('../../controllers');
 const routesString = require('../../constants/routes');
 
+
+
 module.exports = app => {
 
   app.get(routesString.findManyUser, middlewares.auth.accessPermission('findManyUser'), Controller.auth.FindManyUser);
