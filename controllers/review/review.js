@@ -6,45 +6,44 @@ const handleError = require("../../error/HandleError");
 
 // thêm review
 const addReview = async (req, res) => {
-  const idUser = req.userIsLoggedId;
+  const idUser = req.userIsLoggedId._id;
   // console.log("addReview 1234111111", idUser)
 
-  if (req.body.content.trim().length === 0) {
-    res.status(400).send({ message: messages.validateContenComment });
-  } else {
+ 
     const review = new models.reviews({ ...req.body, users: idUser });
     review.save()
       .then((data) =>
         res.status(200).send({
           data: data,
-          status: 200,
-          messages: messages.CreateSuccessfully,
+          success: true,
+          message: messages.CreateSuccessfully,
         })
       )
       .catch((error) => {
-        console.log(`error ${error}`);
         handleError.ServerError(error, res);
       });
-  }
+  
 };
 
 // update review
 const updateReview = async (req, res) => {
-  const user = req.userIsLoggedId;
-  const reviewId = req.query.id;
-  const option = { new: true };
-  let find
-  for (const role of user.roles) {
-    if (role.name == "Moderator" || role.name == "Admin") {
-      find = { _id: reviewId }
-      break;
-    } else {
-      find = { _id: reviewId, users: user._id }
-      break;
-    }
-  }
-
+ 
     try {
+
+      const user = req.userIsLoggedId;
+      const reviewId = req.query.id;
+      const option = { new: true };
+      let find
+      for (const role of user.roles) {
+        if (role.name == "Moderator" || role.name == "Admin") {
+          find = { _id: reviewId }
+          break;
+        } else {
+          find = { _id: reviewId, users: user._id }
+          break;
+        }
+      }
+    
       const review = { ...req.body, updateAt: Date.now() };
       const result = await models.reviews.findOneAndUpdate(
         find,
@@ -56,7 +55,7 @@ const updateReview = async (req, res) => {
       }
       const response = {
         data: result,
-        success: 200,
+        success:true,
         message: messages.UpdateSuccessfully,
       };
       return res.status(200).send(response);
@@ -68,30 +67,28 @@ const updateReview = async (req, res) => {
 
 //remove one review
 const removeOneReview = async (req, res) => {
-  const user = req.userIsLoggedId;
-  const reviewId = req.query.id;
-  const option = { new: true };
-  let find
-  for (const role of user.roles) {
-    if (role.name == "Moderator" || role.name == "Admin") {
-      find = { _id: reviewId }
-      break;
-    } else {
-      find = { _id: reviewId, users: user._id }
-      break;
-    }
-  }
+
   // console.log("🚀 ~ file: review.js ~ line 73 ~ find ~ find", find)
   try {
+    const user = req.userIsLoggedId;
+    const reviewId = req.query.id;
+    const option = { new: true };
+    let find
+    for (const role of user.roles) {
+      if (role.name == "Moderator" || role.name == "Admin") {
+        find = { _id: reviewId }
+        break;
+      } else {
+        find = { _id: reviewId, users: user._id }
+        break;
+      }
+    }
     const review = { deleted:true, deleteAt:Date.now()};
     const result = await models.reviews.findOneAndUpdate(find,review, option);
     if(!result) {
       return res.status(400).send({ success: false,message: messages.RemoveNotSuccessfully});
     }
-
-
     const response = {
-      data: result,
       success: true,
       message: messages.RemoveSuccessfully,
     };
@@ -113,10 +110,12 @@ const removeManyReview = async (req, res) => {
         { $set: { deleted: true, deleteAt: Date.now() } },
         option
       );
+      if(!result){
+        return res.status(400).send({ success: false,message: messages.RemoveNotSuccessfully});
+      }
       const response = {
-        data: result,
-        status: 200,
-        messages: messages.RemoveSuccessfully,
+        success: true,
+        message: messages.RemoveSuccessfully,
       };
       return res.status(200).send(response);
     } catch (error) {
@@ -132,10 +131,9 @@ const deleteOneReview = async (req, res) => {
   try {
     const reviewId = req.query.id;
     const result = await models.reviews.deleteOne({_id:reviewId});
-    if(!result) {
+    if(result.deletedCount === 0) {
       return res.status(400).send({ success: false,message: messages.DeleteNotSuccessfully});}
     const response = {
-      data: result,
       success: true,
       message: messages.DeleteSuccessfully,
     };
@@ -152,10 +150,15 @@ const deleteManyReview = async (req, res) => {
     try {
       const listReviewId = req.body.listReviewId;
       const result = await models.reviews.deleteMany({ "_id":{ $in: listReviewId }});
+
+      if(result.deletedCount === 0 ) {
+        return res.status(400).send({ success: false,message: messages.DeleteNotSuccessfully})
+      }
+
       const response = {
         data: result,
-        status: 200,
-        messages: messages.DeleteSuccessfully,
+        success: true,
+        message: messages.DeleteSuccessfully,
       };
       return res.status(200).send(response);
     } catch (error) {
@@ -167,15 +170,15 @@ const deleteManyReview = async (req, res) => {
 
 // danh sách review theo mã comic sắp xếp theo ngày
 const getAllReviewSort = async (req, res) => {
+
+  try {
   const comicId = req.query.idComic;
   const sort = req.query.sortReview;
   const rating = req.query.rating;
   let page = parseInt(req.query.page);
-  const PAGE_SIZE = 5;
+  const PAGE_SIZE = 10;
   page < 0 ? (page = 1) : (page = page);
   const skip = (page - 1) * PAGE_SIZE;
-
- 
 
   if (!comicId) {
     return res.status(400).send({ messages: messages.NotFound });
@@ -186,41 +189,43 @@ const getAllReviewSort = async (req, res) => {
         const result = await models.reviews.find({ ebooks: comicId, deleted: false })
           .skip(skip)
           .limit(PAGE_SIZE);
-        return res.status(200).send({ data: result });
+        return res.status(200).send({ data: result, susscess:true, massage:messages.GetDataSuccessfully });
       } catch (error) {
         handleError.ServerError(error, res);
       }
 
     }
     else if (page && sort && !rating) {
-      console.log("Sắp xếp");
+     
       try {
         const result = await models.reviews.find({ ebooks: comicId, deleted: false })
           .skip(skip)
           .limit(PAGE_SIZE)
           .sort({ createAt: sort === "ASC" ? 1 : -1 });
-        return res.status(200).send({ data: result });
+        return res.status(200).send({ data: result, susscess:true, massage:messages.GetDataSuccessfully  });
       } catch (error) {
         handleError.ServerError(error, res);
       }
 
     }
     else if (page && rating && sort) {
-      console.log(`rating ${rating}`);
+      // console.log(`rating ${rating}`);
 
       try {
         const result = await models.reviews.find({ ebooks: comicId, deleted: false })
           .skip(skip)
           .limit(PAGE_SIZE)
           .sort({ rating: sort === "ASC" ? 1 : -1 });;
-        return res.status(200).send({ data: result });
+        return res.status(200).send({ data: result ,susscess:true, massage:messages.GetDataSuccessfully});
       } catch (error) {
         handleError.ServerError(error, res);
-
       }
 
     }
-    else return res.status(400).send({ messages: messages.NotFound });
+    else return res.status(400).send({ susscess:false,messages: messages.NotFound });
+  }
+  } catch (error) {
+    handleError.ServerError(error, res);
   }
 };
 

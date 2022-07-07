@@ -40,6 +40,11 @@
     "roles": ["Admin", "Moderator"]
   },
   {
+    "featureName": "add-review",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator","User"]
+  },
+  {
     "featureName": "update-review",
     "featureGroup": "auth",
     "roles": ["Admin", "Moderator","User"]
@@ -61,6 +66,36 @@
   },
   {
     "featureName": "delete-many-review",
+    "featureGroup": "auth",
+    "roles": ["Moderator"]
+  },
+  {
+    "featureName": "add-comment",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator","User"]
+  },
+  {
+    "featureName": "update-comment",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator","User"]
+  },
+  {
+    "featureName": "remove-one-comment",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator","User"]
+  },
+  {
+    "featureName": "remove-many-comment",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "delete-one-comment",
+    "featureGroup": "auth",
+    "roles": [ "Moderator"]
+  },
+  {
+    "featureName": "delete-many-comment",
     "featureGroup": "auth",
     "roles": ["Moderator"]
   }

@@ -25,6 +25,7 @@ const messages = {
 
 
   // success messages
+  GetDataSuccessfully:"Get data successfully",
   LoginSuccessfully : 'Login successfully',
   CreateSuccessfully: 'Create Successfully',
   UpdateSuccessfully: 'Update Successfully',
