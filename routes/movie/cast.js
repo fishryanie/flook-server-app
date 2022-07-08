@@ -1,22 +1,22 @@
+const upload = require("../../functions/UploadImage");
 const middlewares = require("../../middlewares");
-const Controller = require("../../controllers");
+const Controller = require('../../controllers');
+const routesString = require('../../constants/routes');
+const subStr = require('../../functions/subString')
+
 
 module.exports = app => {
-
-  app.get("/api/cast-management/findCastByMovieId",[
-  ],Controller.cast.findCastByMovieId );
-
-  app.post("/api/cast-management/addNewCast",[
-
-  ],Controller.cast.addNewCast );
+  //Tìm diễn viên bằng ID
+  app.get(routesString.findCastByMovieId, middlewares.auth.accessPermission(subStr(routesString.findCastByMovieId)), Controller.cast.findCastByMovieId);
+  // thêm diễn viên
+  app.post(routesString.addNewCast, middlewares.auth.accessPermission(subStr(routesString.addNewCast)), Controller.cast.addNewCast);
 
   // update diễn viên
-  app.put("/api/cast-management/updateCast/:id",[
+  app.put(routesString.updateCast, middlewares.auth.accessPermission(subStr(routesString.updateCast)), Controller.cast.updateCast);
+  // Xoá diễn viên
+  app.delete(routesString.deleteCast, middlewares.auth.accessPermission(subStr(routesString.deleteCast)), Controller.cast.deleteCast);
 
-  ],Controller.cast.updateCast);
 
-  app.delete("/api/cast-management/deleteCast/:id",[
-
-  ],Controller.cast.deleteCast );
 
 };
+
