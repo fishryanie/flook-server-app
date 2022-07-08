@@ -11,7 +11,7 @@ const SendMail = async (req, res, toMail, subject, newPassword, userId) => {
 
   const apiChangePassword = req.protocol + '://' + req.headers.host + routesString.changePassword + '?id=' + userId
 
-  let renderMailRegister = fs.readFileSync(process.cwd() + '/views/register.html','utf8').replace('LINK_ACTIVATE_ACCOUNT', apiActiveAccount).replace('RENDER_NEW_PASSWORD', newPassword)
+  let renderMailRegister = fs.readFileSync(process.cwd() + '/views/email.hbs','utf8').replace('LINK_ACTIVATE_ACCOUNT', apiActiveAccount).replace('RENDER_NEW_PASSWORD', newPassword)
   
   const options = {
     from: process.env.FLOOK_EMAIL_USERNAME,
