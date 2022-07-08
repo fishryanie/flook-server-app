@@ -1,13 +1,6 @@
-function subString(value){
-    var flag = true;
-    var mess = '';
-    var str = value.toString();
-    if(str.trim() == ''){
-      mess = 'Empty'
-    } else {
-      mess = str.substring(str.lastIndexOf('/')+1,str.length);
-    }
-      return mess;
+function subStr(value){
+      value = value.substring(value.lastIndexOf('/')+1,value.length);    
+      return value;
   }
 
-  module.exports = subString
+  module.exports = subStr

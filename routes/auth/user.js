@@ -6,9 +6,12 @@ const subStr = require('../../functions/subString')
 
 module.exports = app => {
 
-  app.get(routesString.findManyUser, middlewares.auth.accessPermission(subStr(routesString.findManyUser)), Controller.auth.FindManyUser);
+  app.get(routesString.findManyUser, 
+    middlewares.auth.accessPermission(subStr(routesString.findManyUser)), 
+    Controller.auth.FindManyUser);
 
-  app.get(routesString.findOneUser, middlewares.auth.accessPermission(subStr(routesString.findOneUser)), Controller.auth.FindByIdUserController);
+  app.get(routesString.findOneUser, middlewares.auth.accessPermission(subStr(routesString.findOneUser)), 
+  Controller.auth.FindByIdUserController);
 
   app.get(routesString.setActiveUser, Controller.auth.ActiveUserController);
 
