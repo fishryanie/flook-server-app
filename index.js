@@ -62,7 +62,7 @@ app.get("/", (req, res) => res.render('web-hook', routesString));
 
 database.then(() => {
 
-  // formatData()
+  formatData()
 
   require('./routes')(app)
 

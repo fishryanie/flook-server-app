@@ -9,7 +9,7 @@ const Comments = new mongoose.Schema({
 
   commentId: { type: mongoose.Schema.Types.ObjectId, ref:'users', default: null},
 
-  chapterId: { type: mongoose.Schema.Types.ObjectId, ref:'chapters', default: null},
+  ebookId: { type: mongoose.Schema.Types.ObjectId, ref:'ebooks', default: null},
 
   status: { type: String, default: null },
 

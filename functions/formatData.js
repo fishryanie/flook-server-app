@@ -67,7 +67,7 @@ const formatData = () => {
 
       const arrayFeatures = await insert_many_features(arrayRoles, arrayFeatureGroups)
 
-      const arrayComments = await insert_many_comments(arrayUsers, arrayReviews, arrayChapters, arrayPosts)
+      const arrayComments = await insert_many_comments(arrayUsers, arrayReviews, arrayEbooks, arrayPosts)
 
       
 
@@ -203,7 +203,7 @@ async function insert_many_features(arrayRoles, arrayFeatureGroups){
   return await models.features.insertMany(dataDefaults.features)
 }
 
-async function insert_many_comments(arrayUsers, arrayReviews, arrayChapters, arrayPosts){
+async function insert_many_comments(arrayUsers, arrayReviews, arrayEbooks, arrayPosts){
   dataDefaults.comments.forEach(comment => { 
     arrayUsers.forEach(user => {
       if(comment.userId === user.email){
@@ -215,12 +215,13 @@ async function insert_many_comments(arrayUsers, arrayReviews, arrayChapters, arr
         comment.reviewId = review._id
       }
     })
-    arrayChapters.forEach(chapter => {
-      if((comment.chapterId?.name === chapter.name) && (comment.chapterId.content === chapter.content)){
-        comment.chapterId = chapter._id
+    arrayEbooks.forEach(ebook => {
+      if(comment.ebookId === ebook.title){
+        comment.ebookId = ebook._id
       }
     })
   })
+  // console.log(dataDefaults.comments)
   return await models.comments.insertMany(dataDefaults.comments)
 }
 
