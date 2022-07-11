@@ -1,23 +1,34 @@
 require('dotenv/config')
-const fs = require('fs');
-const path = require('path');
-const nodemailer = require('nodemailer');
-const routesString = require('../constants/routes')
+const fs = require('fs'), nodemailer = require('nodemailer'), apiString = require('../constants/api')
 
 
 const SendMail = async (req, res, toMail, subject, newPassword, userId) => {
 
-  const apiActiveAccount = req.protocol + '://' + req.headers.host + routesString.setActiveUser + '?id=' + userId
+  const apiActiveAccount = req.protocol + '://' + req.headers.host + apiString.setActiveUser + '?id=' + userId
 
-  const apiChangePassword = req.protocol + '://' + req.headers.host + routesString.changePassword + '?id=' + userId
+  const apiForgotPassword = req.protocol + '://' + req.headers.host + apiString.forgotPassword + '?id=' + userId
 
-  let renderMailRegister = fs.readFileSync(process.cwd() + '/views/register.html','utf8').replace('LINK_ACTIVATE_ACCOUNT', apiActiveAccount).replace('RENDER_NEW_PASSWORD', newPassword)
-  
+  let renderMailRegister = fs
+  .readFileSync(process.cwd() + '/views/email.hbs','utf8')
+  .replace('RENDER_NEW_PASSWORD', newPassword)
+  .replace('TEXT_API', apiActiveAccount)
+  .replace('TEXT_SUBJECT', subject)
+  .replace('TEXT_BUTTON', 'Activate your account')
+  .replace('TEXT_DESCRIPTION', '')
+
+
+  let renderMailForgotPassword = fs
+  .readFileSync(process.cwd() + '/views/email.hbs', 'utf8')
+  .replace('TEXT_API', apiForgotPassword)
+  .replace('TEXT_SUBJECT', subject)
+  .replace('TEXT_BUTTON', 'Update new password')
+  .replace('TEXT_DESCRIPTION', '')
+
   const options = {
     from: process.env.FLOOK_EMAIL_USERNAME,
     to: toMail,
     subject: subject, 
-    html: renderMailRegister
+    html: newPassword ? renderMailRegister : renderMailForgotPassword
   }
   
   const transporter = nodemailer.createTransport({

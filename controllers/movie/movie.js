@@ -3,14 +3,10 @@ const cloudinary = require('../../configs/cloudnary');
 const models = require("../../models");
 const message = require("../../constants/messages");
 const handleError = require("../../error/HandleError");
-const FormatDate = require("../../functions/FormatDate");
+
 const folder_image = { folder: 'Flex-ticket/ImageMovie/image' }
 const folder_background = { folder: 'Flex-ticket/ImageMovie/background' }
 const folder_otherImage = { folder: 'Flex-ticket/ImageMovie/other' }
-
-const NEW = FormatDate.addArrayDays("NEW");
-const ISPLAYING = FormatDate.addArrayDays("ISPLAYING");
-const COMMING_SOON = FormatDate.addArrayDays("COMMING_SOON");
 
 
 const FindMovieController = async (req, res) => {
@@ -151,4 +147,47 @@ module.exports = {
   AddMovieController,
   DeleteMovieController,
   UpdateMovieController,
+
+  findOneMovie: (req, res) => {
+    
+  },
+
+  findManyMovie: async (req, res) => {
+    
+  },
+
+  insertOneMovie: async (req, res) => {
+
+  },
+
+  insertOneMovie: async (req, res) => {
+
+  },
+
+  insertManyMovie: async (req, res) => {
+
+  },
+
+  updateOneMovie: async (req, res) => {
+
+  },
+
+  deleteOneMovie: async (req, res) => {
+
+  },
+
+  deleteManyMovie: async (req, res) => {
+
+  },
+
+  removeOneMovie: async (req, res) => {
+
+  },
+
+  removeManyMovie: async (req, res) => {
+
+  },
+
+  searchMovie: async (req, res) => {
+  }
 };

@@ -1,25 +1,59 @@
 [
   {
-    "featureName": "finduser",
+    "featureName": "find-many-user",
     "featureGroup": "auth",
     "roles": ["Admin", "Moderator"]
   },
   {
-    "featureName": "insertUser",
+    "featureName": "find-one-user",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator", "User"]
+  },
+  {
+    "featureName": "insert-one-user",
     "featureGroup": "auth",
     "roles": ["Admin", "Moderator"]
   },
   {
-    "featureName": "updateUser",
+    "featureName": "update-one-user",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator","User"]
+  },
+  {
+    "featureName": "delete-one-user",
+    "featureGroup": "auth",
+    "roles": [ "Moderator"]
+  },
+  {
+    "featureName": "delete-many-user",
+    "featureGroup": "auth",
+    "roles": [ "Moderator"]
+  },
+  {
+    "featureName": "remove-one-user",
     "featureGroup": "auth",
     "roles": ["Admin", "Moderator"]
   },
   {
-    "featureName": "deleteUser",
+    "featureName": "remove-many-user",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "update-review",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator","User"]
+  },
+  {
+    "featureName": "remove-one-review",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator","User"]
+  },
+  {
+    "featureName": "remove-many-review",
     "featureGroup": "auth",
     "roles": ["Admin", "Moderator"]
   }
 ]
-
 
 

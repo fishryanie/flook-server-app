@@ -2,11 +2,11 @@ const models = require("../../models");
 const cloudinary = require('../../configs/cloudnary')
 const jwt = require("jsonwebtoken");
 const SendMail = require("../../functions/SendMail");
-const generator = require("../../functions/Generator");
 
 const configsToken = require("../../configs/token");
 const messages = require("../../constants/messages");
-const handleError = require('../../error/HandleError')
+const handleError = require('../../error/HandleError');
+const { generatePassword } = require("../../functions/globalFunc");
 const folder = { folder: 'Flex-ticket/ImageUser' }
 
 
@@ -150,7 +150,7 @@ const ForgotPasswordController = async (req, res) => {
     const id = req.user._id
     const email = req.user.email
 
-    const newPassword = generator();
+    const newPassword = generatePassword();
     const result = await models.users.findByIdAndUpdate(
       { _id: id },
       { password: await models.users.hashPassword(newPassword)},

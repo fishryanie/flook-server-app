@@ -6,7 +6,8 @@ const Users = require("./auth/user")
 const model = {
   users: mongoose.model('users', Users),
   roles: mongoose.model('roles', require('./auth/roles')),
-  // movies: mongoose.model('movies', require('./movie/movie')),
+  casts: mongoose.model('casts', require('./movie/cast')),
+  movies: mongoose.model('movies', require('./movie/movie')),
   genres: mongoose.model('genres', require('./storybook/genre')),
   ebooks: mongoose.model('ebooks', require('./storybook/ebooks')),
   authors: mongoose.model('authors', require('./storybook/author')),
