@@ -230,6 +230,46 @@ module.exports = {
   removeManyReview,
   deleteOneReview,
   deleteManyReview,
-  getAllReviewSort
+  getAllReviewSort,
+
+  findOneReview: (req, res) => {
+    
+  },
+
+  findManyReview: async (req, res) => {
+    
+  },
+
+  insertOneReview: async (req, res) => {
+
+  },
+
+  insertOneReview: async (req, res) => {
+
+  },
+
+  insertManyReview: async (req, res) => {
+
+  },
+
+  updateOneReview: async (req, res) => {
+
+  },
+
+  deleteOneReview: async (req, res) => {
+
+  },
+
+  deleteManyReview: async (req, res) => {
+
+  },
+
+  removeManyReview: async (req, res) => {
+
+  },
+
+  searchReview: async (req, res) =>{
+    
+  }
  
 };

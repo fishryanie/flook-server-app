@@ -218,4 +218,48 @@ module.exports = {
   likeAndDislike,
   deleteComment,
   getAllCommentSort,
+
+  findOneComment: (req, res) => {
+    
+  },
+
+  findManyComment: async (req, res) => {
+    
+  },
+
+  insertOneComment: async (req, res) => {
+
+  },
+
+  insertOneComment: async (req, res) => {
+
+  },
+
+  insertManyComment: async (req, res) => {
+
+  },
+
+  updateOneComment: async (req, res) => {
+
+  },
+
+  deleteOneComment: async (req, res) => {
+
+  },
+
+  deleteManyComment: async (req, res) => {
+
+  },
+
+  removeOneComment: async (req, res) => {
+
+  },
+
+  removeManyComment: async (req, res) => {
+
+  },
+
+  searchComment: async (req, res) =>{
+
+  }
 };

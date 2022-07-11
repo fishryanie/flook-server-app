@@ -5,7 +5,7 @@ const review = require('./review/review')
 const comment = require('./review/comment')
 const ebooks = require('./storybook/ebooks')
 const genre = require('./storybook/genre')
-const auth = require('./auth/user')
+const author = require('./storybook/author')
 const roles = require('./auth/role')
 const chapter = require('./storybook/chapter')
 const feature = require('./auth/feature')
@@ -13,7 +13,7 @@ const featureGroup = require('./auth/featureGroup')
 
 
 const Controller = {
-  roles, user, movie, cast, comment, ebooks, genre, auth, chapter, review, comment, feature, featureGroup
+  roles, user, movie, cast, comment, ebooks, genre, author, chapter, review, comment, feature, featureGroup
 }
 
 module.exports = Controller

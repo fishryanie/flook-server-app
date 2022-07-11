@@ -1,34 +1,33 @@
 const upload = require("../../functions/UploadImage");
 const middlewares = require("../../middlewares");
 const Controller = require('../../controllers');
-const routesString = require('../../constants/routes');
+const apiString = require('../../constants/routes');
 const subStr = require('../../functions/subString')
 
-module.exports = app => {
-  // Thêm bình luận
-  app.post("/api/comment-management/addComment", [
-  ], Controller.comment.addComment);
+module.exports = app => { 
+  app.get(apiString.findOneComment, middlewares.auth.accessPermission(subStr(apiString.findOneComment)) , Controller.comment.findOneComment);
+  
+  app.get(apiString.findManyComment, middlewares.auth.accessPermission(subStr(apiString.findManyComment)) , Controller.comment.findManyComment);
+  
+  app.get(apiString.searchComment, middlewares.auth.accessPermission(subStr(apiString.searchComment)) , Controller.comment.searchComment);
+  
+  app.put(apiString.updateOneComment, middlewares.auth.accessPermission(subStr(apiString.updateOneComment)) , Controller.comment.updateOneComment);
+  
+  app.post(apiString.insertOneComment, middlewares.auth.accessPermission(subStr(apiString.insertOneComment)) , Controller.comment.insertOneComment);
+  
+  app.post(apiString.insertManyComment, middlewares.auth.accessPermission(subStr(apiString.insertManyComment)) , Controller.comment.insertManyComment);
+  
+  app.delete(apiString.deleteOneComment, middlewares.auth.accessPermission(subStr(apiString.deleteOneComment)) , Controller.comment.deleteOneComment);
+  
+  app.delete(apiString.deleteManyComment, middlewares.auth.accessPermission(subStr(apiString.deleteManyComment)) , Controller.comment.deleteManyComment);
+  
+  app.delete(apiString.removeOneComment, middlewares.auth.accessPermission(subStr(apiString.removeOneComment)) , Controller.comment.removeOneComment);
+  
+  app.delete(apiString.removeManyComment, middlewares.auth.accessPermission(subStr(apiString.removeManyComment)) , Controller.comment.removeManyComment);
+  
+}
 
-  // update bình luận
-  app.put(routesString.updateOneComment, 
-    middlewares.auth.accessPermission(subStr(routesString.updateOneComment)), 
-    Controller.comment.updateComment);
 
-  // delete comment
-  app.delete(routesString.deleteOneComment, 
-    middlewares.auth.accessPermission(subStr(routesString.deleteOneComment)), 
-    Controller.comment.deleteComment);
-    
-  // like and dislike
-  app.put("/api/comment-management/likeAndDislikeComment/:id/:likeAndDislike", [
-
-  ], Controller.comment.likeAndDislike);
-
-  // danh sách bình luận theo mã phim sắp xếp theo ngày
-  app.get("/api/comment-management/getAllCommentSort", [
-
-  ], Controller.comment.getAllCommentSort);
-};
 
 
 

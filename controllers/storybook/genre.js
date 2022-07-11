@@ -79,6 +79,49 @@ module.exports = {
   
   },
 
-  
+  findOneGenre: (req, res) => {
+    
+  },
+
+  findManyGenre: async (req, res) => {
+    
+  },
+
+  insertOneGenre: async (req, res) => {
+
+  },
+
+  insertOneGenre: async (req, res) => {
+
+  },
+
+  insertManyGenre: async (req, res) => {
+
+  },
+
+  updateOneGenre: async (req, res) => {
+
+  },
+
+  deleteOneGenre: async (req, res) => {
+
+  },
+
+  deleteManyGenre: async (req, res) => {
+
+  },
+
+  removeOneGenre: async (req, res) => {
+
+  },
+
+  removeManyGenre: async (req, res) => {
+
+  },
+
+  searchGenre: async (req, res) =>{
+
+  }
+
 }
 

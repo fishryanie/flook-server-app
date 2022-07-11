@@ -151,4 +151,47 @@ module.exports = {
   AddMovieController,
   DeleteMovieController,
   UpdateMovieController,
+
+  findOneMovie: (req, res) => {
+    
+  },
+
+  findManyMovie: async (req, res) => {
+    
+  },
+
+  insertOneMovie: async (req, res) => {
+
+  },
+
+  insertOneMovie: async (req, res) => {
+
+  },
+
+  insertManyMovie: async (req, res) => {
+
+  },
+
+  updateOneMovie: async (req, res) => {
+
+  },
+
+  deleteOneMovie: async (req, res) => {
+
+  },
+
+  deleteManyMovie: async (req, res) => {
+
+  },
+
+  removeOneMovie: async (req, res) => {
+
+  },
+
+  removeManyMovie: async (req, res) => {
+
+  },
+
+  searchMovie: async (req, res) => {
+  }
 };

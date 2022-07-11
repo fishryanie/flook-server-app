@@ -29,7 +29,7 @@ app.use(favicon(__dirname + '/favicon.ico'));
 app.use(morgan('dev'))
 
 database.then(() => {
-  formatData()
+  //formatData()
 
   console.log('Database connected');
 }).catch(error => console.error(error))
@@ -43,4 +43,11 @@ if (process.env.NODE_ENV !== 'test') {
 app.listen(process.env.PORT || 8000 , () => console.info('Server is running on port ' + process.env.PORT || 8000));
 }
 
-console.log("hello")
+
+// function subStr(value){
+//   value = value.substring(value.lastIndexOf('/')+1,value.length);    
+//   return value;
+// }
+
+// const routesString = require('./constants/routes');
+// console.log(subStr(routesString.deleteManyAuthor))

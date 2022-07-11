@@ -1,22 +1,28 @@
 const upload = require("../../functions/UploadImage");
 const middlewares = require("../../middlewares");
 const Controller = require('../../controllers');
-const routesString = require('../../constants/routes');
+const apiString = require('../../constants/routes');
 const subStr = require('../../functions/subString')
 
-
-module.exports = app => {
-  //Tìm diễn viên bằng ID
-  app.get(routesString.findCastByMovieId, middlewares.auth.accessPermission(subStr(routesString.findCastByMovieId)), Controller.cast.findCastByMovieId);
-  // thêm diễn viên
-  app.post(routesString.addNewCast, middlewares.auth.accessPermission(subStr(routesString.addNewCast)), Controller.cast.addNewCast);
-
-  // update diễn viên
-  app.put(routesString.updateCast, middlewares.auth.accessPermission(subStr(routesString.updateCast)), Controller.cast.updateCast);
-  // Xoá diễn viên
-  app.delete(routesString.deleteCast, middlewares.auth.accessPermission(subStr(routesString.deleteCast)), Controller.cast.deleteCast);
-
-
-
-};
-
+module.exports = app => { 
+  app.get(apiString.findOneCast, middlewares.auth.accessPermission(subStr(apiString.findOneCast)) , Controller.cast.findOneCast);
+  
+  app.get(apiString.findManyCast, middlewares.auth.accessPermission(subStr(apiString.findManyCast)) , Controller.cast.findManyCast);
+  
+  app.get(apiString.searchCast, middlewares.auth.accessPermission(subStr(apiString.searchCast)) , Controller.cast.searchCast);
+  
+  app.put(apiString.updateOneCast, middlewares.auth.accessPermission(subStr(apiString.updateOneCast)) , Controller.cast.updateOneCast);
+  
+  app.post(apiString.insertOneCast, middlewares.auth.accessPermission(subStr(apiString.insertOneCast)) , Controller.cast.insertOneCast);
+  
+  app.post(apiString.insertManyCast, middlewares.auth.accessPermission(subStr(apiString.insertManyCast)) , Controller.cast.insertManyCast);
+  
+  app.delete(apiString.deleteOneCast, middlewares.auth.accessPermission(subStr(apiString.deleteOneCast)) , Controller.cast.deleteOneCast);
+  
+  app.delete(apiString.deleteManyCast, middlewares.auth.accessPermission(subStr(apiString.deleteManyCast)) , Controller.cast.deleteManyCast);
+  
+  app.delete(apiString.removeOneCast, middlewares.auth.accessPermission(subStr(apiString.removeOneCast)) , Controller.cast.removeOneCast);
+  
+  app.delete(apiString.removeManyCast, middlewares.auth.accessPermission(subStr(apiString.removeManyCast)) , Controller.cast.removeManyCast);
+  
+}

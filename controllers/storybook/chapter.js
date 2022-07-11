@@ -80,4 +80,48 @@ module.exports = {
   findChapterById,
   findChapterByMangaId,
   addChapter,
+
+  findOneChapter: (req, res) => {
+    
+  },
+
+  findManyChapter: async (req, res) => {
+    
+  },
+
+  insertOneChapter: async (req, res) => {
+
+  },
+
+  insertOneChapter: async (req, res) => {
+
+  },
+
+  insertManyChapter: async (req, res) => {
+
+  },
+
+  updateOneChapter: async (req, res) => {
+
+  },
+
+  deleteOneChapter: async (req, res) => {
+
+  },
+
+  deleteManyChapter: async (req, res) => {
+
+  },
+
+  removeOneChapter: async (req, res) => {
+
+  },
+
+  removeManyChapter: async (req, res) => {
+
+  },
+
+  searchChapter: async (req, res) =>{
+    
+  }
 }

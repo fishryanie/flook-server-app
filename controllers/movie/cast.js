@@ -89,11 +89,57 @@ const deleteCast = async (req, res) => {
 };
 
 
+
+
 module.exports = {
   addNewCast,
   updateCast,
   deleteCast,
   findCastByMovieId,
+
+  findOneCast: (req, res) => {
+    
+  },
+
+  findManyCast: async (req, res) => {
+    
+  },
+
+  insertOneCast: async (req, res) => {
+
+  },
+
+  insertOneCast: async (req, res) => {
+
+  },
+
+  insertManyCast: async (req, res) => {
+
+  },
+
+  updateOneCast: async (req, res) => {
+
+  },
+
+  deleteOneCast: async (req, res) => {
+
+  },
+
+  deleteManyCast: async (req, res) => {
+
+  },
+
+  removeOneCast: async (req, res) => {
+
+  },
+
+  removeManyCast: async (req, res) => {
+
+  },
+
+  searchCast: async (req, res) => {
+
+  }
 };
 
 

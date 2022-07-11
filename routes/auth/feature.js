@@ -1,23 +1,29 @@
 const upload = require("../../functions/UploadImage");
 const middlewares = require("../../middlewares");
 const Controller = require('../../controllers');
-const routesString = require('../../constants/routes');
+const apiString = require('../../constants/routes');
 const subStr = require('../../functions/subString')
 
 module.exports = app => { 
-  app.get(routesString.findManyFeature, middlewares.auth.accessPermission(subStr(routesString.findManyFeature)) , Controller.feature.findMany);
+  app.get(apiString.findOneFeature, middlewares.auth.accessPermission(subStr(apiString.findOneFeature)) , Controller.feature.findOneFeature);
   
-  app.get(routesString.insertOneFeature, middlewares.auth.accessPermission(subStr(routesString.insertOneFeature)) , Controller.feature.findByFeatureGroupId);
+  app.get(apiString.findManyFeature, middlewares.auth.accessPermission(subStr(apiString.findManyFeature)) , Controller.feature.findManyFeature);
+  
+  app.get(apiString.searchFeature, middlewares.auth.accessPermission(subStr(apiString.searchFeature)) , Controller.feature.searchFeature);
+  
+  app.post(apiString.insertOneFeature, middlewares.auth.accessPermission(subStr(apiString.insertOneFeature)) , Controller.feature.insertOneFeature);
+  
+  app.post(apiString.insertManyFeature, middlewares.auth.accessPermission(subStr(apiString.insertManyFeature)) , Controller.feature.insertManyFeature);
+  
+  app.put(apiString.updateOneFeature, middlewares.auth.accessPermission(subStr(apiString.updateOneFeature)) , Controller.feature.updateOneFeature);
+  
+  app.delete(apiString.deleteOneFeature, middlewares.auth.accessPermission(subStr(apiString.deleteOneFeature)) , Controller.feature.deleteOneFeature);
+  
+  app.delete(apiString.deleteManyFeature, middlewares.auth.accessPermission(subStr(apiString.deleteManyFeature)) , Controller.feature.deleteManyFeature);
+  
+  app.delete(apiString.removeOneFeature, middlewares.auth.accessPermission(subStr(apiString.removeOneFeature)) , Controller.feature.removeOneFeature);
 
-  app.get(routesString.deleteOneFeature, middlewares.auth.accessPermission(subStr(routesString.deleteOneFeature)) , Controller.feature.findMany);
-  
-  app.get(routesString.updateOneFeature, middlewares.auth.accessPermission(subStr(routesString.updateOneFeature)) , Controller.feature.findByFeatureGroupId);
+  app.delete(apiString.removeManyFeature, middlewares.auth.accessPermission(subStr(apiString.removeManyFeature)) , Controller.feature.removeManyFeature);
 
-  app.get(routesString.deleteManyFeature, middlewares.auth.accessPermission(subStr(routesString.deleteManyFeature)) , Controller.feature.findMany);
-  
-  app.get(routesString.insertManyFeature, middlewares.auth.accessPermission(subStr(routesString.insertManyFeature)) , Controller.feature.findByFeatureGroupId);
-
-  app.get(routesString.findOneFeature, middlewares.auth.accessPermission(subStr(routesString.findOneFeature)) , Controller.feature.findMany);
-  
   
 }

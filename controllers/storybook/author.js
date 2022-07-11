@@ -48,7 +48,51 @@ const addAuthor = async (req, res) => {
 }
 
 const Controller = {
-  findMany, addAuthor
+  findMany, addAuthor,
+
+  findOneAuthor: (req, res) => {
+    
+  },
+
+  findManyAuthor: async (req, res) => {
+    
+  },
+
+  insertOneAuthor: async (req, res) => {
+
+  },
+
+  insertOneAuthor: async (req, res) => {
+
+  },
+
+  insertManyAuthor: async (req, res) => {
+
+  },
+
+  updateOneAuthor: async (req, res) => {
+
+  },
+
+  deleteOneAuthor: async (req, res) => {
+
+  },
+
+  deleteManyAuthor: async (req, res) => {
+
+  },
+
+  removeOneAuthor: async (req, res) => {
+
+  },
+
+  removeManyAuthor: async (req, res) => {
+
+  },
+
+  searchAuthor: async (req, res) =>{
+    
+  }
 }
 
 module.exports = Controller

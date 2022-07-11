@@ -282,4 +282,48 @@ module.exports = {
   deletedManga,
   updateManga,
   filterMany,
+
+  findOneEbook: (req, res) => {
+    
+  },
+
+  findManyEbook: async (req, res) => {
+    
+  },
+
+  insertOneEbook: async (req, res) => {
+
+  },
+
+  insertOneEbook: async (req, res) => {
+
+  },
+
+  insertManyEbook: async (req, res) => {
+
+  },
+
+  updateOneEbook: async (req, res) => {
+
+  },
+
+  deleteOneEbook: async (req, res) => {
+
+  },
+
+  deleteManyEbook: async (req, res) => {
+
+  },
+
+  removeOneEbook: async (req, res) => {
+
+  },
+
+  removeManyEbook: async (req, res) => {
+
+  },
+
+  searchEbook: async (req, res) =>{
+    
+  }
 }
