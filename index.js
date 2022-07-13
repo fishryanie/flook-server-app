@@ -28,7 +28,7 @@ app.use(favicon(__dirname + '/favicon.ico'));
 app.use(morgan('dev'))
 
 database.then(() => {
-  // formatData()
+  // formatData() 
 
   console.log('Database connected');
 }).catch(error => console.error(error))

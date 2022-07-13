@@ -98,6 +98,16 @@
     "featureName": "delete-many-comment",
     "featureGroup": "auth",
     "roles": ["Moderator"]
+  },
+  {
+    "featureName": "like-and-unlike-comment",
+    "featureGroup": "auth",
+    "roles": [ "Moderator","Admin","User"]
+  },
+  {
+    "featureName": "get-all-comment-sort",
+    "featureGroup": "auth",
+    "roles": ["Moderator","Admin","User"]
   }
 ]
 

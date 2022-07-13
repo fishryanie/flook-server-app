@@ -183,13 +183,24 @@ const getAllReviewSort = async (req, res) => {
   if (!comicId) {
     return res.status(400).send({ messages: messages.NotFound });
   } else {
+
+    const resultRating = await models.reviews.find({ ebooks: comicId, deleted: false })
+    const lenghtRating = resultRating.length
+    let total = 0
+        for(let i =0; i < lenghtRating; i++){
+        total += resultRating[i].rating
+    }
+    let averageRating = total/lenghtRating
+  
+
     if (page && !sort && !rating) {
-      console.log("get all phân trang");
+     
       try {
         const result = await models.reviews.find({ ebooks: comicId, deleted: false })
           .skip(skip)
-          .limit(PAGE_SIZE);
-        return res.status(200).send({ data: result, susscess:true, massage:messages.GetDataSuccessfully });
+          .limit(PAGE_SIZE)
+          .sort({"createAt": -1})
+        return res.status(200).send({ data: {result,averageRating }, susscess:true, massage:messages.GetDataSuccessfully });
       } catch (error) {
         handleError.ServerError(error, res);
       }
@@ -202,7 +213,7 @@ const getAllReviewSort = async (req, res) => {
           .skip(skip)
           .limit(PAGE_SIZE)
           .sort({ createAt: sort === "ASC" ? 1 : -1 });
-        return res.status(200).send({ data: result, susscess:true, massage:messages.GetDataSuccessfully  });
+        return res.status(200).send({ data: {result,averageRating}, susscess:true, massage:messages.GetDataSuccessfully  });
       } catch (error) {
         handleError.ServerError(error, res);
       }
@@ -216,7 +227,7 @@ const getAllReviewSort = async (req, res) => {
           .skip(skip)
           .limit(PAGE_SIZE)
           .sort({ rating: sort === "ASC" ? 1 : -1 });;
-        return res.status(200).send({ data: result ,susscess:true, massage:messages.GetDataSuccessfully});
+        return res.status(200).send({ data:  {result, averageRating} ,susscess:true, massage:messages.GetDataSuccessfully});
       } catch (error) {
         handleError.ServerError(error, res);
       }

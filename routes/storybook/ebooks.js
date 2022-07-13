@@ -6,7 +6,7 @@ module.exports = app => {
 
   app.get('/api/ebooks-management/fineOneManga', Controller.ebooks.findMangaById)
 
-  app.get('/api/ebooks-management/findManyManga', Controller.ebooks.filterMany)
+
 
   app.get('/api/manga-management/getMangaByGenre', Controller.ebooks.findMangaByGenre)
 
@@ -20,7 +20,7 @@ module.exports = app => {
     upload.single("image")
   ],Controller.ebooks.addManga)
 
-  app.post('/api/manga-management/filterManga', Controller.ebooks.filterMany)
+  app.post('/api/ebook-management/filter-ebooks', Controller.ebooks.filterEbooks)
 
   app.put('/api/manga-management/updateManga/:id',[
     upload.single("image")
