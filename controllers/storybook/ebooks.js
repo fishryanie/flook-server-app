@@ -157,14 +157,13 @@ const filterEbooks = async (req, res) => {
     const numPages = parseInt(req.query.page)
     const skip = numPages ? (numPages - 1) * PAGE_SIZE : null
     const { author, genre, status, allowedAge, chapter, sort } = req.body;
-    console.log("🚀 ~ file: ebooks.js ~ line 160 ~ filterEbooks ~ req.body", allowedAge.length)
-
+  
     let find, populate = ['authors', 'genres']
 
     let alowAgeCondition, chapterCondition, sortCondition
 
     if (allowedAge.length > 0) {
-      console.log("allowedAge[0].allowed", allowedAge[0])
+      // console.log("allowedAge[0].allowed", allowedAge[0])
       switch (allowedAge[0]) {
         case 11: alowAgeCondition = { $lte: 11 }
           break;
@@ -179,7 +178,7 @@ const filterEbooks = async (req, res) => {
       }
     }
 
-    console.log("alowAgeCondition", alowAgeCondition);
+    // console.log("alowAgeCondition", alowAgeCondition);
     if (chapter.length > 0) {
       switch (chapter[0]) {
         case 49: chapterCondition = { $lte: 49 }
@@ -200,7 +199,7 @@ const filterEbooks = async (req, res) => {
           break;
       } 
     }
-  console.log("chapterCondition", chapterCondition);
+  // console.log("chapterCondition", chapterCondition);
     if (sort.length > 0) {
    
       switch (sort[0].name) {
@@ -226,7 +225,6 @@ const filterEbooks = async (req, res) => {
       }
     }
 
-
     if (author[0] === 'All' && genre[0] === 'All' && chapter.length == 0 && allowedAge.length == 0 && status.length == 0) {
       find = null
     } else {
@@ -241,10 +239,7 @@ const filterEbooks = async (req, res) => {
       }
     }
 
-   
 
-    console.log("find", find);
-    console.log("sortcondition", sortCondition);
     const count = await models.ebooks.find(find).count();
 
     if (sort.length > 0 && req.query.page > 0) {
@@ -254,7 +249,6 @@ const filterEbooks = async (req, res) => {
     else if (sort.length === 0) {
       result = await models.ebooks.find(find).populate(populate).skip(skip).limit(PAGE_SIZE);
     }
-
 
    res.status(200).send({ data: { data: result, count: count }, success: true, message: messages.GetDataSuccessfully })
 
