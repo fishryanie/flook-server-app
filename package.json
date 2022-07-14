@@ -7,7 +7,7 @@
     "dev": "nodemon index.js",
     "test": "jest --watchAll",
     "start": "pm2 start index.js --name flook-server-app --no-daemon --log-date-format='MM-DD hh:mm:ss.SSS A'",
-    "switch-css": "node-sass -w views/scss/index.scss views/css/index.css"
+    "switch-css": "node-sass -w src/resources/scss/index.scss src/public/css/index.css"
   },
   "keywords": [],
   "author": "Phan Hồng Quân",

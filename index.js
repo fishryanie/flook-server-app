@@ -1,5 +1,7 @@
 require('dotenv/config')
 
+const path = require('path');
+
 const cors = require("cors");
 
 const morgan = require('morgan');
@@ -56,7 +58,7 @@ app.use(morgan('dev'))
 
 app.set('view engine', 'hbs');
 
-app.set('views', './views')
+app.set('views', path.join(__dirname,'resources/views'))
 
 app.get("/", (req, res) => res.render('web-hook', routesString));
 
