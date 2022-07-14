@@ -2,6 +2,7 @@ const cloudinary = require('../../configs/cloudnary')
 const models = require("../../models");
 const handleError = require("../../error/HandleError");
 const messages = require("../../constants/messages");
+const { addDays } = require('../../functions/globalFunc');
 const folder = { folder: 'Flex-ticket/ImageAuther' }
 
 
@@ -102,7 +103,7 @@ module.exports = {
       if (authorFind.deleted === true) {
         row = await models.authors.findByIdAndUpdate(id, { deleted: false, deleteAt: "", updateAt: authorFind.updateAt, createAt: authorFind.createAt }, option);
       } else {
-        row = await models.authors.findByIdAndUpdate(id, { deleted: true, deleteAt: FormatDate.addDays(0), updateAt: authorFind.updateAt, createAt: authorFind.createAt }, option);
+        row = await models.authors.findByIdAndUpdate(id, { deleted: true, deleteAt: addDays(0), updateAt: authorFind.updateAt, createAt: authorFind.createAt }, option);
       }
       if (!row) {
         console.log(messages.NotFound);
@@ -128,11 +129,7 @@ module.exports = {
       if (!result) {
         return res.status(400).send({ success: false, message: messages.RemoveNotSuccessfully });
       }
-      const response = {
-        success: true,
-        message: messages.RemoveSuccessfully,
-      };
-      return res.status(200).send(response);
+      return res.status(200).send({success:true, message: messages.DeleteSuccessfully });
     } catch (error) {
       handleError.ServerError(error, res);
     }

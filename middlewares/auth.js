@@ -17,19 +17,20 @@ const accessPermission = typefunc => async (req, res, next) => {
       // Shold returns if no logged in user is found
       if (!userIsLogged) return handleError.NotFoundError(decoded.id, res)
       // Find feature default
-      const feature = await models.features.find({featureName: typefunc})
+      let feature = await models.features.findOne({featureName: typefunc})
       // Create a new feature if not found
-      if (feature == '') await models.features.create({featureName: typefunc})
-      // Compare featureRole and userRole
-      else {
-        feature[0].roles?.forEach(featureRole => {
-          userIsLogged.roles?.forEach(userRole => {
-            if (featureRole.toString() === userRole._id.toString()) {              
-              array.push(featureRole)
-            }
-          }) 
-        })
+      if (!feature) {
+        const role = await models.roles.findOne({name:"Admin"})
+        feature = await models.features.create({featureName: typefunc, roles:[role._id]})
       }
+      feature?.roles?.forEach(featureRole => {
+        userIsLogged.roles?.forEach(userRole => {
+          if (featureRole.toString() === userRole._id.toString()) {              
+            array.push(featureRole)
+          }
+        }) 
+      })
+      req.userIsLoggedId = userIsLogged
       array.length > 0 ? next() : handleError.PermissionError(res)
     })
   }

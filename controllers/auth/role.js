@@ -1,5 +1,7 @@
 const models = require('../../models');
 const handleError = require('../../error/HandleError');
+const { addDays } = require('../../functions/globalFunc');
+const messages = require('../../constants/messages');
 
 module.exports = {
 
@@ -55,21 +57,19 @@ module.exports = {
     let row;
     try {
       if (roleFind.deleted === true) {
-        row = await models.roles.findByIdAndUpdate(id, { deleted: false, deleteAt: "", updateAt: roleFind.updateAt, createAt: roleFind.createAt }, option);
+        row = await models.roles.findByIdAndUpdate(id, { deleted: false, deleteAt: null, updateAt: roleFind.updateAt, createAt: roleFind.createAt }, option);
       } else {
         row = await models.roles.findByIdAndUpdate(id, { 
           deleted: true, 
-          deleteAt: FormatDate.addDays(0), 
+          deleteAt: addDays(0), 
           updateAt: roleFind.updateAt, 
           createAt: roleFind.createAt 
         },  { upsert: true });
       }
       if (!row) {
-        console.log(messages.NotFound);
-        return res.status(404).send({ message: messages.NotFound + id });
+        return handleError.NotFoundError(id, res)
       }
-      console.log(messages.DeleteSuccessfully);
-      return res.status(200).send({ message: messages.DeleteSuccessfully });
+      return res.status(200).send({success: true, message: messages.DeleteSuccessfully });
     } catch (error) {
       return handleError.ServerError(error, res)
     }
@@ -77,22 +77,16 @@ module.exports = {
 
   removeManyRole: async (req, res) => {
     const listDelete = req.body;
-    const option = { new: true };
-    console.log('removeManyRole', listDelete)
     try {
       const result = await models.roles.updateMany(
         { "_id": { $in: listDelete } },
-        { $set: { deleted: true, deleteAt: Date.now() } },
-        option
+        { $set: { deleted: true, deleteAt: addDays(0) } },
+        { new: true }
       );
       if (!result) {
-        return res.status(400).send({ success: false, message: messages.RemoveNotSuccessfully });
+        return res.status(400).send({success:false, message: messages.RemoveNotSuccessfully});
       }
-      const response = {
-        success: true,
-        message: messages.RemoveSuccessfully,
-      };
-      return res.status(200).send(response);
+      return res.status(200).send({success:true, message: messages.DeleteSuccessfully });
     } catch (error) {
       handleError.ServerError(error, res);
     }

@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const configsToken = require('../configs/token');
 const dataDefault = require('../functions/dataDefault');
 const zalopay = require('../configs/zalopay');
+const { addDays, randomDate } = require('../functions/globalFunc');
 
 module.exports = app => {
 
@@ -14,6 +15,7 @@ module.exports = app => {
   require('./auth/featureGroup')(app)
   require('./movie/cast')(app)
   require('./movie/movie')(app)
+  require('./review/review')(app)
   require('./review/comment')(app)
   require('./storybook/ebooks')(app)
   require('./storybook/genre')(app)
@@ -74,4 +76,6 @@ module.exports = app => {
       handleError.ServerError(error, res)
     }
   })
+
+
 }

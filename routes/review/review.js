@@ -1,8 +1,9 @@
 const upload = require("../../functions/UploadImage");
 const middlewares = require("../../middlewares");
 const Controller = require('../../controllers');
-const apiString = require('../../constants/routes');
-const subStr = require('../../functions/subString')
+const apiString = require('../../constants/api');
+const { subStr } = require("../../functions/globalFunc");
+
 
 module.exports = app => { 
   app.get(apiString.findOneReview, middlewares.auth.accessPermission(subStr(apiString.findOneReview)) , Controller.review.findOneReview);

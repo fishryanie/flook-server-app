@@ -64,9 +64,9 @@ const routesString = {
   updateOneGenre: `${genre}/update-one-genre`,
   deleteOneGenre: `${genre}/delete-one-genre`,
   deleteManyGenre: `${genre}/delete-many-genre`,
-  removeOneGenre: `${role}/remove-one-genre`,
-  removeManyGenre: `${role}/remove-many-genre`,
-  searchGenre: `${role}/search-one-genre`,
+  removeOneGenre: `${genre}/remove-one-genre`,
+  removeManyGenre: `${genre}/remove-many-genre`,
+  searchGenre: `${genre}/search-one-genre`,
 
   // ebook
   findOneEbook: `${ebook}/find-one-ebook`,
@@ -76,9 +76,9 @@ const routesString = {
   updateOneEbook: `${ebook}/update-one-ebook`,
   deleteOneEbook: `${ebook}/delete-one-ebook`,
   deleteManyEbook: `${ebook}/delete-many-ebook`,
-  removeOneEbook: `${role}/remove-one-ebook`,
-  removeManyEbook: `${role}/remove-many-ebook`,
-  searchEbook: `${role}/search-one-ebook`,
+  removeOneEbook: `${ebook}/remove-one-ebook`,
+  removeManyEbook: `${ebook}/remove-many-ebook`,
+  searchEbook: `${ebook}/search-one-ebook`,
 
   // chapter
   findOneChapter: `${chapter}/find-one-chapter`,
@@ -100,9 +100,9 @@ const routesString = {
   updateOneReview: `${review}/update-one-review`,
   deleteOneReview: `${review}/delete-one-review`,
   deleteManyReview: `${review}/delete-many-review`,
-  removeOneReview: `${chapter}/remove-one-chapter`,
-  removeManyReview: `${chapter}/remove-many-chapter`,
-  searchReview: `${chapter}/search-one-chapter`,
+  removeOneReview: `${review}/remove-one-chapter`,
+  removeManyReview: `${review}/remove-many-chapter`,
+  searchReview: `${review}/search-one-chapter`,
 
   // comment
   findOneComment: `${comment}/find-one-comment`,

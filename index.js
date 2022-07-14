@@ -24,10 +24,6 @@ const database = require('./configs/mongodb')
 
 const app = express();
 
-const corsOptions = { credentials: true, optionsSuccessStatus: 204, origin: '*', method: 'GET, POST, PUT, DELETE HEAD, PATCH' };
-
-app.use(cors(corsOptions));
-
 app.use(cookieParser());
 
 app.use(bodyParser.json());
@@ -44,11 +40,22 @@ app.set('view engine', 'hbs');
 
 app.set('views', './views')
 
-app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', req.header('origin') );
+app.use((req, res, next) => {
+  app.use(cors({
+    credentials: true, 
+    origin: req.headers.origin,
+  }));
+  next();
+});
+
+app.use((req, res, next) => {
   res.header('Access-Control-Allow-Credentials', true);
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Methods', "GET,HEAD,PUT,PATCH,POST,DELETE");
+  res.header(
+   'Access-Control-Allow-Headers',
+   'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept'
+  );
   next();
 });
 
@@ -56,8 +63,8 @@ app.get("/", (req, res) => res.render('index', apiString));
 
 database.then(() => {
 
-  dataDefault()
-
+  // dataDefault()
+ 
   require('./routes')(app)
 
   console.log(messages.mongoDBSuccess);

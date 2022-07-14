@@ -16,7 +16,7 @@ const dataDefaults = {
 
 }
 
-const { randomArray, addArrayDays, randomInteger } = require('./globalFunc');
+const { randomArray, addArrayDays, randomInteger, randomDate } = require('./globalFunc');
 
 
 const formatData = () => {
@@ -71,6 +71,8 @@ const formatData = () => {
       const arrayFeatures = await insert_many_features(arrayRoles, arrayFeatureGroups)
 
       const arrayComments = await insert_many_comments(arrayUsers, arrayReviews, arrayChapters, arrayPosts)
+
+      const updateCreateAtUser = await update_createAt_users(arrayUsers)
 
       const updateHistory = await update_history_users(arrayEbooks, arrayChapters)
 
@@ -240,6 +242,15 @@ async function insert_many_comments(arrayUsers, arrayReviews, arrayChapters, arr
 
 /** =======================||FUNCTIONS FORMAT UPDATE SAMPLE DATA ||=============================*/
 
+async function update_createAt_users(arrayUsers){
+  arrayUsers.forEach(async user => {
+    await models.users.updateOne(
+      { _id: user._id }, 
+      { createAt: randomDate(new Date(2018, 0, 0), new Date())},
+      { new: true }
+    );
+  })
+} 
 
 async function update_history_users(arrayEbooks, arrayChapters){
   return await models.users.updateMany({}, {$set: {

@@ -6,22 +6,19 @@ const { subStr } = require("../../functions/globalFunc");
 
 module.exports = app => {
 
-  app.get(apiString.findManyUser,
-    middlewares.auth.accessPermission(subStr(apiString.findManyUser)),
-    Controller.user.FindManyUser);
+  app.get(apiString.findManyUser, middlewares.auth.accessPermission(subStr(apiString.findManyUser)), Controller.user.FindManyUser);
 
   app.get(apiString.searchUser, middlewares.auth.accessPermission(subStr(apiString.searchUser)), Controller.user.FindManyUser);
 
-  app.get(apiString.findOneUser, middlewares.auth.accessPermission(subStr(apiString.findOneUser)),
-    Controller.user.FindByIdUserController);
+  app.get(apiString.findOneUser, middlewares.auth.accessPermission(subStr(apiString.findOneUser)), Controller.user.FindByIdUserController);
 
   app.get(apiString.setActiveUser, Controller.user.ActiveUserController);
 
   app.delete(apiString.deleteOneUser, middlewares.auth.accessPermission(subStr(apiString.deleteOneUser)), Controller.user.DeleteUserController);
 
-  app.delete(apiString.removeOneUser, middlewares.auth.accessPermission(subStr(apiString.removeOneUser)), Controller.user.DeleteUserController);
+  app.delete(apiString.removeOneUser, middlewares.auth.accessPermission(subStr(apiString.removeOneUser)), Controller.user.removeOneUser);
 
-  app.delete(apiString.removeManyUser, middlewares.auth.accessPermission(subStr(apiString.removeManyUser)), Controller.user.DeleteUserController);
+  app.delete(apiString.removeManyUser, middlewares.auth.accessPermission(subStr(apiString.removeManyUser)), Controller.user.removeManyUser);
 
 
   app.post(apiString.login, [

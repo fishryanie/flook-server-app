@@ -6,7 +6,7 @@ const SendMail = require("../../functions/SendMail");
 const configsToken = require("../../configs/token");
 const messages = require("../../constants/messages");
 const handleError = require('../../error/HandleError');
-const { generatePassword } = require("../../functions/globalFunc");
+const { generatePassword, addDays } = require("../../functions/globalFunc");
 const folder = { folder: 'Flex-ticket/ImageUser' }
 
 
@@ -301,6 +301,50 @@ module.exports = {
     
     } catch (error) {
       return handleError.ServerError(error, res)
+    }
+  },
+
+  removeOneUser: async (req, res) => {
+    const option = { new: true };
+    const id = req.query.id;
+    const userFind = await models.users.findById(id);
+    let row;
+  
+    try {
+  
+      if (userFind.deleted === true) {
+        row = await models.users.findByIdAndUpdate(id, { deleted: false, deleteAt: null, updateAt: userFind.updateAt, createAt: userFind.createAt }, option);
+      } else {
+        row = await models.users.findByIdAndUpdate(id, { deleted: true, deleteAt: addDays(0), updateAt: userFind.updateAt, createAt: userFind.createAt }, option);
+      }
+      if (!row) {
+        console.log(messages.NotFound);
+        return res.status(404).send({ message: messages.NotFound + id });
+      }
+      console.log(messages.DeleteSuccessfully);
+      return res.status(200).send({ message: messages.DeleteSuccessfully });
+    } catch (error) {
+      return handleError.ServerError(error, res)
+    }
+  },
+  removeManyUser: async (req, res) => {
+    const listDelete = req.body;
+    try {
+      const result = await models.users.updateMany(
+        { "_id": { $in: listDelete } },
+        { $set: { deleted: true, deleteAt: addDays(0) } },
+        { new: true }
+      );
+      if (!result) {
+        return res.status(400).send({ success: false, message: messages.RemoveNotSuccessfully });
+      }
+      const response = {
+        success: true,
+        message: messages.DeleteSuccessfully,
+      };
+      return res.status(200).send(response);
+    } catch (error) {
+      handleError.ServerError(error, res);
     }
   },
 

@@ -1,6 +1,7 @@
 const models = require("../../models");
 const messages = require("../../constants/messages");
 const handleError = require("../../error/HandleError");
+const { addDays } = require("../../functions/globalFunc");
 
 
 
@@ -77,21 +78,16 @@ module.exports = {
     const id = req.query.id;
     const chapterFind = await models.chapters.findById(id);
     let row;
-  
     try {
-  
       if (chapterFind.deleted === true) {
-        row = await models.chapters.findByIdAndUpdate(id, { deleted: false, deleteAt: "", updateAt: chapterFind.updateAt, createAt: chapterFind.createAt }, option);
+        row = await models.chapters.findByIdAndUpdate(id, { deleted: false, deleteAt: null, updateAt: chapterFind.updateAt, createAt: chapterFind.createAt }, option);
       } else {
-        row = await models.chapters.findByIdAndUpdate(id, { deleted: true, deleteAt: FormatDate.addDays(0), updateAt: chapterFind.updateAt, createAt: chapterFind.createAt }, option);
+        row = await models.chapters.findByIdAndUpdate(id, { deleted: true, deleteAt: addDays(0), updateAt: chapterFind.updateAt, createAt: chapterFind.createAt }, option);
       }
-      console.log(row);
       if (!row) {
-        console.log(messages.NotFound);
-        return res.status(404).send({ message: messages.NotFound + id });
+       return handleError.NotFoundError(id, res)
       }
-      console.log(messages.DeleteSuccessfully);
-      return res.status(200).send({ message: messages.DeleteSuccessfully });
+      return res.status(200).send({success:true, message: messages.DeleteSuccessfully });
     } catch (error) {
       return handleError.ServerError(error, res)
     }
@@ -104,19 +100,15 @@ module.exports = {
     try {
       const result = await models.chapters.updateMany(
         { "_id": { $in: listDelete } },
-        { $set: { deleted: true, deleteAt: Date.now() } },
+        { $set: { deleted: true, deleteAt: addDays(0) } },
         option
       );
       if (!result) {
         return res.status(400).send({ success: false, message: messages.RemoveNotSuccessfully });
       }
-      const response = {
-        success: true,
-        message: messages.RemoveSuccessfully,
-      };
-      return res.status(200).send(response);
+      return res.status(200).send({success:true, message: messages.DeleteSuccessfully });
     } catch (error) {
-      handleError.ServerError(error, res);
+      return handleError.ServerError(error, res);
     }
   },
 

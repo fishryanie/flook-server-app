@@ -87,6 +87,12 @@ function randomInteger(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function randomDate(start, end) {
+  let newDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+  newDate.setHours(7,0,0,0);
+  return newDate;
+}
+
 function subStr(value){
   return value?.substring(value.lastIndexOf('/')+1, value?.length);    
 }
@@ -96,6 +102,7 @@ const globalFunc = {
   addArrayDays,
   emptyTrash,
   subStr,
+  randomDate,
   randomArray,
   randomString,
   randomInteger,
