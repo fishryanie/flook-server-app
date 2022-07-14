@@ -77,5 +77,20 @@ module.exports = app => {
     }
   })
 
+  app.get('/api/thongke-new-user', async (req, res) => {
+    try {
+      let find
+      switch (req.query.time) {
+        case 'day': find =  {$where : `return this.createAt.getDate() == ${addDays(0).getDate().toString().length === 1 ? '0' + addDays(0).getDate() : addDays(0).getDate()} && this.createAt.getFullYear() == ${addDays(0).getFullYear()}`}; break;
+        case 'month': find = {$where : `return (this.createAt.getMonth() == ${addDays(0).getMonth().toString().length === 1 ? '0' + addDays(0).getMonth() : addDays(0).getMonth()}) && (this.createAt.getFullYear() == ${addDays(0).getFullYear()})`}; break;
+        case 'yeah': find =  {$where : `return this.createAt.getFullYear() == ${addDays(0).getFullYear()}`}; break;
+        default: break;
+      }      
+      const result = await models.users.find(find).sort({createAt: -1})
+      result && res.status(200).send({success: true, data:result})
+    } catch (error) {
+      handleError.ServerError(error, res)
+    }
+  })
 
 }
