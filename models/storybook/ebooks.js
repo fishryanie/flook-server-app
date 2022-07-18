@@ -13,7 +13,7 @@ const Ebooks = new mongoose.Schema({
   numChapters: { type: Number, default: 0 },
   allowedAge: { type: Number, trim: true, default: 0 },
   title: { type: String, trim: true, required: true, unique: true },
-  view: { type: Number, trim: true, default: 0 },
+  views: { type: Number, trim: true, default: 0 },
   vip: {type: Boolean, default: false},
   images: {
     wallPaper: {

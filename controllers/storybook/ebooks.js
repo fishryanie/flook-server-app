@@ -190,44 +190,91 @@ module.exports = {
     }
   },
 
+
+  
   searchEbook: async (req, res) =>{
-    const PAGE_SIZE = 12;
-    const numPages = parseInt(req.query.page)
-    const skip = numPages ? (numPages-1) * PAGE_SIZE : null
-    const { author, genre, status, allowedAge, chapter } = req.body;
-    let find, sortBook, result=[], populate = ['authors', 'genres']
-
-    switch (req.query.sort) {
-      case 'view': sortBook={view: -1}; break;
-      case 'title': sortBook={title: -1}; break;
-      case 'rating': break;
-      default: break;
-    }
-
-    if(author === undefined){
-      console.log('a');
-
-      find = null
-    } else if (author?.length >= 0 && author[0]==='All' && genre[0]==='All' && status[0]==='All' && allowedAge[0]==='All') {
-      find = null
-    } else {
-      find = { $or: [
-          { genre: { $in: genre } },
-          { author: { $in: author } },
-          { status: { $in: status } },
-          { allowedAge: { $in: allowedAge } },
-        ]
-      }
-    }
     try {
-      const count = await models.ebooks.find(find).count();
-      if (req.query.sort > 0 && req.query.page > 0) {
-        result = await models.ebooks.find(find).populate(populate).skip(skip).limit(PAGE_SIZE).sort(sortBook);
+      const PAGE_SIZE = 12;
+      const numPages = parseInt(req.query.page)
+      const skip = numPages ? (numPages - 1) * PAGE_SIZE : null
+      const { author, genre, status, allowedAge, chapter, sort } = req.body;
+      let find, alowAgeCondition, chapterCondition, sortCondition, populate = ['authors', 'genres']
+      if (allowedAge.length > 0) {
+        switch (allowedAge[0]) {
+          case 11: alowAgeCondition = { $lte: 11 }
+            break;
+          case 18: alowAgeCondition = { $lte: 18  ,$gte:12 }
+            break;
+          case 30: alowAgeCondition = { $lte: 30 ,  $gte: 18 }
+            break;
+          case 31: alowAgeCondition = { $gte: 31 }
+            break;
+          default: alowAgeCondition = null
+            break;
+        }
+      }  
+      if (chapter.length > 0) {
+        switch (chapter[0]) {
+          case 49: chapterCondition = { $lte: 49 }
+            break;
+          case 150: chapterCondition = { $lte: 150 , $gte: 50 }
+            break;
+          case 250: chapterCondition = { $lte: 250 ,  $gte: 150 }
+            break;
+          case 500: chapterCondition = { $lte: 500 ,  $gte: 250 }
+            break;
+          case 800: chapterCondition = { $lte: 800 ,  $gte: 500 }
+            break;
+          case 1000: chapterCondition = { $lte: 1000 , $gte: 800 }
+            break;
+          case 1001: chapterCondition = { $gte: 1001 }
+            break;
+          default: chapterCondition = null
+            break;
+        } 
       }
-      if (req.query.sort == 0) {
+      if (sort.length > 0) {
+        switch (sort[0].name) {
+          case "Sort by name":
+            if (sort[0].type === "ASC") {
+              sortCondition = { title: 1 }
+            } else sortCondition = { title: -1 }
+            break;
+          case "Sort by view":
+            if (sort[0].type === "ASC") {
+              sortCondition = { view: 1 }
+            } else sortCondition = { view: -1 }
+            break;
+          case "Sort by date":
+            if (sort[0].type === "ASC") {
+              sortCondition = { createAt: 1 }
+            } else sortCondition = { createAt: -1 }
+            break;
+          default: sortCondition = null
+            break;
+        }
+      }
+      if (author[0] === 'All' && genre[0] === 'All' && chapter.length == 0 && allowedAge.length == 0 && status.length == 0) {
+        find = null
+      } else {
+        find = {
+          $or: [
+            { genres: { $in: genre } },
+            { authors: { $in: author } },
+            { status: status[0]},
+            { allowedAge: alowAgeCondition },
+            { numChapters: chapterCondition },
+          ]
+        }
+      }  
+      const count = await models.ebooks.find(find).count();
+      if (sort.length > 0 && req.query.page > 0) {
+        console.log("Vào đây ");
+        result = await models.ebooks.find(find).populate(populate).skip(skip).limit(PAGE_SIZE).sort(sortCondition);
+      } else if (sort.length === 0) {
         result = await models.ebooks.find(find).populate(populate).skip(skip).limit(PAGE_SIZE);
       }
-      result.length > 0 && res.status(200).send({data: result, count: count, success:true})
+      return res.status(200).send({data:result, count: count, success: true, message: messages.GetDataSuccessfully })
     } catch (error) {
       return handleError.ServerError(error, res)
     }

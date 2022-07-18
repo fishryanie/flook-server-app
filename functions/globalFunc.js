@@ -2,7 +2,7 @@ const cloudinary = require('../configs/cloudnary')
 const models = require('../models')
 
 const listDateNewBook = 'EBOOKS_NEW'
-
+const listDaysOfWeeek = 'DAYS_OF_WEEK'
 const allowed = {
   uppers: "QWERTYUIOPASDFGHJKLZXCVBNM",
   lowers: "qwertyuiopasdfghjklzxcvbnm",
@@ -49,6 +49,13 @@ function addArrayDays(type, count){
   switch (type) { 
     case listDateNewBook: {
       for (let index = -10; index <= 0; index++) {
+        array.push(addDays(index))
+      }
+      return array;
+    }
+    case listDaysOfWeeek: {
+      let dayOfWeek = addDays(0).getDay()
+      for (let index = -dayOfWeek + 1; index <=  7 - dayOfWeek; index++) {
         array.push(addDays(index))
       }
       return array;

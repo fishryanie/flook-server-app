@@ -74,7 +74,7 @@ const formatData = () => {
 
       const updateCreateAtUser = await update_createAt_users(arrayUsers)
 
-      const updateHistory = await update_history_users(arrayEbooks, arrayChapters)
+      const updateHistory = await update_history_users(arrayUsers, arrayEbooks, arrayChapters)
 
       const updateSubscribe = await update_subscribe_users(arrayUsers, arrayEbooks, arrayAuthors)
 
@@ -146,6 +146,7 @@ async function insert_many_author(arrayUsers){
 
 async function insert_many_ebooks(arrayGenres, arrayAuthors){
   dataDefaults.ebooks.forEach(ebook => {
+    ebook.views = randomInteger(123,456)
     for (const x in arrayGenres) { 
       for (const y in ebook.genres) {
         if(ebook.genres[y] === arrayGenres[x].name){
@@ -164,6 +165,7 @@ async function insert_many_ebooks(arrayGenres, arrayAuthors){
   randomArray(dataDefaults.ebooks, 10).forEach((item, index) => {
     item.createAt = addArrayDays('EBOOKS_NEW')[index]
   })
+
   return await models.ebooks.insertMany(dataDefaults.ebooks)
 }
 
@@ -252,21 +254,24 @@ async function update_createAt_users(arrayUsers){
   })
 } 
 
-async function update_history_users(arrayEbooks, arrayChapters){
-  return await models.users.updateMany({}, {$set: {
-    'history.read.ebooks': randomArray(arrayEbooks, arrayEbooks.length * randomInteger(10,90) / 100).map(ebook => ebook._id),
-    'history.read.chapters': randomArray(arrayChapters, arrayChapters.length * randomInteger(10,90) / 100).map(chapter => chapter._id), 
-    'history.download.ebooks': randomArray(arrayEbooks, arrayEbooks.length * randomInteger(10,90) / 100).map(ebook => ebook._id), 
-    'history.download.chapters': randomArray(arrayChapters, arrayChapters.length * randomInteger(10,90) / 100).map(chapter => chapter._id), 
-  }}, {upsert: true})
+async function update_history_users(arrayUsers, arrayEbooks, arrayChapters){
+  arrayUsers.forEach(async user => {
+    let arrayEbooksRandom = Array.from(new Set(randomArray(arrayEbooks, arrayEbooks.length * randomInteger(10,90) / 100))).map(item => item._id)    
+    await models.users.updateOne({_id: user._id}, {'history.read.ebooks': arrayEbooksRandom}, { new: true });
+  })
 }
 
 async function update_subscribe_users(arrayUsers, arrayEbooks, arrayAuthors) {
-  return await models.users.updateMany({}, {$set: {
-    'subscribe.users': randomArray(arrayUsers, arrayUsers.length * randomInteger(10,90) / 100).map(item => item._id), 
-    'subscribe.ebooks': randomArray(arrayEbooks, arrayEbooks.length * randomInteger(10,90) / 100).map(item => item._id), 
-    'subscribe.authors': randomArray(arrayAuthors, arrayAuthors.length * randomInteger(10,90) / 100).map(item => item._id)
-  }}, {upsert: true})
+  arrayUsers.forEach(async user => {
+    let arrayUsersRandome = Array.from(new Set(randomArray(arrayUsers, arrayUsers.length * randomInteger(10,90) / 100))).map(item => item._id)
+    let arrayEbooksRandom = Array.from(new Set(randomArray(arrayEbooks, arrayEbooks.length * randomInteger(10,90) / 100))).map(item => item._id)
+    let arrayAuthorRandom = Array.from(new Set(randomArray(arrayAuthors, arrayAuthors.length * randomInteger(10,90) / 100))).map(item => item._id)
+    Promise.all([
+      models.users.updateOne({_id: user._id}, {'subscribe.users': arrayUsersRandome}, { new: true }),
+      models.users.updateOne({_id: user._id}, {'subscribe.ebooks': arrayEbooksRandom}, { new: true }),
+      models.users.updateOne({_id: user._id}, {'subscribe.authors': arrayAuthorRandom}, { new: true }),
+    ])
+  })
 }
 
 async function update_comments_to_comments(arrayUsers, arrayComments){
