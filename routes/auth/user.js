@@ -22,7 +22,7 @@ module.exports = app => {
 
 
   app.post(apiString.login, [
-    middlewares.auth.verifyUserName('login_app'),
+    middlewares.auth.verifyUserName(subStr(apiString.login)),
     middlewares.auth.VerifyPassword,
   ], Controller.user.Login);
 
@@ -30,14 +30,19 @@ module.exports = app => {
     middlewares.auth.VerifyEmail('create_new'),
   ], Controller.user.Register);
 
+  // app.post(apiString.insertOneUser, [
+  //   upload.single("avatar"),
+  //   middlewares.auth.accessPermission(subStr(apiString.insertOneUser)),
+  //   middlewares.auth.verifyUserName('create_new'),
+  //   middlewares.auth.VerifyEmail('create_new'),
+  // ], Controller.user.CreateNewController);
+
   app.post(apiString.insertOneUser, [
-    upload.single("avatar"),
-    middlewares.auth.accessPermission('create_new'),
+    upload.single("images"),
+    middlewares.auth.accessPermission(subStr(apiString.insertOneUser)),
     middlewares.auth.verifyUserName('create_new'),
     middlewares.auth.VerifyEmail('create_new'),
-    middlewares.auth.VerifyPhoneNumber,
   ], Controller.user.CreateNewController);
-
 
   app.put(apiString.forgotPassword, [
     middlewares.auth.VerifyEmail('')

@@ -6,6 +6,7 @@ const configsToken = require('../configs/token');
 const dataDefault = require('../functions/dataDefault');
 const zalopay = require('../configs/zalopay');
 const { addDays, randomDate, addArrayDays } = require('../functions/globalFunc');
+const moment = require('moment');
 const showEbook = {title:1, images:1, authors:1, genres:1, status:1, description:1, allowedAge:1, views:1}
 
 module.exports = app => {
@@ -82,15 +83,21 @@ module.exports = app => {
 
   app.get('/api/statistical/new-members', async (req, res) => {
     try {
-      let find
-      switch (req.query.time) {
-        case 'day': find =  {$where : `return this.createAt.getDate() == ${addDays(0).getDate().toString().length === 1 ? '0' + addDays(0).getDate() : addDays(0).getDate()} && this.createAt.getFullYear() == ${addDays(0).getFullYear()}`}; break;
-        case 'month': find = {$where : `return (this.createAt.getMonth() == ${addDays(0).getMonth().toString().length === 1 ? '0' + addDays(0).getMonth() : addDays(0).getMonth()}) && (this.createAt.getFullYear() == ${addDays(0).getFullYear()})`}; break;
-        case 'yeah': find =  {$where : `return this.createAt.getFullYear() == ${addDays(0).getFullYear()}`}; break;
-        default: break;
-      }      
-      const result = await models.users.find(find).sort({createAt: -1})
-      result && res.status(200).send({success: true, data:result})
+      function options(type){
+        return {$match: {deleted:false, createAt: { 
+          $gte: moment().startOf(type === 'week' ? 'isoWeek' : type).toDate(),
+          $lt: moment().endOf(type === 'week' ? 'isoWeek' : type).toDate()
+        }}}
+      }
+      const select = [
+        {$project: {displayName:1, createAt:1}},
+        {$group: {_id: {$month:"$createAt"}, count:{$sum:1}, listUser: { $push: '$$ROOT' }}},
+        {$project: {_id:0, month: '$_id', listUser: 1}},
+        {$sort: {month: 1}}
+      ]
+      select.unshift(options(req.query.time))
+      const result = await models.users.aggregate(select)
+      result && res.status(200).send({count:result.length, success:true, data:result})
     } catch (error) {
       handleError.ServerError(error, res)
     }
@@ -125,11 +132,19 @@ module.exports = app => {
       const select = [
         {$match: {deleted: false}},
         {$lookup: {from: 'reviews',localField: '_id',foreignField: 'ebooks',as: 'countSum',pipeline: [{$match: {deleted: false}}]}},
-        {$project:{...showEbook, countSum: { $avg: '$countSum.rating' }}}, // làm sao hiện tất cả field ngoài cách này
-        {$sort: { countSum: -1 }}
+        {$project:{countSum: { $avg: '$countSum.rating' }}}, 
       ]
+      switch (req.query.type) {
+        case 'ranking':
+          select.push({$sort: { countSum: -1 }})
+          break;
+        case 'chart':
+          select.push({$group: {'_id': { '$toInt': '$countSum' }, count:{$sum:1}}})
+          break;
+        default: break;  
+      }
       const result = await models.ebooks.aggregate(select)
-      result && res.status(200).send({count: result.length, data: result, success: true})
+      result && res.status(200).send({success:true, count: result.length, data: result})
     } catch (error) {
       return handleError.ServerError(error, res)
     }
@@ -165,4 +180,6 @@ module.exports = app => {
       return handleError.ServerError(error, res)
     }
   })
+
+  
 }

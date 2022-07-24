@@ -327,6 +327,7 @@ module.exports = {
       return handleError.ServerError(error, res)
     }
   },
+
   removeManyUser: async (req, res) => {
     const listDelete = req.body;
     try {
@@ -347,6 +348,7 @@ module.exports = {
       handleError.ServerError(error, res);
     }
   },
+  
 
   CreateNewController,
   RefreshTokenController,

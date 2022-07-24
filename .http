@@ -1,5 +1,5 @@
 ### LOGIN APP MODERATOR  ===============================================>
-POST http://localhost:8000/api/user-management/sign-in HTTP/1.1
+POST http://localhost:8000/api/user-management/login HTTP/1.1
 Content-Type: application/json
 Accept:  application/json
 
@@ -9,13 +9,13 @@ Accept:  application/json
 }
 
 ### LOGIN APP ADMIN ====================================================>
-POST http://localhost:8000/api/user-management/sign-in HTTP/1.1
+POST http://localhost:8000/api/user-management/login HTTP/1.1
 Content-Type: application/json
 Accept:  application/json
 
 {
 	"username": "huyhdang",
-  "password": "Admin1@113355",
+  "password": "Admin1@113355"
 }
 
 
@@ -37,3 +37,9 @@ Accept:  application/json
 {
   "email":"qphanquan1998@gmail.com", 
 }
+
+###
+GET http://localhost:8000/api/management-ebooks/find-many-by-user?type=subscribe HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyZDRkNTdkYjYxMzc5MTI2NzhhZWQ1ZSIsImlhdCI6MTY1ODYzNTk4NywiZXhwIjoxNjU4Njc5MTg3fQ.3SaZvFC_K0X-gAQ2hWVwq-A6Yrah48D8FeWq9HwKuoA

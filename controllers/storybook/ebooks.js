@@ -41,45 +41,27 @@ module.exports = {
   },
 
   insertOneEbook: async (req, res) => {
-    const dataBook = req.body.title;
-
+    const dataUser = req.body.username;
+    console.log('roles', req.body.roles)
     try {
-      const title = await models.ebooks.findOne({ title: dataBook });
-  
-      if (title) {
-        console.log("tên sách tồn tại!!!");
-        return res.status(400).send(title);
+      const userName = await models.users.findOne({username: dataUser})
+      if(userName){
+        return res.status(400).send(userName);
       }
-  
-      const imageUpload = await cloudinary.uploader.upload(req.file?.path, folder);
-      const newBook = new models.ebooks({
-        ...req.body, image: { id: imageUpload.public_id, url: imageUpload.secure_url }, createAt: Date.now()
-      });
-  
-      const genreBook = await models.genres.find({ name: { $in: req.body.genre } })
-      newBook.genre = genreBook?.map((genre) => genre._id);
-  
-      const auther = await models.authors.find({ name: { $in: req.body.auther } })
-      console.log(auther)
-      if (auther.length === 0) {
-        const newAuther = new models.authors({
-          ...req.body, book: req.body._id, name: req.body.auther
-        });
-        await newAuther.save();
-        newBook.auther = auther?.map((auther) => auther._id);
-      } else {
-        newBook.auther = auther?.map((auther) => auther._id);
-      }
-  
-      const result = await newBook.save();
-      if (result) {
+      const avatarUpload = await cloudinary.uploader.upload(req.file?.path, folder);
+      const USER = new models.users({...req.body, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url }} });
+      USER.roles = req.body.roles.pop()
+      const result = await USER.save();
+      if(result){
         const response = {
           data: result,
+          status: 200,
+          message: messages.InsertSuccessfully,
         }
-        return res.status(200).send(response);
+        return res.status(200).send(response)
       }
     } catch (error) {
-      handleError.ServerError(error, res);
+      return handleError.ServerError(error, res)
     }
   },
 
@@ -193,92 +175,136 @@ module.exports = {
 
   
   searchEbook: async (req, res) =>{
+    const filterEbooks = async (req, res) => {
+      console.log("filter ebook");
+      try {
+    
+        const PAGE_SIZE =10;
+        const numPages = parseInt(req.query.page)
+        const skip = numPages ? (numPages - 1) * PAGE_SIZE : null
+        const { author, genre, status, allowedAge, sort , newDay, chapter} = req.body;
+      
+        let find, populate = ['authors', 'genres']
+    
+        let alowAgeCondition, chapterCondition, sortCondition
+    
+        if (allowedAge.length > 0) {
+          // console.log("allowedAge[0].allowed", allowedAge[0])
+          switch (allowedAge[0]) {
+            case 11: alowAgeCondition = { $lte: 11 }
+              break;
+            case 18: alowAgeCondition = { $lte: 18  ,$gte:12 }
+              break;
+            case 30: alowAgeCondition = { $lte: 30 ,  $gte: 18 }
+              break;
+            case 31: alowAgeCondition = { $gte: 31 }
+              break;
+            default: alowAgeCondition = null
+              break;
+          }
+        }
+        if (sort.length > 0) {
+       
+          switch (sort[0].name) {
+    
+            case "Sort by name":
+              if (sort[0].type === "ASC") {
+                sortCondition = { title: 1 }
+              } else sortCondition = { title: -1 }
+              break;
+            case "Sort by view":
+              if (sort[0].type === "ASC") {
+                sortCondition = { view: 1 }
+              } else sortCondition = { view: -1 }
+              break;
+            case "Sort by date":
+              if (sort[0].type === "ASC") {
+                sortCondition = { createAt: 1 }
+              } else sortCondition = { createAt: -1 }
+              break;
+    
+            default: sortCondition = null
+              break;
+          }
+        }
+    
+        if (author.length === 0 && genre.length === 0 && allowedAge.length === 0 && status.length === 0, !newDay) {
+          find = {"deleted":false}
+        } else {
+          find = {
+              deleted:false,
+              $and: [
+                genre.length > 0 ? { genres: { $in: genre } } : {} ,
+                author.length > 0 ? { authors: { $in: author } } :{},
+                status.length >  0 ? { status: status[0]}: {},
+                allowedAge.length > 0 ? { allowedAge: alowAgeCondition }:{},
+                newDay && {createAt: addArrayDays('EBOOKS_NEW')}
+              ]   
+          }
+        }
+    
+        const count = await models.ebooks.find(find).count();
+    
+        if (sort.length > 0 && req.query.page > 0) {
+    console.log("Vào đây ");
+          result = await models.ebooks.find(find).populate(populate).skip(skip).limit(PAGE_SIZE).sort(sortCondition);
+          
+        }
+        else if (sort.length === 0) {
+          result = await models.ebooks.find(find).populate(populate).skip(skip).limit(PAGE_SIZE);
+        }
+    
+       res.status(200).send({ data: { data: result, count: count }, success: true, message: messages.GetDataSuccessfully })
+    
+    
+      } catch (error) {
+        return handleError.ServerError(error, res)
+      }
+    }
+  },
+
+
+  findManyByUser: async (req, res) => {
     try {
-      const PAGE_SIZE = 12;
-      const numPages = parseInt(req.query.page)
-      const skip = numPages ? (numPages - 1) * PAGE_SIZE : null
-      const { author, genre, status, allowedAge, chapter, sort } = req.body;
-      let find, alowAgeCondition, chapterCondition, sortCondition, populate = ['authors', 'genres']
-      if (allowedAge.length > 0) {
-        switch (allowedAge[0]) {
-          case 11: alowAgeCondition = { $lte: 11 }
-            break;
-          case 18: alowAgeCondition = { $lte: 18  ,$gte:12 }
-            break;
-          case 30: alowAgeCondition = { $lte: 30 ,  $gte: 18 }
-            break;
-          case 31: alowAgeCondition = { $gte: 31 }
-            break;
-          default: alowAgeCondition = null
-            break;
-        }
-      }  
-      if (chapter.length > 0) {
-        switch (chapter[0]) {
-          case 49: chapterCondition = { $lte: 49 }
-            break;
-          case 150: chapterCondition = { $lte: 150 , $gte: 50 }
-            break;
-          case 250: chapterCondition = { $lte: 250 ,  $gte: 150 }
-            break;
-          case 500: chapterCondition = { $lte: 500 ,  $gte: 250 }
-            break;
-          case 800: chapterCondition = { $lte: 800 ,  $gte: 500 }
-            break;
-          case 1000: chapterCondition = { $lte: 1000 , $gte: 800 }
-            break;
-          case 1001: chapterCondition = { $gte: 1001 }
-            break;
-          default: chapterCondition = null
-            break;
-        } 
+      let result, userId = req.userIsLoggedId._id
+      switch (req.query.type) {
+        case 'readed':
+          result = await models.users.findOne({_id: userId, deleted: false}, {'history.read.ebooks': 1}).populate('history.read.ebooks')
+          break;
+        case 'subscribe':
+          result = await models.users.findOne({_id: userId, deleted: false}, {'subscribe.ebooks': 1}).populate('subscribe.ebooks')
+          break;
+        default: break;
       }
-      if (sort.length > 0) {
-        switch (sort[0].name) {
-          case "Sort by name":
-            if (sort[0].type === "ASC") {
-              sortCondition = { title: 1 }
-            } else sortCondition = { title: -1 }
-            break;
-          case "Sort by view":
-            if (sort[0].type === "ASC") {
-              sortCondition = { view: 1 }
-            } else sortCondition = { view: -1 }
-            break;
-          case "Sort by date":
-            if (sort[0].type === "ASC") {
-              sortCondition = { createAt: 1 }
-            } else sortCondition = { createAt: -1 }
-            break;
-          default: sortCondition = null
-            break;
-        }
-      }
-      if (author[0] === 'All' && genre[0] === 'All' && chapter.length == 0 && allowedAge.length == 0 && status.length == 0) {
-        find = null
-      } else {
-        find = {
-          $or: [
-            { genres: { $in: genre } },
-            { authors: { $in: author } },
-            { status: status[0]},
-            { allowedAge: alowAgeCondition },
-            { numChapters: chapterCondition },
-          ]
-        }
-      }  
-      const count = await models.ebooks.find(find).count();
-      if (sort.length > 0 && req.query.page > 0) {
-        console.log("Vào đây ");
-        result = await models.ebooks.find(find).populate(populate).skip(skip).limit(PAGE_SIZE).sort(sortCondition);
-      } else if (sort.length === 0) {
-        result = await models.ebooks.find(find).populate(populate).skip(skip).limit(PAGE_SIZE);
-      }
-      return res.status(200).send({data:result, count: count, success: true, message: messages.GetDataSuccessfully })
+      result && res.status(200).send({
+        success: true, 
+        count: result.subscribe.ebooks.length ? result.subscribe.ebooks.length : result.history.read.ebooks.length, 
+        data: result.subscribe.ebooks ? result.subscribe.ebooks : result.history.read.ebooks})
     } catch (error) {
       return handleError.ServerError(error, res)
     }
-  }
+  },
+
+  changePassword: async (req, res) => {
+    const userId = req.userIsLogged._id.toString();
+    const passwordNew = req.body.password_New
+    
+    try {
+      const result = await models.users.findOneAndUpdate(
+        { _id: userId },
+        { password: await models.users.hashPassword(passwordNew) },
+        { new: true, upsert: true }
+      );
+      if (!result) {
+        return res.status(400).send({ message: "Update that bai" });
+      }
+      return res.status(200).send({data: result, success: true, message: 'Change Password Successfully!!!'});
+    } catch (error) {
+      return handleError.ServerError(error, res)
+    }
+  },
+
+ 
 }
 
 

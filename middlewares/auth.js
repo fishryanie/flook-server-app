@@ -1,10 +1,12 @@
 const jwt = require("jsonwebtoken");
 const message = require("../constants/messages");
+const apiString = require('../constants/api');
 const config = require("../configs/token");
 const handleError = require("../error/HandleError");
 const models = require("../models");
+const { subStr } = require("../functions/globalFunc");
 
-const accessPermission = typefunc => async (req, res, next) => {
+const accessPermission = typefunc => async (req, res, next) => {  
   const array=[], token = req.headers?.authorization;
   if (!token) {
     return handleError.NoTokenError(res)
@@ -53,7 +55,7 @@ const verifyUserName = typeUserName => async (req, res, next) => {
 
     const result = await models.users.findOne({username}).populate("roles","-__v");
     
-    if(typeUserName === 'login_app') {
+    if(typeUserName === subStr(apiString.login)) {
       if (!result) return handleError.NotFoundError(username, res);
       req.result = result;
       next();
