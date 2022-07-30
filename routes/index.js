@@ -24,8 +24,7 @@ module.exports = app => {
   require('./storybook/author')(app)
   require('./storybook/chapter')(app)
 
-  app.get('/layout/web-hook', (req, res) => {})
-
+ 
   
   app.get('/layout/form-change-password', (req, res) => {
     const token = req.query.token
@@ -45,7 +44,6 @@ module.exports = app => {
     }
   })
 
-  app.get('/api/zalopay/findManyBank', zalopay.findListBank)
 
 
   app.get('/api/data-management/create-default-data', async (req, res) => {
@@ -107,25 +105,18 @@ module.exports = app => {
     try {
       const select = [
         {$match: {deleted: false}},
-        {$lookup: {from: 'authors',localField: '_id',foreignField: 'subscribe.ebooks',as: 'subscribers',pipeline: [{$match: {deleted: false}}]}},
+        {$lookup: {from: 'users',localField: '_id',foreignField: 'subscribe.ebooks',as: 'subscribers',pipeline: [{$match: {deleted: false}}]}},
         {$project: {...showEbook, subscribers: {$size: { '$setUnion': [ '$subscribers._id', [] ]}}}},
         {$sort: { subscribers: -1 }}
       ]
-      const result = await models.ebooks.aggregate(select)
+      const result = await models.authors.aggregate(select)
       result && res.status(200).send({count: result.length, data: result, success: true})
     } catch (error) {
       return handleError.ServerError(error, res)
     }
   })
 
-  app.get('/api/statistical/ebooks-rankings-by-views', async (req, res) => {
-    try {
-      const result = await models.ebooks.find({delete: false}).sort({views: -1})
-      result && res.status(200).send({success: true, data: result})
-    } catch (error) {
-      return handleError.ServerError(error, res)
-    }
-  })
+
 
   app.get('/api/statistical/ebooks-rankings-by-review-score', async (req, res) => {
     try {
@@ -150,36 +141,10 @@ module.exports = app => {
     }
   })
   
-  app.get('/api/statistical/ebooks-rankings-by-reader', async (req, res) => {
-    try {
-      const select = [
-        {$match: {deleted: false}},
-        {$lookup: {from: 'users',localField: '_id',foreignField: 'history.read.ebooks',as: "readers",pipeline: [{$match: {deleted: false}}]}},
-        {$project: {...showEbook, readers: {$size: { '$setUnion': [ '$readers._id', [] ]}}}},
-        {$sort: { readers: -1 }}
-      ]
-      const result = await models.ebooks.aggregate(select)
-      result && res.status(200).send({count: result.length, data: result, success: true})
-    } catch (error) {
-      return handleError.ServerError(error, res)
-    }
-  })
+ 
 
 
-  app.get('/api/statistical/ebooks-rankings-by-subscribers', async (req, res) => {
-    try {
-      const select = [
-        {$match: {deleted: false}},
-        {$lookup: {from: "users",localField: "_id",foreignField: "subscribe.ebooks",as: "subscribers",pipeline: [{$match: {deleted: false}}]}},
-        {$project: {...showEbook, subscribers: {$size: { "$setUnion": [ "$subscribers._id", [] ]}}}},
-        {$sort: { subscribers: -1 }}
-      ]
-      const result = await models.ebooks.aggregate(select)
-      result && res.status(200).send({count: result.length, data: result, success: true})
-    } catch (error) {
-      return handleError.ServerError(error, res)
-    }
-  })
+ 
 
   
 }
