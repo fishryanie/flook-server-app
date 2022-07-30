@@ -78,7 +78,7 @@ const routesString = {
   deleteManyEbook: `${ebook}/delete-many-ebook`,
   removeOneEbook: `${ebook}/remove-one-ebook`,
   removeManyEbook: `${ebook}/remove-many-ebook`,
-  searchEbook: `${ebook}/search-one-ebook`,
+  searchEbook: `${ebook}/search-ebook`,
 
   // chapter
   findOneChapter: `${chapter}/find-one-chapter`,

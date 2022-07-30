@@ -3,6 +3,7 @@ const handleError = require("../../error/HandleError");
 const messages = require("../../constants/messages");
 const folder = { folder: 'Flex-ticket/ImageBook' }
 const models = require("../../models");
+const showEbook = { title:1, images:1, authors:1, genres:1, status:1, description:1, allowedAge:1, views:1 }
 const { addDays, addArrayDays } = require('../../functions/globalFunc');
 
 
@@ -195,17 +196,14 @@ module.exports = {
         {$lookup: {from: 'users',localField: '_id',foreignField: 'history.read.ebooks',as: "readers",pipeline: [{$match: {deleted: false}}]}},
         {$lookup: {from: 'chapters',localField: '_id',foreignField: 'ebooks',as: 'chapters', pipeline: [{$match: {deleted: false}}]}},
         {$lookup: {from: 'reviews',localField: '_id',foreignField: 'ebooks',as: 'countSum',pipeline: [{$match: {deleted: false}}]}},
-        {$project: {title: 1, authors:1, genres:1, images:1, views:1,
-          sumPage: {$size: '$chapters'}, 
+        {$project: {...showEbook,
           avgScore:{'$divide': [{'$trunc':{'$add':[{'$multiply': [{$avg:'$countSum.rating' }, 100]}, 0.5]}}, 100]},
           subscribers: {$size: { "$setUnion": [ "$subscribers._id", [] ]}},
+          sumPage: {$size: { '$setUnion': [ '$chapters._id', [] ]}}, 
           readers: {$size: { '$setUnion': [ '$readers._id', [] ]}}
         }},
       ]
       page && select.push({$skip: skip },{$limit: pageSize })
-      if(userIsLogged){
-
-      }
       if(allowedAge) {
         switch (allowedAge) {
           case 11: alowAgeCondition = { $lte: 11 }; break;
@@ -247,7 +245,7 @@ module.exports = {
           default: break;
         }
       } 
-      const result = await models.ebooks.aggregate(select).explain("executionStats")
+      const result = await models.ebooks.aggregate(select)
       result && res.send({success: true, length: result.length, data: result})
     } catch (error) {
       return handleError.ServerError(error, res)
