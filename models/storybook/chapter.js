@@ -7,7 +7,7 @@ const Chapter = new mongoose.Schema({
   deleted: { type: Boolean, default: false },
   content: { type: String, default: null , trim: true },
   ebooks: { type: mongoose.Schema.Types.ObjectId, ref: 'ebooks', required: true },
-  numLikes: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
+  likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
   numViews: { type: Number, default: 0 },
   status: { type: String, default: null },
   name: { type: String, unique: false,},

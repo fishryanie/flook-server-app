@@ -192,18 +192,28 @@ module.exports = {
         ]}},
         {$lookup: {from: 'authors',localField: 'authors',foreignField: '_id',as: 'authors', pipeline: [{$match: {deleted: false}},{$project: {name: 1, images: '$images.avatar.url'}}]}},
         {$lookup: {from: 'genres',localField: 'genres',foreignField: '_id',as: 'genres', pipeline: [{$match: {deleted: false}},{$project: {name: 1}}]}},
+        {$lookup: {from: 'reviews',localField: '_id',foreignField: 'ebooks',as: 'reviews',pipeline: [{$match: {deleted: false}}]}},
+        {$lookup: {from: 'chapters',localField: '_id',foreignField: 'ebooks',as: 'chapters', pipeline: [{$match: {deleted: false}}]}},
         {$lookup: {from: 'users',localField: '_id',foreignField: 'subscribe.ebooks',as: 'subscribers',pipeline: [{$match: {deleted: false}}]}},
         {$lookup: {from: 'users',localField: '_id',foreignField: 'history.read.ebooks',as: "readers",pipeline: [{$match: {deleted: false}}]}},
-        {$lookup: {from: 'chapters',localField: '_id',foreignField: 'ebooks',as: 'chapters', pipeline: [{$match: {deleted: false}}]}},
-        {$lookup: {from: 'reviews',localField: '_id',foreignField: 'ebooks',as: 'countSum',pipeline: [{$match: {deleted: false}}]}},
+        {$lookup: {from: 'comments',localField: 'reviews._id',foreignField: 'reviewId',as: 'commentsReview',pipeline: [{$match: {deleted: false}}]}},
+        {$lookup: {from: 'comments',localField: 'chapters._id',foreignField: 'chapterId',as: 'commentsChapter',pipeline: [{$match: {deleted: false}}]}},
         {$project: {...showEbook,
-          avgScore:{'$divide': [{'$trunc':{'$add':[{'$multiply': [{$avg:'$countSum.rating' }, 100]}, 0.5]}}, 100]},
+          sumHot: { $sum: [
+            {$size: '$reviews'}, 
+            {$size: '$reviews.likes'}, 
+            {$size: '$chapters.likes'}, 
+            {$size: '$commentsReview'}, 
+            {$size: '$commentsChapter'}, 
+            {$size: '$commentsReview.likes'}, 
+            {$size: '$commentsChapter.likes'}
+          ]},
+          avgScore:{'$divide': [{'$trunc':{'$add':[{'$multiply': [{$avg:'$reviews.rating' }, 100]}, 0.5]}}, 100]},
           subscribers: {$size: { "$setUnion": [ "$subscribers._id", [] ]}},
           sumPage: {$size: { '$setUnion': [ '$chapters._id', [] ]}}, 
-          readers: {$size: { '$setUnion': [ '$readers._id', [] ]}}
+          readers: {$sum: {$size: '$readers'}},
         }},
       ]
-      page && select.push({$skip: skip },{$limit: pageSize })
       if(allowedAge) {
         switch (allowedAge) {
           case 11: alowAgeCondition = { $lte: 11 }; break;
@@ -225,7 +235,7 @@ module.exports = {
       if(sort) {
         switch (sort) {
           case 'hot':
-            select.push({$sort:{hot: parseInt(orderby) || -1}})
+            select.push({$sort:{sumHot: parseInt(orderby) || -1}})
             break;
           case 'name':
             select.push({$sort:{title: parseInt(orderby) || -1}})
@@ -245,6 +255,7 @@ module.exports = {
           default: break;
         }
       } 
+      page && select.push({$skip: skip },{$limit: pageSize })
       const result = await models.ebooks.aggregate(select)
       result && res.send({success: true, length: result.length, data: result})
     } catch (error) {

@@ -147,6 +147,7 @@ async function insert_many_author(arrayUsers){
 async function insert_many_ebooks(arrayGenres, arrayAuthors){
   dataDefaults.ebooks.forEach(ebook => {
     ebook.views = randomInteger(123,456)
+
     for (const x in arrayGenres) { 
       for (const y in ebook.genres) {
         if(ebook.genres[y] === arrayGenres[x].name){
@@ -189,6 +190,7 @@ async function insert_many_chapter(arrayEbooks, arrayUsers){
 
 async function insert_many_reviews(arrayEbooks, arrayUsers){
   dataDefaults.reviews.forEach(review => {
+    review.likes = randomArray(arrayUsers, arrayUsers.length * randomInteger(10,90) / 100).map(user => user._id)
     arrayEbooks.forEach(ebook => {
       if(review.ebooks === ebook.title){
         review.ebooks = ebook._id
@@ -225,17 +227,18 @@ async function insert_many_comments(arrayUsers, arrayReviews, arrayChapters, arr
   let dataComment=[]
   for (let index = 0; index < randomInteger(456,789); index++) {
     dataComment.push({
-      userId: (arrayUsers.sort(() => 0.5 - Math.random())[0])._id,
-      reviewId:(arrayReviews.sort(() => 0.5 - Math.random())[0])._id,
+      userId: arrayUsers[Math.floor(Math.random() * arrayUsers.length)],
+      reviewId: arrayReviews[Math.floor(Math.random() * arrayReviews.length)],
       content: dataDefaults.stringCmt[Math.floor(Math.random() * dataDefaults.stringCmt.length)],
-      like: randomArray(arrayUsers, arrayUsers.length * randomInteger(10,90) / 100).map(user => user._id),
+      likes: randomArray(arrayUsers, arrayUsers.length * randomInteger(10,90) / 100).map(user => user._id),
     })
-
+  }
+  for (let index = 0; index < randomInteger(456,789); index++) {
     dataComment.push({
-      userId: (arrayUsers.sort(() => 0.5 - Math.random())[0])._id,
-      chapterId:(arrayChapters.sort(() => 0.5 - Math.random())[0])._id,
-      content:  dataDefaults.stringCmt[Math.floor(Math.random() * dataDefaults.stringCmt.length)],
-      like: randomArray(arrayUsers, arrayUsers.length * randomInteger(10,90) / 100).map(user => user._id),
+      userId: arrayUsers[Math.floor(Math.random() * arrayUsers.length)],
+      chapterId: arrayChapters[Math.floor(Math.random() * arrayChapters.length)],
+      content: dataDefaults.stringCmt[Math.floor(Math.random() * dataDefaults.stringCmt.length)],
+      likes: randomArray(arrayUsers, arrayUsers.length * randomInteger(10,90) / 100).map(user => user._id),
     })
   } 
   return await models.comments.insertMany(dataComment)
@@ -257,7 +260,11 @@ async function update_createAt_users(arrayUsers){
 async function update_history_users(arrayUsers, arrayEbooks, arrayChapters){
   arrayUsers.forEach(async user => {
     let arrayEbooksRandom = Array.from(new Set(randomArray(arrayEbooks, arrayEbooks.length * randomInteger(10,90) / 100))).map(item => item._id)    
-    await models.users.updateOne({_id: user._id}, {'history.read.ebooks': arrayEbooksRandom}, { new: true });
+    let arrayChaptersRandom = Array.from(new Set(randomArray(arrayChapters, arrayChapters.length * randomInteger(10,90) / 100))).map(item => item._id)
+    Promise.all([
+      models.users.updateOne({_id: user._id}, {'history.read.ebooks': arrayEbooksRandom}, { new: true }),
+      models.users.updateOne({_id: user._id}, {'history.read.chapters': arrayChaptersRandom}, { new: true }),
+    ])    
   })
 }
 
@@ -279,10 +286,10 @@ async function update_comments_to_comments(arrayUsers, arrayComments){
   for (let index = 0; index < randomInteger(456,789); index++) {
     let userLike = randomArray(arrayUsers, arrayUsers.length * randomInteger(10,90) / 100).map(item => item._id)
     dataComment.push({
-      userId: (arrayUsers.sort(() => 0.5 - Math.random())[0])._id,
-      commentId:(arrayComments.sort(() => 0.5 - Math.random())[0])._id,
+      userId: arrayUsers[Math.floor(Math.random() * arrayUsers.length)],
+      commentId: arrayComments[Math.floor(Math.random() * arrayComments.length)],
       content:  dataDefaults.stringCmt[Math.floor(Math.random() * dataDefaults.stringCmt.length)],
-      like: userLike,
+      likes: userLike,
     })
   } 
   return await models.comments.insertMany(dataComment)
