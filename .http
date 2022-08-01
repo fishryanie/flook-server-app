@@ -1,5 +1,5 @@
 ### LOGIN APP MODERATOR  ===============================================>
-POST http://localhost:8000/api/user-management/sign-in HTTP/1.1
+POST http://localhost:8000/api/user-management/login HTTP/1.1
 Content-Type: application/json
 Accept:  application/json
 
@@ -9,24 +9,24 @@ Accept:  application/json
 }
 
 ### LOGIN APP ADMIN ====================================================>
-POST http://localhost:8000/api/user-management/sign-in HTTP/1.1
+POST http://localhost:8000/api/user-management/login-in HTTP/1.1
 Content-Type: application/json
 Accept:  application/json
 
 {
 	"username": "huyhdang",
-  "password": "Admin1@113355",
+  "password": "Admin1@113355"
 }
 
 
 ### LOGIN APP USER  ====================================================>
-POST http://localhost:8000/api/user-management/sign-in HTTP/1.1
+POST http://localhost:8000/api/user-management/login HTTP/1.1
 Content-Type: application/json
 Accept:  application/json
 
 {
   "username": "thanhlehuu223",
-  "password": "Abc*123456789",
+  "password": "Abc*123456789"
 }
 
 ### REGISTER APP  ======================================================>

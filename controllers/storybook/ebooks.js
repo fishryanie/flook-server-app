@@ -10,39 +10,38 @@ const { addDays, addArrayDays } = require('../../functions/globalFunc');
 module.exports = {
 
   findOneEbook: async (req, res) => {
+    const populate = ['authors', 'genres']
+
     try {
       const id = req.query.id;
-      const result = await models.ebooks.findById(id)
-      result && res.status(200).send({success: true, data: result});
+      const result = await models.ebooks.findById(id).populate(populate);
+      result && res.status(200).send({success: true, data: result, message: messages.FindSuccessfully});
     } catch (error) {
       return handleError.ServerError(error, res);
     }
   },
 
   findManyEbook: async (req, res) => {
-    const findManga = async (req, res) => {
       const deleted = req.query.deleted;
+      const populate = ['authors', 'genres']
       let result;
       try {
         (deleted === "true")
-          ? result = await models.ebooks.find({ deleted: { $in: true } })
+          ? result = await models.ebooks.find({ deleted: { $in: true } }).populate(populate)
           : (deleted === "false")
-            ? result = await models.ebooks.find({ deleted: { $in: false } })
-            : result = await models.ebooks.find();
-        return res.status(200).send(result);
+            ? result = await models.ebooks.find({ deleted: { $in: false } }).populate(populate)
+            : result = await models.ebooks.find().populate(populate);
+        return res.status(200).send({data: result, success: true, message: messages.FindSuccessfully});
       } catch (error) {
         handleError.ServerError(error, res);
       }
-    };
-  },
-
-  insertOneEbook: async (req, res) => {
-
-  },
+    },
 
   insertOneEbook: async (req, res) => {
     const dataBook = req.body.title;
-
+    console.log('title', dataBook);
+    const itemTrash = req.body.authors.pop() && req.body.genres.pop();
+    console.log('itemTrash', itemTrash);
     try {
       const title = await models.ebooks.findOne({ title: dataBook });
   
@@ -53,28 +52,15 @@ module.exports = {
   
       const imageUpload = await cloudinary.uploader.upload(req.file?.path, folder);
       const newBook = new models.ebooks({
-        ...req.body, image: { id: imageUpload.public_id, url: imageUpload.secure_url }, createAt: Date.now()
+        ...req.body, images: { background: { id: imageUpload.public_id, url: imageUpload.secure_url }, wallPaper: { id: imageUpload.public_id, url: imageUpload.secure_url } }, createAt: Date.now()
       });
-  
-      const genreBook = await models.genres.find({ name: { $in: req.body.genre } })
-      newBook.genre = genreBook?.map((genre) => genre._id);
-  
-      const auther = await models.authors.find({ name: { $in: req.body.auther } })
-      console.log(auther)
-      if (auther.length === 0) {
-        const newAuther = new models.authors({
-          ...req.body, book: req.body._id, name: req.body.auther
-        });
-        await newAuther.save();
-        newBook.auther = auther?.map((auther) => auther._id);
-      } else {
-        newBook.auther = auther?.map((auther) => auther._id);
-      }
   
       const result = await newBook.save();
       if (result) {
         const response = {
           data: result,
+          message: messages.InsertSuccessfully,
+          success: true
         }
         return res.status(200).send(response);
       }
@@ -88,33 +74,34 @@ module.exports = {
   },
 
   updateOneEbook: async (req, res) => {
-    const id = req.params.id;
-    const image = req.body.image;
-    console.log(image);
+    const id = req.query.id;
+    const itemTrash = req.body.genres.pop() && req.body.authors.pop();
+    const image = req.body.images;
+    console.log('body', req.body);
     const option = { new: true };
     let imageUpload
     try {
       const bookFind = await models.ebooks.findById(id);
       if (req.file) {
-        await cloudinary.uploader.destroy(bookFind.image.id);
+        await cloudinary.uploader.destroy(bookFind.images.background.id);
         imageUpload = await cloudinary.uploader.upload(req.file?.path, folder);
       } else {
         imageUpload = await cloudinary.uploader.upload(image, folder);
-        await cloudinary.uploader.destroy(bookFind.image.id);
+        await cloudinary.uploader.destroy(bookFind.images.background.id);
       }
   
       const updateBook = new models.ebooks({
-        ...req.body, _id: id, image: { id: imageUpload?.public_id, url: imageUpload?.secure_url }, updateAt: Date.now(), createAt: bookFind.createAt, deleteAt: bookFind.deleteAt
+        ...req.body, images: { background: { id: imageUpload.public_id, url: imageUpload.secure_url }, wallPaper: { id: imageUpload.public_id, url: imageUpload.secure_url } }, updateAt: Date.now(), createAt: bookFind.createAt, deleteAt: bookFind.deleteAt
       });
   
-      const genreBook = await models.genres.find({ name: { $in: req.body.genre } })
-      updateBook.genre = genreBook?.map((genre) => genre._id);
+      // const genreBook = await models.genres.find({ name: { $in: req.body.genre } })
+      // updateBook.genre = genreBook?.map((genre) => genre._id);
       const result = await models.ebooks.findByIdAndUpdate(id, updateBook, option);
   
       if (!result) {
         return handleError.NotFoundError(id, res)
       }
-      return res.status(200).send({ messages: messages.UpdateSuccessfully, data: result });
+      return res.status(200).send({ message: messages.UpdateSuccessfully, data: result });
     } catch (error) {
       return handleError.ServerError(error, res)
     }
@@ -145,7 +132,7 @@ module.exports = {
 
   removeOneEbook: async (req, res) => {
     const option = { new: true };
-    const id = req.params.id;
+    const id = req.query.id;
     const bookFind = await models.ebooks.findById(id);
     let row;
   
@@ -159,10 +146,10 @@ module.exports = {
       console.log(row);
       if (!row) {
         console.log(messages.NotFound);
-        return res.status(404).send({ messages: messages.NotFound + id });
+        return res.status(404).send({ message: messages.NotFound + id });
       }
       console.log(messages.DeleteSuccessfully);
-      return res.status(200).send({ messages: messages.DeleteSuccessfully });
+      return res.status(200).send({ message: messages.DeleteSuccessfully });
     } catch (error) {
       return handleError.ServerError(error, res)
     }
@@ -194,7 +181,7 @@ module.exports = {
     const PAGE_SIZE = 12;
     const numPages = parseInt(req.query.page)
     const skip = numPages ? (numPages-1) * PAGE_SIZE : null
-    const { author, genre, status, allowedAge, chapter } = req.body;
+    const { authors, genres, status, allowedAge, chapters } = req.body;
     let find, sortBook, result=[], populate = ['authors', 'genres']
 
     switch (req.query.sort) {
@@ -204,16 +191,16 @@ module.exports = {
       default: break;
     }
 
-    if(author === undefined){
+    if(authors === undefined){
       console.log('a');
 
       find = null
-    } else if (author?.length >= 0 && author[0]==='All' && genre[0]==='All' && status[0]==='All' && allowedAge[0]==='All') {
+    } else if (authors?.length >= 0 && authors[0]==='All' && genres[0]==='All' && status[0]==='All' && allowedAge[0]==='All') {
       find = null
     } else {
       find = { $or: [
-          { genre: { $in: genre } },
-          { author: { $in: author } },
+          { genres: { $in: genres } },
+          { authors: { $in: authors } },
           { status: { $in: status } },
           { allowedAge: { $in: allowedAge } },
         ]
@@ -227,7 +214,7 @@ module.exports = {
       if (req.query.sort == 0) {
         result = await models.ebooks.find(find).populate(populate).skip(skip).limit(PAGE_SIZE);
       }
-      result.length > 0 && res.status(200).send({data: result, count: count, success:true})
+      result.length > 0 && res.status(200).send({data: result, count: count, success:true, message: messages.FindSuccessfully})
     } catch (error) {
       return handleError.ServerError(error, res)
     }

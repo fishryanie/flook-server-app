@@ -5,7 +5,7 @@ const handleError = require("../../error/HandleError");
 
 
 // thêm bình luận
-const addComment = async (req, res) => {
+const insertOneComment = async (req, res) => {
   const idUser = req.userId;
 
   if (req.body.content.trim().length === 0) {
@@ -17,7 +17,7 @@ const addComment = async (req, res) => {
         res.status(200).send({
           data: data,
           status: 200,
-          messages: messages.CreateSuccessfully,
+          message: messages.InsertSuccessfully,
         })
       )
       .catch((error) => {
@@ -121,8 +121,8 @@ const likeAndDislike = async (req, res) => {
       result.modifiedCount === 0
         ? res.status(400).send({ messages: "Bạn đã dislike" })
         : res
-            .status(200)
-            .send({ data: result, messages: "Dislike successfully" });
+          .status(200)
+          .send({ data: result, messages: "Dislike successfully" });
     } catch (error) {
       handleError.ServerError(error, res);
     }
@@ -214,26 +214,39 @@ const getAllCommentSort = async (req, res) => {
 };
 
 module.exports = {
-  addComment,
+  insertOneComment,
   updateComment,
   likeAndDislike,
   deleteComment,
   getAllCommentSort,
 
   findOneComment: (req, res) => {
-    
+
   },
 
   findManyComment: async (req, res) => {
-    
+    const populate = ['userId', 'reviewId', 'commentId', 'chapterId']
+    try {
+      Promise.all([
+        models.comments.find({ deleted: false }).populate(populate),
+        models.comments.find().count()
+      ]).then((result) => {
+        return res.status(200).send({ data: result[0], count: result[1], success: true });
+      })
+    } catch (error) {
+      return handleError.ServerError(error, res);
+    }
   },
 
   insertOneComment: async (req, res) => {
-
-  },
-
-  insertOneComment: async (req, res) => {
-
+    try {
+      const userId = req.userIsLogged._id.toString();
+      console.log('userId', userId)
+      const comment = new models.comments({ ...req.body }).save();
+      comment && res.status(200).send({ data: comment, success: true, message: messages.InsertSuccessfully })
+    } catch (error) {
+      return handleError.ServerError(error, res)
+    }
   },
 
   insertManyComment: async (req, res) => {
@@ -241,7 +254,39 @@ module.exports = {
   },
 
   updateOneComment: async (req, res) => {
-
+    try {
+      const user = req.userIsLogged;
+      const commentId = req.query.id;
+      const option = { new: true };
+      let find
+      for (const role of user.roles) {
+        if (role.name == "Moderator" || role.name == "Admin") {
+          find = { _id: commentId }
+          break;
+        } else {
+          find = { _id: commentId, users: user }
+          break;
+        }
+      }
+    
+      const comment = { ...req.body, updateAt: Date.now() };
+      const result = await models.comments.findOneAndUpdate(
+        find,
+        comment,
+        option
+      );
+      if(!result) {
+        return res.status(400).send({ success: false,message: messages.UpdateFail});
+      }
+      const response = {
+        data: result,
+        success:true,
+        message: messages.UpdateSuccessfully,
+      };
+      return res.status(200).send(response);
+    } catch (error) {
+      handleError.ServerError(error, res);
+    }
   },
 
   deleteOneComment: async (req, res) => {
@@ -253,14 +298,60 @@ module.exports = {
   },
 
   removeOneComment: async (req, res) => {
+    try {
+      const user = req.userIsLogged;
+      const commentId = req.query.id;
+      console.log(user)
+      const option = { new: true };
+      let find
+      for (const role of user.roles) {
+        if (role.name == "Moderator" || role.name == "Admin") {
+          find = { _id: commentId }
+          break;
+        } else {
+          find = { _id: commentId, users: user._id }
+          break;
+        }
+      }
+      const comment = { deleted: true, deleteAt: Date.now() };
+      const result = await models.comments.findOneAndUpdate(find, comment, option);
+      if (!result) {
+        return res.status(400).send({ success: false, message: messages.RemoveFail });
+      }
+      const response = {
+        success: true,
+        message: messages.RemoveSuccessfully,
+      };
+      return res.status(200).send(response);
+
+    } catch (error) {
+      handleError.ServerError(error, res);
+    }
 
   },
 
   removeManyComment: async (req, res) => {
-
+    const listCommentId = req.body
+    try {
+      const result = await models.comments.updateMany(
+        { "_id": { $in: listCommentId } },
+        { $set: { deleted: true, deleteAt: Date.now() } },
+        { new: true }
+      );
+      if (!result) {
+        return res.status(400).send({ success: false, message: messages.RemoveFail });
+      }
+      const response = {
+        success: true,
+        message: messages.RemoveSuccessfully,
+      };
+      return res.status(200).send(response);
+    } catch (error) {
+      handleError.ServerError(error, res);
+    }
   },
 
-  searchComment: async (req, res) =>{
+  searchComment: async (req, res) => {
 
   }
 };

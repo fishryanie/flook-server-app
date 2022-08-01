@@ -1,34 +1,171 @@
 [
   {
+    "featureName": "find-user-loggin",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator", "User"]
+  },
+  {
     "featureName": "find-many-user",
     "featureGroup": "auth",
     "roles": ["Admin", "Moderator"]
   },
   {
-    "featureName": "find-one-user",
+    "featureName": "find-many-role",
     "featureGroup": "auth",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "find-many-feature",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "find-many-feature-group",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "find-many-ebook",
+    "featureGroup": "ebooks",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "find-one-ebook",
+    "featureGroup": "ebooks",
     "roles": ["Admin", "Moderator", "User"]
   },
+  {
+    "featureName": "search-ebook",
+    "featureGroup": "ebooks",
+    "roles": ["Admin", "Moderator", "User"]
+  },
+  {
+    "featureName": "find-many-author",
+    "featureGroup": "authors",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "find-many-genre",
+    "featureGroup": "genres",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "search-chapter",
+    "featureGroup": "chapters",
+    "roles": ["Admin", "Moderator", "User"]
+  },
+  {
+    "featureName": "find-many-chapter",
+    "featureGroup": "chapters",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "find-one-chapter",
+    "featureGroup": "chapters",
+    "roles": ["Admin", "Moderator", "User"]
+  },
+  {
+    "featureName": "find-many-review",
+    "featureGroup": "reviews",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "find-many-comment",
+    "featureGroup": "comments",
+    "roles": ["Admin", "Moderator"]
+  },
+
+
+
   {
     "featureName": "insert-one-user",
     "featureGroup": "auth",
     "roles": ["Admin", "Moderator"]
   },
   {
+    "featureName": "insert-one-role",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "insert-one-ebook",
+    "featureGroup": "ebooks",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "insert-one-author",
+    "featureGroup": "authors",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "insert-one-genre",
+    "featureGroup": "genres",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "insert-one-chapter",
+    "featureGroup": "chapters",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "insert-one-review",
+    "featureGroup": "reviews",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "insert-one-comment",
+    "featureGroup": "comments",
+    "roles": ["Admin", "Moderator"]
+  },
+
+
+
+
+  {
     "featureName": "update-one-user",
     "featureGroup": "auth",
     "roles": ["Admin", "Moderator","User"]
   },
   {
-    "featureName": "delete-one-user",
+    "featureName": "update-one-role",
     "featureGroup": "auth",
-    "roles": [ "Moderator"]
+    "roles": ["Admin", "Moderator"]
   },
   {
-    "featureName": "delete-many-user",
-    "featureGroup": "auth",
-    "roles": [ "Moderator"]
+    "featureName": "update-one-ebook",
+    "featureGroup": "ebooks",
+    "roles": ["Admin", "Moderator"]
   },
+  {
+    "featureName": "update-one-author",
+    "featureGroup": "authors",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "update-one-genre",
+    "featureGroup": "genres",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "update-one-chapter",
+    "featureGroup": "chapters",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "update-one-review",
+    "featureGroup": "reviews",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "update-one-comment",
+    "featureGroup": "comments",
+    "roles": ["Admin", "Moderator"]
+  },
+
+
+
+
+
   {
     "featureName": "remove-one-user",
     "featureGroup": "auth",
@@ -40,20 +177,114 @@
     "roles": ["Admin", "Moderator"]
   },
   {
-    "featureName": "update-review",
+    "featureName": "remove-one-role",
     "featureGroup": "auth",
-    "roles": ["Admin", "Moderator","User"]
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "remove-many-role",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "remove-one-ebook",
+    "featureGroup": "ebooks",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "remove-many-ebook",
+    "featureGroup": "ebooks",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "remove-one-author",
+    "featureGroup": "authors",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "remove-many-author",
+    "featureGroup": "authors",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "remove-one-genre",
+    "featureGroup": "genres",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "remove-many-genre",
+    "featureGroup": "genres",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "remove-one-chapter",
+    "featureGroup": "chapters",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "remove-many-chapter",
+    "featureGroup": "chapters",
+    "roles": ["Admin", "Moderator"]
   },
   {
     "featureName": "remove-one-review",
-    "featureGroup": "auth",
+    "featureGroup": "reviews",
     "roles": ["Admin", "Moderator","User"]
   },
   {
     "featureName": "remove-many-review",
-    "featureGroup": "auth",
+    "featureGroup": "reviews",
     "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "remove-one-comment",
+    "featureGroup": "comments",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "remove-many-comment",
+    "featureGroup": "comments",
+    "roles": ["Admin", "Moderator"]
+  },
+
+
+
+
+  {
+    "featureName": "find-one-user",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator", "User"]
+  },
+  {
+    "featureName": "delete-one-user",
+    "featureGroup": "auth",
+    "roles": [ "Moderator"]
+  },
+  {
+    "featureName": "delete-many-user",
+    "featureGroup": "auth",
+    "roles": [ "Moderator"]
+  },
+
+
+
+
+
+  {
+    "featureName": "update-review",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator","User"]
+  },
+
+
+
+
+  {
+    "featureName": "change-password",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator", "User"]
   }
+  
 ]
 
 

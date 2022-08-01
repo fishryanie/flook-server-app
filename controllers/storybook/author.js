@@ -9,7 +9,7 @@ module.exports = {
 
 
   findOneAuthor: (req, res) => {
-    
+
   },
 
   findManyAuthor: async (req, res) => {
@@ -18,7 +18,7 @@ module.exports = {
         models.authors.find({ deleted: false }).populate('license'),
         models.authors.find({ deleted: false }).count()
       ]).then((result) => {
-        return res.status(200).send({ data: result[0], count: result[1], success: true });
+        return res.status(200).send({ data: result[0], count: result[1], success: true, message: messages.FindSuccessfully });
       })
     } catch (error) {
       handleError.ServerError(error, res);
@@ -27,29 +27,31 @@ module.exports = {
 
 
   insertOneAuthor: async (req, res) => {
-    const dataAuther = req.body.name;
+    const dataAuthor = req.body.name;
+    console.log('name', req.body.name);
     try {
-      const name = await models.authors.findOne({ name: dataAuther });
+      const name = await models.authors.findOne({ name: dataAuthor });
       if (name) {
         console.log("tên tác giả tồn tại!!!");
         return res.status(400).send(name);
       }
-      const imageUpload = await cloudinary.uploader.upload(req.file?.path, folder);
+
       const newAuthor = new models.authors({
-        ...req.body, image: { id: imageUpload.public_id, url: imageUpload.secure_url }, createAt: Date.now()
+        ...req.body
       });
-      const book = await models.ebooks.find({ title: { $in: req.body.book } })
-      newAuthor.book = book?.map((book) => book._id);
+
       const result = await newAuthor.save();
       if (result) {
         const response = {
           data: result,
+          success: true,
+          message: messages.InsertSuccessfully
         }
         return res.status(200).send(response);
       }
     } catch (error) {
       handleError.ServerError(error, res);
-    }  
+    }
   },
 
   insertManyAuthor: async (req, res) => {
@@ -57,7 +59,20 @@ module.exports = {
   },
 
   updateOneAuthor: async (req, res) => {
-
+    const id = req.query.id
+    const authorData = new models.authors({ ...req.body, _id: id });
+    const option = { new: true };
+    try {
+      const result = await models.authors.findByIdAndUpdate(id, authorData, option);
+      if (!result) {
+        console.log(messages.NotFound);
+        return res.status(404).send({ message: messages.NotFound });
+      }
+      console.log({ data: result });
+      return res.status(200).send({ message: messages.UpdateSuccessfully, data: result });
+    } catch (error) {
+      handleError.ServerError(error, res)
+    }
   },
 
   deleteOneAuthor: async (req, res) => {
@@ -96,9 +111,9 @@ module.exports = {
     const id = req.query.id;
     const authorFind = await models.authors.findById(id);
     let row;
-  
+
     try {
-  
+
       if (authorFind.deleted === true) {
         row = await models.authors.findByIdAndUpdate(id, { deleted: false, deleteAt: "", updateAt: authorFind.updateAt, createAt: authorFind.createAt }, option);
       } else {
@@ -138,7 +153,7 @@ module.exports = {
     }
   },
 
-  searchAuthor: async (req, res) =>{
-    
+  searchAuthor: async (req, res) => {
+
   }
 }

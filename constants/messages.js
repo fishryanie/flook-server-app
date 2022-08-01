@@ -14,9 +14,10 @@ const messages = {
   // catch error messages
   ServerError: 'Server error',
   LoginFailed: 'Login failed',
-  CreateFail: 'Create Fail',
+  InsertFail: 'Insert Fail',
   UpdateFail: 'Update Fail',
   DeleteFail: 'Delete Fail',
+  RemoveFail: 'Remove Fail',
   NotFound:'Not found',
   InvalidPassword: 'Invalid Password!',
   AlreadyExists: 'Already Exists',
@@ -26,9 +27,12 @@ const messages = {
 
   // success messages
   LoginSuccessfully : 'Login successfully',
-  CreateSuccessfully: 'Create Successfully',
+  InsertSuccessfully: 'Insert Successfully',
   UpdateSuccessfully: 'Update Successfully',
   DeleteSuccessfully: 'Delete Successfully',
+  RemoveSuccessfully: 'Remove Successfully',
+
+  FindSuccessfully: 'Find Successfully',
   
 }
 

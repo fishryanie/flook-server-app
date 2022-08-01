@@ -5,15 +5,16 @@ const apiString = require('../../constants/api');
 const { subStr } = require("../../functions/globalFunc");
 
 module.exports = app => { 
+
   app.get(apiString.findOneChapter, middlewares.auth.accessPermission(subStr(apiString.findOneChapter)) , Controller.chapter.findOneChapter);
   
   app.get(apiString.findManyChapter, middlewares.auth.accessPermission(subStr(apiString.findManyChapter)) , Controller.chapter.findManyChapter);
   
-  app.get(apiString.searchChapter, middlewares.auth.accessPermission(subStr(apiString.searchChapter)) , Controller.chapter.searchChapter);
+  app.post(apiString.searchChapter, middlewares.auth.accessPermission(subStr(apiString.searchChapter)) , Controller.chapter.searchChapter);
   
-  app.put(apiString.updateOneChapter, middlewares.auth.accessPermission(subStr(apiString.updateOneChapter)) , Controller.chapter.updateOneChapter);
+  app.put(apiString.updateOneChapter, upload.single("images"), middlewares.auth.accessPermission(subStr(apiString.updateOneChapter)) , Controller.chapter.updateOneChapter);
   
-  app.post(apiString.insertOneChapter, middlewares.auth.accessPermission(subStr(apiString.insertOneChapter)) , Controller.chapter.insertOneChapter);
+  app.post(apiString.insertOneChapter, upload.single("images"), middlewares.auth.accessPermission(subStr(apiString.insertOneChapter)) , Controller.chapter.insertOneChapter);
   
   app.post(apiString.insertManyChapter, middlewares.auth.accessPermission(subStr(apiString.insertManyChapter)) , Controller.chapter.insertManyChapter);
   

@@ -24,7 +24,7 @@ const database = require('./configs/mongodb')
 
 const app = express();
 
-const corsOptions = { credentials: true, optionsSuccessStatus: 204, origin: '*', method: 'GET, POST, PUT, DELETE HEAD, PATCH' };
+const corsOptions = { credentials: true, optionsSuccessStatus: 204, origin: 'http://localhost:3000', method: 'GET, POST, PUT, DELETE HEAD, PATCH' };
 
 app.use(cors(corsOptions));
 
@@ -56,7 +56,7 @@ app.get("/", (req, res) => res.render('index', apiString));
 
 database.then(() => {
 
-  dataDefault()
+  // dataDefault()
 
   require('./routes')(app)
 

@@ -30,6 +30,7 @@ const routesString = {
   removeOneUser: `${user}/remove-one-user`,
   removeManyUser: `${user}/remove-many-user`,
   searchUser: `${user}/search-one-user`,
+  findUserLoggin: `${user}/find-user-loggin`,
 
 
   // author
@@ -76,11 +77,12 @@ const routesString = {
   updateOneEbook: `${ebook}/update-one-ebook`,
   deleteOneEbook: `${ebook}/delete-one-ebook`,
   deleteManyEbook: `${ebook}/delete-many-ebook`,
-  removeOneEbook: `${role}/remove-one-ebook`,
-  removeManyEbook: `${role}/remove-many-ebook`,
-  searchEbook: `${role}/search-one-ebook`,
+  removeOneEbook: `${ebook}/remove-one-ebook`,
+  removeManyEbook: `${ebook}/remove-many-ebook`,
+  searchEbook: `${ebook}/search-ebook`,
 
   // chapter
+  findChapterByEbook: `${chapter}/find-chapter-by-ebook`,
   findOneChapter: `${chapter}/find-one-chapter`,
   findManyChapter: `${chapter}/find-many-chapter`,
   insertOneChapter: `${chapter}/insert-one-chapter`,
@@ -90,19 +92,19 @@ const routesString = {
   deleteManyChapter: `${chapter}/delete-many-chapter`,
   removeOneChapter: `${chapter}/remove-one-chapter`,
   removeManyChapter: `${chapter}/remove-many-chapter`,
-  searchChapter: `${chapter}/search-one-chapter`,
+  searchChapter: `${chapter}/search-chapter`,
 
   // review
-  findOneReview: `${review}/find-One-review`,
+  findOneReview: `${review}/find-one-review`,
   findManyReview: `${review}/find-many-review`,
   insertOneReview: `${review}/insert-one-review`,
   insertManyReview: `${review}/insert-many-review`,
   updateOneReview: `${review}/update-one-review`,
   deleteOneReview: `${review}/delete-one-review`,
   deleteManyReview: `${review}/delete-many-review`,
-  removeOneReview: `${chapter}/remove-one-chapter`,
-  removeManyReview: `${chapter}/remove-many-chapter`,
-  searchReview: `${chapter}/search-one-chapter`,
+  removeOneReview: `${review}/remove-one-review`,
+  removeManyReview: `${review}/remove-many-review`,
+  searchReview: `${review}/search-review`,
 
   // comment
   findOneComment: `${comment}/find-one-comment`,
@@ -114,7 +116,7 @@ const routesString = {
   deleteManyComment: `${comment}/delete-many-comment`,
   removeOneComment: `${comment}/remove-one-comment`,
   removeManyComment: `${comment}/remove-many-comment`,
-  searchComment: `${comment}/search-one-comment`,
+  searchComment: `${comment}/search-comment`,
 
   // feature
   findOneFeature: `${feature}/find-one-feature`,

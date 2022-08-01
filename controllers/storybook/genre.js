@@ -1,5 +1,6 @@
 const messages = require("../../constants/messages");
 const handleError = require("../../error/HandleError");
+const { addDays } = require("../../functions/globalFunc");
 const models = require("../../models");
 
 module.exports = {
@@ -18,6 +19,7 @@ module.exports = {
 
   insertOneGenre: async (req, res) => {
     const dataGenreBook = req.body.name;
+    console.log('name', dataGenreBook);
   
     try {
       const name = await models.genres.findOne({ name: dataGenreBook });
@@ -28,13 +30,14 @@ module.exports = {
   
       if (name){
         console.log("tên loại đã tồn tại!!!");
-        res.status(200).send(name);
+        res.status(400).send({message: messages.InsertFail + `, ${name} already exist!!!`});
       }
       const result = await newGenreBook.save();
       if (result){
         const response = {
           data: result,
-          status: 200,
+          success: true,
+          message: messages.InsertSuccessfully
         }
         return res.status(200).send(response);
       }
@@ -61,10 +64,10 @@ module.exports = {
       const result = await models.genres.findByIdAndUpdate(id, GenreBook, option);
       if (!result) {
         console.log(messages.NotFound);
-        return res.status(404).send(messages.NotFound);
+        return res.status(404).send({ message:messages.NotFound });
       }
       console.log({ data: result });
-      return res.status(200).send({ messages: messages.UpdateSuccessfully, data: result });
+      return res.status(200).send({ message: messages.UpdateSuccessfully, data: result });
     } catch (error) {
       handleError.ServerError(error, res)
     }
@@ -101,7 +104,7 @@ module.exports = {
       if (genreFind.deleted === true) {
         row = await models.genres.findByIdAndUpdate(id, { deleted: false, deleteAt: "", updateAt: genreFind.updateAt, createAt: genreFind.createAt }, option);
       } else {
-        row = await models.genres.findByIdAndUpdate(id, { deleted: true, deleteAt: FormatDate.addDays(0), updateAt: genreFind.updateAt, createAt: genreFind.createAt }, option);
+        row = await models.genres.findByIdAndUpdate(id, { deleted: true, deleteAt: addDays(0), updateAt: genreFind.updateAt, createAt: genreFind.createAt }, option);
       }
       console.log(row);
       if (!row) {

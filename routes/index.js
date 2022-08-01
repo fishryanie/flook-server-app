@@ -14,6 +14,7 @@ module.exports = app => {
   require('./auth/featureGroup')(app)
   require('./movie/cast')(app)
   require('./movie/movie')(app)
+  require('./review/review')(app)
   require('./review/comment')(app)
   require('./storybook/ebooks')(app)
   require('./storybook/genre')(app)

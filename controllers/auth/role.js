@@ -1,5 +1,6 @@
 const models = require('../../models');
 const handleError = require('../../error/HandleError');
+const messages = require('../../constants/messages');
 
 module.exports = {
 
@@ -9,7 +10,7 @@ module.exports = {
 
   findManyRole: async (req, res) => {
     models.roles.find({deleted: false})
-    .then(data => res.status(200).send({data: data, success: true}))
+    .then(data => res.status(200).send({data: data, success: true, message: messages.FindSuccessfully}))
     .catch(error => handleError.ServerError(error, res))
   },
 

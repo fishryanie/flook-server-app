@@ -1,63 +1,63 @@
 const upload = require("../../functions/UploadImage");
 const middlewares = require("../../middlewares");
 const Controller = require('../../controllers');
-const apiString = require('../../constants/api');
+const routesString = require('../../constants/api');
 const { subStr } = require("../../functions/globalFunc");
 
 module.exports = app => {
 
-  app.get(apiString.findManyUser,
-    middlewares.auth.accessPermission(subStr(apiString.findManyUser)),
+  app.get(routesString.findManyUser,
+    middlewares.auth.accessPermission(subStr(routesString.findManyUser)),
     Controller.user.FindManyUser);
 
-  app.get(apiString.searchUser, middlewares.auth.accessPermission(subStr(apiString.searchUser)), Controller.user.FindManyUser);
+  app.get(routesString.searchUser, middlewares.auth.accessPermission(subStr(routesString.searchUser)), Controller.user.FindManyUser);
 
-  app.get(apiString.findOneUser, middlewares.auth.accessPermission(subStr(apiString.findOneUser)),
+  app.get(routesString.findOneUser, middlewares.auth.accessPermission(subStr(routesString.findOneUser)),
     Controller.user.FindByIdUserController);
 
-  app.get(apiString.setActiveUser, Controller.user.ActiveUserController);
+  app.get(routesString.setActiveUser, Controller.user.ActiveUserController);
 
-  app.delete(apiString.deleteOneUser, middlewares.auth.accessPermission(subStr(apiString.deleteOneUser)), Controller.user.DeleteUserController);
+  app.delete(routesString.deleteOneUser, middlewares.auth.accessPermission(subStr(routesString.deleteOneUser)), Controller.user.DeleteUserController);
 
-  app.delete(apiString.removeOneUser, middlewares.auth.accessPermission(subStr(apiString.removeOneUser)), Controller.user.DeleteUserController);
+  app.delete(routesString.removeOneUser, middlewares.auth.accessPermission(subStr(routesString.removeOneUser)), Controller.user.removeOneUser);
 
-  app.delete(apiString.removeManyUser, middlewares.auth.accessPermission(subStr(apiString.removeManyUser)), Controller.user.DeleteUserController);
+  app.delete(routesString.removeManyUser, middlewares.auth.accessPermission(subStr(routesString.removeManyUser)), Controller.user.removeManyUser);
 
 
-  app.post(apiString.login, [
+  app.post(routesString.login, [
     middlewares.auth.verifyUserName('login_app'),
     middlewares.auth.VerifyPassword,
   ], Controller.user.Login);
 
-  app.post(apiString.register, [
+  app.post(routesString.register, [
     middlewares.auth.VerifyEmail('create_new'),
   ], Controller.user.Register);
 
-  app.post(apiString.insertOneUser, [
-    upload.single("avatar"),
-    middlewares.auth.accessPermission('create_new'),
+  app.post(routesString.insertOneUser, [
+    upload.single("images"),
+    middlewares.auth.accessPermission(subStr(routesString.insertOneUser)),
     middlewares.auth.verifyUserName('create_new'),
     middlewares.auth.VerifyEmail('create_new'),
     middlewares.auth.VerifyPhoneNumber,
   ], Controller.user.CreateNewController);
 
 
-  app.put(apiString.forgotPassword, [
+  app.put(routesString.forgotPassword, [
     middlewares.auth.VerifyEmail('')
   ], Controller.user.ForgotPasswordController);
 
 
-  app.put(apiString.changePassword, [
-    middlewares.auth.accessPermission(subStr(apiString.changePassword)),
+  app.put(routesString.changePassword, [
+    middlewares.auth.accessPermission(subStr(routesString.changePassword)),
     middlewares.auth.VerifyPassword
   ], Controller.user.ChangePasswordController);
 
 
-  app.put(apiString.updateOneUser, [
+  app.put(routesString.updateOneUser, [
     upload.single("avatar"),
-    middlewares.auth.accessPermission(subStr(apiString.updateOneUser)),
+    middlewares.auth.accessPermission(subStr(routesString.updateOneUser)),
     middlewares.auth.VerifyEmail(''),
   ], Controller.user.UpdateUserController);
 
-
+  app.get(routesString.findUserLoggin, middlewares.auth.accessPermission(subStr(routesString.findUserLoggin)), Controller.user.findUserLoggin)
 };

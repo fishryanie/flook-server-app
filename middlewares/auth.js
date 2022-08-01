@@ -14,6 +14,8 @@ const accessPermission = typefunc => async (req, res, next) => {
       if (err) return handleError.TokenError(err, res)
       // Find user is logged
       const userIsLogged = await models.users.findById(decoded.id).populate('roles')
+      req.userIsLogged = userIsLogged;
+      req.result = userIsLogged;
       // Shold returns if no logged in user is found
       if (!userIsLogged) return handleError.NotFoundError(decoded.id, res)
       // Find feature default
