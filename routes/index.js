@@ -49,8 +49,9 @@ module.exports = app => {
 
   app.get('/api/zalopay/findManyBank', zalopay.findListBank)
 
-  app.get('/api/add-data', () => {
+  app.get('/api/add-data', (req, res) => {
     dataDefault()
+    res.send({success: true, message: 'insert data successfully'})
   })
 
   app.get('/api/data-management/create-default-data', async (req, res) => {
