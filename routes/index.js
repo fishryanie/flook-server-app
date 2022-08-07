@@ -46,8 +46,12 @@ module.exports = app => {
     }
   })
 
+
   app.get('/api/zalopay/findManyBank', zalopay.findListBank)
 
+  app.get('/api/add-data', () => {
+    dataDefault()
+  })
 
   app.get('/api/data-management/create-default-data', async (req, res) => {
     const token = req.query.token
@@ -63,7 +67,7 @@ module.exports = app => {
         if (!userIsLogged) return handleError.NotFoundError(decoded.id, res)
         
         userIsLogged.roles.forEach(role => {
-          if( role.name === 'Moderator') {
+          if(role.name === 'Moderator') {
             dataDefault()
             return res.send({success: true, messages: 'create default data'})
           }
