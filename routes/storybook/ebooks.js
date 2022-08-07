@@ -9,7 +9,7 @@ module.exports = app => {
   
   app.get(apiString.findManyEbook, middlewares.auth.accessPermission(subStr(apiString.findManyEbook)) , Controller.ebooks.findManyEbook);
 
-  app.get(apiString.findManyByUser, middlewares.auth.accessPermission(apiString.findManyByUser) , Controller.ebooks.findManyByUser);
+  app.get(apiString.findManyByUser, middlewares.auth.accessPermission(subStr(apiString.findManyByUser)) , Controller.ebooks.findManyByUser);
 
   app.post(apiString.searchEbook, Controller.ebooks.searchEbook);
   
@@ -26,6 +26,11 @@ module.exports = app => {
   app.delete(apiString.removeOneEbook, middlewares.auth.accessPermission(subStr(apiString.removeOneEbook)) , Controller.ebooks.removeOneEbook);
   
   app.delete(apiString.removeManyEbook, middlewares.auth.accessPermission(subStr(apiString.removeManyEbook)) , Controller.ebooks.removeManyEbook);
+  
+
+
+
+
   
 }
 

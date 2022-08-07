@@ -10,7 +10,7 @@ module.exports = app => {
 
   app.get(apiString.searchUser, middlewares.auth.accessPermission(subStr(apiString.searchUser)), Controller.user.FindManyUser);
 
-
+  
 
   app.get(apiString.setActiveUser, Controller.user.ActiveUserController);
 

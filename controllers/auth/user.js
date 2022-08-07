@@ -13,17 +13,16 @@ const FindOneUserController = async (req, res) => {
   console.log("🚀 ~ file: user.js ~ line 15 ~ FindOneUserController ~ userIsLogged", req.userIsLogged._id)
 
   const id = req.userIsLogged._id;
-  // console.log('getCoinUserController');
   try {
-    const data = await models.users.findById(id);
+    const data = await models.users.findOne({_id: id},{password:0});
     if(data) {
      return res.status(200).send({data:data, success:true, message:messages.GetDataSuccessfully});
     } 
     else{
-     return res.send({ success:false, message:messages.GetDataNotSuccessfully});
+     return res.send({success:false, message:messages.GetDataNotSuccessfully});
     }
   } catch (error) {
-      return handleError.ServerError(error, res) 
+    return handleError.ServerError(error, res) 
   }
 };
 
@@ -219,9 +218,9 @@ const ChangePasswordController = async (req, res) => {
       { new: true, upsert: true }
     );
     if (!result) {
-      return res.status(400).send({ message: "Update that bai" });
+      return res.status(400).send({message: "Update that bai" });
     }
-    return res.status(200).send({ data: result, success: true, message: 'Change Password Successfully!!!' });
+    return res.status(200).send({success: true, message: 'Change Password Successfully!!!' });
   } catch (error) {
     return handleError.ServerError(error, res)
   }
