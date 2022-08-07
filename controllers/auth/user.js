@@ -13,7 +13,7 @@ const FindOneUserController = async (req, res) => {
   console.log("🚀 ~ file: user.js ~ line 15 ~ FindOneUserController ~ userIsLogged", req.userIsLogged._id)
   const id = req.userIsLogged._id;
   try {
-    const data = await models.users.findOne({_id: id},{password:0});
+    const data = await models.users.findOne({_id: id},{password:0}).populate('roles', 'name');
     if(data) {
      return res.status(200).send({data:data, success:true, message:messages.GetDataSuccessfully});
     } 

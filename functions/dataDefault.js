@@ -19,7 +19,7 @@ const dataDefaults = {
 const { randomArray, addArrayDays, randomInteger, randomDate } = require('./globalFunc');
 
 
-const formatData = () => {
+const formatData = async (res) => {
 
   console.time()
 
@@ -81,34 +81,27 @@ const formatData = () => {
       const updateComments = await update_comments_to_comments(arrayUsers, arrayComments)
 
 
-      arrayRoles && console.info('insertMany roles successfully', arrayRoles.length + ' data')
-
-      arrayGenres && console.info('insertMany genres successfully', arrayGenres.length + ' data')
-
-      arrayUsers && console.info('insertMany users successfully', arrayUsers.length + ' data')
-
-      arrayAuthors && console.info('insertMany authors successfully', arrayAuthors.length + ' data')
-
-      arrayEbooks && console.info('insertMany ebooks successfully', arrayEbooks.length + ' data')
-
-      arrayChapters && console.info('insertMany chapters successfully', arrayChapters.length + ' data')
-
-      arrayReviews && console.info('insertMany reviews successfully', arrayReviews.length + ' data')
-
-      arrayComments && console.info('insertMany comments successfully', arrayComments.length + ' data')
-
-      arrayFeatures && console.info('insertMany features successfully', arrayFeatures.length + ' data')
-
-      arrayFeatureGroups && console.info('insertMany feature groups successfully', arrayFeatureGroups.length + ' data')
-
-      updateHistory && console.info('updateMany history of user successfully')
-
-      updateSubscribe && console.info('updateMany subscribe of users successfully')
-
-      updateComments && console.info('updateMany comment of comment successfully')
+      if(arrayRoles && arrayGenres && arrayFeatureGroups && arrayUsers && arrayAuthors && arrayEbooks && arrayReviews && arrayChapters && arrayFeatures && arrayComments && updateCreateAtUser && updateHistory && updateSubscribe && updateComments){
+        const messages = {
+          arrayRoles: `insertMany roles successfully ${arrayRoles.length} data`,
+          arrayGenres: `insertMany genres successfully ${arrayGenres.length} data`,
+          arrayUsers: `insertMany users successfully ${arrayUsers.length} data`,
+          arrayAuthors: `insertMany authors successfully ${arrayAuthors.length} data`,
+          arrayEbooks: `insertMany books successfully ${arrayEbooks.length} data`,
+          arrayChapters: `insertMany chapters successfully ${arrayChapters.length} data`,
+          arrayReviews: `insertMany reviews successfully ${arrayReviews.length} data`,
+          arrayComments: `insertMany comments successfully ${arrayComments} data`,
+          arrayFeatures: `insertMany features successfully ${arrayFeatures} data`,
+          arrayFeatureGroups: `insertMany feature groups successfully ${arrayFeatureGroups.length} data`,
+          updateHistory: 'updateMany history of user successfully',
+          updateSubscribe: 'updateMany subscribe of users successfully',
+          updateComments: 'updateMany comment of comment successfully'
+        }
+        console.info(messages)
+        res.send({success: true, messages: messages})
+      }
 
       console.timeEnd()
-
     })
   }).catch(error => console.error(error)) 
 }
@@ -127,7 +120,9 @@ async function insert_many_user(arrayRoles){
           user.roles[y] = arrayRoles[x]._id
         }
       }
-    } 
+    }
+    console.log("🚀 ~ file: dataDefault.js ~ line 124 ~ insert_many_user ~ user", user.roles)
+    
     arrayUsers.push(await new models.users({...user}).save())
   }
   return arrayUsers
