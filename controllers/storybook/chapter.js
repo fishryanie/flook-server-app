@@ -7,7 +7,8 @@ const mongoose = require('mongoose');
 
 
 module.exports = {
-  searchOneChapter: async (req, res) => {
+
+  findOneChapter: async (req, res) => {
     try {
       const { chapId } = req.query;
       const result = await models.chapters.aggregate([
@@ -37,6 +38,7 @@ module.exports = {
       handleError.ServerError(error, res);
     }
   },
+
   searchChapter: async (req, res) => {
     try {
       const { ebookId, orderby } = req.query;
@@ -57,15 +59,6 @@ module.exports = {
         {$sort:{name: orderby ? 1 : -1}}
       ])
       return res.status(200).send({success: true, count: result.length, data: result});
-    } catch (error) {
-      handleError.ServerError(error, res);
-    }
-  },
-  findOneChapter: async (req, res) => {
-    const id = req.query.id;
-    try {
-      const result = await models.chapters.findById(id).populate('ebooks');
-      return res.status(200).send(result)
     } catch (error) {
       handleError.ServerError(error, res);
     }
