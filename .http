@@ -1,0 +1,45 @@
+### LOGIN APP MODERATOR  ===============================================>
+POST http://localhost:8000/api/user-management/login HTTP/1.1
+Content-Type: application/json
+Accept:  application/json
+
+{
+	"username":"moderator", 
+  "password":"Moderator@113355"
+}
+
+### LOGIN APP ADMIN ====================================================>
+POST http://localhost:8000/api/user-management/login HTTP/1.1
+Content-Type: application/json
+Accept:  application/json
+
+{
+	"username": "huyhdang",
+  "password": "Admin1@113355"
+}
+
+
+### LOGIN APP USER  ====================================================>
+POST http://localhost:8000/api/user-management/sign-in HTTP/1.1
+Content-Type: application/json
+Accept:  application/json
+
+{
+  "username": "thanhlehuu223",
+  "password": "Abc*123456789",
+}
+
+### REGISTER APP  ======================================================>
+POST http://localhost:8000/api/user-management/sign-up HTTP/1.1
+Content-Type: application/json
+Accept:  application/json
+
+{
+  "email":"qphanquan1998@gmail.com", 
+}
+
+###
+GET http://localhost:8000/api/management-ebooks/find-many-by-user?type=subscribe HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyZDRkNTdkYjYxMzc5MTI2NzhhZWQ1ZSIsImlhdCI6MTY1ODYzNTk4NywiZXhwIjoxNjU4Njc5MTg3fQ.3SaZvFC_K0X-gAQ2hWVwq-A6Yrah48D8FeWq9HwKuoA

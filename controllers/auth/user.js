@@ -2,13 +2,29 @@ const models = require("../../models");
 const cloudinary = require('../../configs/cloudnary')
 const jwt = require("jsonwebtoken");
 const SendMail = require("../../functions/SendMail");
-const generator = require("../../functions/Generator");
 
 const configsToken = require("../../configs/token");
 const messages = require("../../constants/messages");
-const handleError = require('../../error/HandleError')
+const handleError = require('../../error/HandleError');
+const { generatePassword, addDays } = require("../../functions/globalFunc");
 const folder = { folder: 'Flex-ticket/ImageUser' }
 
+const FindOneUserController = async (req, res) => {
+  console.log("🚀 ~ file: user.js ~ line 15 ~ FindOneUserController ~ userIsLogged", req.userIsLogged._id)
+
+  const id = req.userIsLogged._id;
+  try {
+    const data = await models.users.findOne({_id: id},{password:0});
+    if(data) {
+     return res.status(200).send({data:data, success:true, message:messages.GetDataSuccessfully});
+    } 
+    else{
+     return res.send({success:false, message:messages.GetDataNotSuccessfully});
+    }
+  } catch (error) {
+    return handleError.ServerError(error, res) 
+  }
+};
 
 const RefreshTokenController = async (req, res) => {
   const { refreshToken: requestToken } = req.body;
@@ -83,13 +99,56 @@ const CreateNewController = async (req, res) => {
   }
 };
 
+const UpdateUserMobileController =async(req,res)=>{
+  try {
+    const userId = req.userIsLogged
+    console.log("body", req.body)
+    const type = req.query.type
+    let data 
+    switch (type) {
+      case "openChap":
+        data={
+          $set:{coin:req.body.coin},
+          $addToSet:{"history.bought":req.body.chapterId}
+         }
+        break;
+    
+      case "update":
+        data={
+          $set:{deviceToken:req.body.deviceToken},
+       
+         }
+        break;
+    
+      default:
+        break;
+    }
+    // if(type==="openChap"){
+    //   data={
+    //    $set:{coin:req.body.coin},
+    //    $addToSet:{"history.bought":req.body.chapterId}
+    //   }
+    //   }
+      
+    
+    const result = await models.users.findOneAndUpdate({_id:userId }, data, { new: true})
+    if(!result){
+      res.send({success:false, message:messages.UpdateFail})
+    }
+    res.send({data:result,success:true, message:messages.UpdateSuccessfully })
+  } catch (error) {
+    return handleError.ServerError(error, res)
+  }
+ 
+  }
 
 const UpdateUserController = async (req, res) => {
-  const id = req.params.id;
-  const avatar = req.body.avatar;
-  const option = { new: true };
-  let avatarUpload
+  
   try {
+    const id = req.params.id;
+    const avatar = req.body.avatar;
+    const option = { new: true };
+    let avatarUpload
     const userFind = await models.users.findById(id);
     if(req.file){
       await cloudinary.uploader.destroy(userFind.avatarId);
@@ -129,7 +188,7 @@ const AddListFavoriteController = async (req, res) => {
 };
 
 const ActiveUserController = async (req, res) => {
-  const userId = req.params.id;
+  const userId = req.query.id;
   try {
     if (!userId) {
       return res.status(400).send({ messages: "not userId or isActive" });
@@ -145,30 +204,13 @@ const ActiveUserController = async (req, res) => {
   }
 };
 
-const ForgotPasswordController = async (req, res) => {
-  try {
-    const id = req.user._id
-    const email = req.user.email
 
-    const newPassword = generator();
-    const result = await models.users.findByIdAndUpdate(
-      { _id: id },
-      { password: await models.users.hashPassword(newPassword)},
-      { new: true }
-    );
-    if (!result) {
-      return res.status(400).send({ messages: messages.UpdatePasswordFail });
-    }
-    await SendMail(email, null, newPassword, false);
-  } catch (error) {
-    return handleError.ServerError(error, res)
-  }
-};
+
 
 const ChangePasswordController = async (req, res) => {
-  const userId = req.userId;
-  const passwordNew = req.result.password
-  
+  const userId = req.userIsLogged._id.toString();
+  const passwordNew = req.body.password_New
+
   try {
     const result = await models.users.findOneAndUpdate(
       { _id: userId },
@@ -176,9 +218,9 @@ const ChangePasswordController = async (req, res) => {
       { new: true, upsert: true }
     );
     if (!result) {
-      return res.status(400).send({ messages: "Update that bai" });
+      return res.status(400).send({message: "Update that bai" });
     }
-    return res.status(200).send(result);
+    return res.status(200).send({success: true, message: 'Change Password Successfully!!!' });
   } catch (error) {
     return handleError.ServerError(error, res)
   }
@@ -218,7 +260,7 @@ const FindManyUser = async (req, res) => {
 };
 
 const FindByIdUserController = async (req, res) => {
-  const id = req.userId;
+  const id = req.user;
   try {
     const data = await models.users.findById(id);
     data.length && res.status(200).send(data);
@@ -264,9 +306,11 @@ const DeleteUserController = async (req, res) => {
 
 module.exports = {
   Login: async (req, res) => {
-    const result = req.result;
+    const result = req.userIsLogged;
+    // console.log("🚀 ~ file: user.js ~ line 278 ~ Login: ~ result", result)
+    
     const token = jwt.sign(
-      { id: result.id }, 
+      { id: result._id }, 
       configsToken.secret, 
       { expiresIn: configsToken.jwtExpiration }
     );
@@ -280,38 +324,109 @@ module.exports = {
       roles: authorities[0],
       accessToken: token,
     };
+    if(!result.isActive){
+      return res.status(400).send({ success: false, message: messages.LoginFailed});
+    }
     return res.status(200).send({data, success: true, message: messages.LoginSuccessfully});
   },
 
   Register: async (req, res) => {
-    const newPassword = generator()
+    const newPassword = generatePassword()
+    const email = req.body.email
     try {
       const USER = new models.users({
-        email: req.body.email,
-        userName: req.body.email,
+        email: email,
+        username: email,
         password: newPassword
       })
-
       const rolesName = await models.roles.find({name: 'user'});
       USER.roles = rolesName?.map((role) => role._id);
       const register = await USER.save();
-      const sendMail = await SendMail(req.body.email, 'Register', newPassword, register._id);
-      register && sendMail && res.status(200).send({success: true, messages: 'sign up successfully, check your mail to get password'});
+      const sendMail = await SendMail(req, res, email, 'Register', newPassword, register._id);
+      
+      sendMail && register && res.status(200).send({success: true, messages: 'sign up successfully, check your mail to get password'});
+    
     } catch (error) {
       return handleError.ServerError(error, res)
     }
   },
 
+  ForgotPassword: async (req, res) => {
+    try {
+      const { userId, email } = req.USER
+      const newPassword = generatePassword();
+      const result = await models.users.findOneAndUpdate(
+        { email: email },
+        { password: await models.users.hashPassword(newPassword)},
+        { new: true }
+      );
+      if (!result) {
+        return res.status(400).send({success: false, messages: messages.UpdatePasswordFail });
+      }
+      const sendMail = await SendMail(req, res, email, 'Forgot Password', newPassword, userId);
+      sendMail && result && res.status(200).send({success: true, messages: 'Check your mail to get new password'});
+    } catch (error) {
+      return handleError.ServerError(error, res)
+    }
+  },
+
+  removeOneUser: async (req, res) => {
+    const option = { new: true };
+    const id = req.query.id;
+    const userFind = await models.users.findById(id);
+    let row;
+  
+    try {
+  
+      if (userFind.deleted === true) {
+        row = await models.users.findByIdAndUpdate(id, { deleted: false, deleteAt: null, updateAt: userFind.updateAt, createAt: userFind.createAt }, option);
+      } else {
+        row = await models.users.findByIdAndUpdate(id, { deleted: true, deleteAt: addDays(0), updateAt: userFind.updateAt, createAt: userFind.createAt }, option);
+      }
+      if (!row) {
+        console.log(messages.NotFound);
+        return res.status(404).send({ message: messages.NotFound + id });
+      }
+      console.log(messages.DeleteSuccessfully);
+      return res.status(200).send({ message: messages.DeleteSuccessfully });
+    } catch (error) {
+      return handleError.ServerError(error, res)
+    }
+  },
+
+  removeManyUser: async (req, res) => {
+    const listDelete = req.body;
+    try {
+      const result = await models.users.updateMany(
+        { "_id": { $in: listDelete } },
+        { $set: { deleted: true, deleteAt: addDays(0) } },
+        { new: true }
+      );
+      if (!result) {
+        return res.status(400).send({ success: false, message: messages.RemoveNotSuccessfully });
+      }
+      const response = {
+        success: true,
+        message: messages.DeleteSuccessfully,
+      };
+      return res.status(200).send(response);
+    } catch (error) {
+      handleError.ServerError(error, res);
+    }
+  },
+  
+
   CreateNewController,
   RefreshTokenController,
   ActiveUserController,
-  ForgotPasswordController,
   ChangePasswordController,
   UpdateUserController,
+  UpdateUserMobileController,
   DeleteUserController,
   FindManyUser,
   FindByIdUserController,
   FindUserNotActive,
   FindListMovieFavorite,
   AddListFavoriteController,
+  FindOneUserController,
 };

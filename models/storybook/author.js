@@ -4,6 +4,7 @@ const Author = new mongoose.Schema({
   createAt: { type: Date, default: Date.now },
   deleteAt: { type: Date, default: null },
   updateAt: { type: Date, default: null },
+  deleted: { type: Boolean, default: false },
   name: { type: String, trim: true, default: null, unique: true },
   license: { type: mongoose.Schema.Types.ObjectId, ref: "users", default: null},
   images: {

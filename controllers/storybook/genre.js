@@ -1,21 +1,23 @@
 const messages = require("../../constants/messages");
 const handleError = require("../../error/HandleError");
+const { addDays } = require("../../functions/globalFunc");
 const models = require("../../models");
 
 module.exports = {
+  findOneGenre: async (req, res) => {
+   
+  },
 
-  findGenre: async (req, res) => {
+  findManyGenre: async (req, res) => {
     try {
-      console.log('123');
-      const result = await models.genres.find();
-      return res.status(200).send({data: result, success: true});
+      const result = await models.genres.find({deleted: false});
+      return res.status(200).send({data: result, success: true, message:messages.GetDataSuccessfully});
     } catch (error) {
       return handleError.ServerError(error, res);
     }
   },
 
-
-  addGenre: async (req, res) => {
+  insertOneGenre: async (req, res) => {
     const dataGenreBook = req.body.name;
   
     try {
@@ -40,11 +42,19 @@ module.exports = {
     } catch (error) {
       handleError.ServerError(error, res);
     }
-  
   },
-  
 
-  updateGenre: async (req, res) => {
+  insertManyGenre: async (req, res) => {
+    try {
+      console.log('123');
+      const result = await models.genres.find();
+      return res.status(200).send({data: result, success: true});
+    } catch (error) {
+      return handleError.ServerError(error, res);
+    }
+  },
+
+  updateOneGenre: async (req, res) => {
     const id = req.query.id
     const GenreBook = new models.genres({ ...req.body, _id: id});
     const option = { new: true };
@@ -61,8 +71,7 @@ module.exports = {
     }
   },
 
-  
-  deleteGenre: async (req, res) => {
+  deleteOneGenre: async (req, res) => {
     try {
       const id = req.params.id;
       const row = await models.genres.findByIdAndRemove(id).exec();
@@ -76,9 +85,55 @@ module.exports = {
     } catch (error) {
       handleError.ServerError(error, res);
     }
-  
   },
 
-  
+  deleteManyGenre: async (req, res) => {
+
+  },
+
+  removeOneGenre: async (req, res) => {
+    const option = { new: true };
+    const id = req.query.id;
+    const genreFind = await models.genres.findById(id);
+    let row;
+    try {
+
+      if (genreFind.deleted === true) {
+        row = await models.genres.findByIdAndUpdate(id, { deleted: false, deleteAt: null, updateAt: genreFind.updateAt, createAt: genreFind.createAt }, option);
+      } else {
+        row = await models.genres.findByIdAndUpdate(id, { deleted: true, deleteAt: addDays(0), updateAt: genreFind.updateAt, createAt: genreFind.createAt }, option);
+      }
+      if (!row) {
+       return handleError.NotFoundError(id, res)
+      }
+      return res.status(200).send({success:true, message: messages.DeleteSuccessfully });
+    } catch (error) {
+      return handleError.ServerError(error, res)
+    }
+
+  },
+
+  removeManyGenre: async (req, res) => {
+    const listDelete = req.body;
+    const option = { new: true };
+    try {
+      const result = await models.genres.updateMany(
+        { "_id": { $in: listDelete } },
+        { $set: { deleted: true, deleteAt: addDays(0) } },
+        option
+      );
+      if (!result) {
+        return res.status(400).send({ success: false, message: messages.RemoveNotSuccessfully });
+      }
+      return res.status(200).send({success:true, message: messages.DeleteSuccessfully });
+    } catch (error) {
+      return handleError.ServerError(error, res);
+    }
+  },
+
+  searchGenre: async (req, res) =>{
+
+  }
+
 }
 

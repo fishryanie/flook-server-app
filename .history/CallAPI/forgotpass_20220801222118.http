@@ -1,0 +1,18 @@
+### fogot pass
+PUT http://localhost:8000/api/user-management/forgot-password
+Content-Type: application/json
+Accept: application/json
+ 
+{
+     "email":"phuocsanhtps@gmail.com"
+}
+
+### change pass
+PUT http://localhost:8000/api/user-management/change-password
+Content-Type: application/json
+Accept: application/json
+ 
+{
+     "password":"Qu1!my#QCX53W1Th",
+     "password_New":"SanhTp$123456"
+}

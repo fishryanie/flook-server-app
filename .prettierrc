@@ -15,6 +15,6 @@
     "trailingComma": "es5",
     "useTabs": false,
     "vueIndentScriptAndStyle": false,
-    "printWidth": 200,
-    "parser": "javascripts"
+    "printWidth": 300,
+    "parser": "html"
 }

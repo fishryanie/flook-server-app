@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
 
+const Users = require("./auth/user")
 
 const model = {
-  casts: mongoose.model('casts', require('./movie/cast')),
-  users: mongoose.model('users', require('./auth/user')),
+  users: mongoose.model('users', Users),
   roles: mongoose.model('roles', require('./auth/roles')),
+  casts: mongoose.model('casts', require('./movie/cast')),
   movies: mongoose.model('movies', require('./movie/movie')),
   genres: mongoose.model('genres', require('./storybook/genre')),
   ebooks: mongoose.model('ebooks', require('./storybook/ebooks')),

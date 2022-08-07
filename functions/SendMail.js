@@ -1,9 +1,36 @@
 require('dotenv/config')
-const nodemailer = require('nodemailer');
-const RenderMailRegister = require('../views/active-account')
-const RenderMailPassword = require('../views/send-password')
+const fs = require('fs'), nodemailer = require('nodemailer'), apiString = require('../constants/api')
 
-const SendMail = async (toMail, subject, newPassword, userId) => {
+
+const SendMail = async (req, res, toMail, subject, newPassword, userId) => {
+
+  const apiActiveAccount = req.protocol + '://' + req.headers.host + apiString.setActiveUser + '?id=' + userId
+
+  const apiForgotPassword = req.protocol + '://' + req.headers.host + apiString.forgotPassword + '?id=' + userId
+
+  let renderMailRegister = fs
+  .readFileSync(process.cwd() + '/views/email.hbs','utf8')
+  .replace('RENDER_NEW_PASSWORD', newPassword)
+  .replace('TEXT_API', apiActiveAccount)
+  .replace('TEXT_SUBJECT', subject)
+  .replace('TEXT_BUTTON', 'Activate your account')
+  .replace('TEXT_DESCRIPTION', '')
+
+
+  let renderMailForgotPassword = fs
+  .readFileSync(process.cwd() + '/views/email.hbs', 'utf8')
+  .replace('TEXT_API', apiForgotPassword)
+  .replace('TEXT_SUBJECT', subject)
+  .replace('TEXT_BUTTON', 'Update new password')
+  .replace('TEXT_DESCRIPTION', '')
+
+  const options = {
+    from: process.env.FLOOK_EMAIL_USERNAME,
+    to: toMail,
+    subject: subject, 
+    html: newPassword ? renderMailRegister : renderMailForgotPassword
+  }
+  
   const transporter = nodemailer.createTransport({
     host: process.env.FLOOK_EMAIL_HOST,
     port: process.env.FLOOK_EMAIL_PORT,
@@ -17,21 +44,13 @@ const SendMail = async (toMail, subject, newPassword, userId) => {
       rejectUnauthorized: false
     }
   });
-  const linkActiveAccount = `http://localhost:8000/api/user-management/setActiveUser/${userId}`
 
-  const options = {
-    from: process.env.FLOOK_EMAIL_USERNAME,
-    to: toMail,
-    subject: subject, 
-    html: userId ? RenderMailRegister(linkActiveAccount) : RenderMailPassword(newPassword)
-  }
-
-  // send mail with defined transport object
-  let info = await transporter.sendMail(options)
+  const info = await transporter.sendMail(options)
 
   console.log("Message sent: %s", info.messageId);
   console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
- 
+
+  return info 
 }
 
 module.exports = SendMail

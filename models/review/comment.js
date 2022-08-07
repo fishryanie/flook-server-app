@@ -3,9 +3,7 @@ const mongoose = require("mongoose");
 const Comments = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "users", default: null },
 
-  bookId: { type: mongoose.Schema.Types.ObjectId, ref: "books", default: null },
-
-  PostId: { type: mongoose.Schema.Types.ObjectId, ref: "forumposts", default: null },
+  postId: { type: mongoose.Schema.Types.ObjectId, ref: "forumposts", default: null },
 
   reviewId: { type: mongoose.Schema.Types.ObjectId, ref: "reviews", default: null },
 
@@ -18,9 +16,10 @@ const Comments = new mongoose.Schema({
   content: { type: String, trim: true, default: '',},
   
   deleted: { type: Boolean, default: false },
+  
   createAt: { type: Date, default: Date.now },
-  deleteAt: { type: Date, default: Date.now },
-  updateAt: { type: Date, default: Date.now, commit: String },
+  deleteAt: { type: Date, default: null },
+  updateAt: { type: Date, default: null },
 });
 
 module.exports = Comments;
