@@ -11,7 +11,7 @@ module.exports = {
   findManyGenre: async (req, res) => {
     try {
       const result = await models.genres.find({deleted: false});
-      return res.status(200).send({data: result, success: true});
+      return res.status(200).send({data: result, success: true, message:messages.GetDataSuccessfully});
     } catch (error) {
       return handleError.ServerError(error, res);
     }

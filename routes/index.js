@@ -23,6 +23,7 @@ module.exports = app => {
   require('./storybook/genre')(app)
   require('./storybook/author')(app)
   require('./storybook/chapter')(app)
+  require('./payment')(app)
 
   app.get('/layout/web-hook', (req, res) => {})
 

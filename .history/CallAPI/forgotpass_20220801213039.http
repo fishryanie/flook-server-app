@@ -1,0 +1,6 @@
+### fogot pass
+PUT http://localhost:8000/api/user-management/forgot-password
+
+{
+     "email":"phuocsanhtps@gmail.com"
+}

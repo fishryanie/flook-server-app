@@ -2,11 +2,65 @@ const models = require("../../models");
 const messages = require("../../constants/messages");
 const handleError = require("../../error/HandleError");
 const { addDays } = require("../../functions/globalFunc");
+const mongoose = require('mongoose');
 
 
 
 module.exports = {
-  
+  searchOneChapter: async (req, res) => {
+    try {
+      const { chapId } = req.query;
+      const result = await models.chapters.aggregate([
+        {$match: {deleted: false, _id: new mongoose.Types.ObjectId(chapId)}},
+        {$lookup: {
+          from: 'comments',
+          localField: '_id',
+          foreignField: 'chapterId',
+          as: 'comments',
+          pipeline: [
+            {$match: {deleted: false}},
+            {$lookup: {
+              from: 'comments',
+              localField: '_id',
+              foreignField: 'commentId',
+              as: 'commentsChild',
+              pipeline: [
+                {$match: {deleted: false}},
+                {$project: {userId: 1,reviewId: 1, likes: 1, createAt: 1, content: 1}}
+              ]}},
+            {$project: {commentsChild: 1, userId: 1,reviewId: 1, likes: 1, createAt: 1, content: 1, countCommentChild: {$size: '$commentsChild'}}}
+          ]
+        }}
+      ])
+      return res.status(200).send({success: true, count: result.length, data: result});
+    } catch (error) {
+      handleError.ServerError(error, res);
+    }
+  },
+  searchChapter: async (req, res) => {
+    try {
+      const { ebookId, orderby } = req.query;
+      console.log("🚀 ~ file: chapter.js ~ line 14 ~ searchChapter: ~ ebookId", ebookId)
+      // const { filter } = req.body;
+      const result = await models.chapters.aggregate([
+        {$match: {
+          ebooks: new mongoose.Types.ObjectId(ebookId),
+          deleted: false, 
+        }},
+        {$lookup: {
+          from: 'comments',
+          localField: '_id',
+          foreignField: 'chapterId',
+          as: 'comments',
+        }},
+        {$project:{name:1, views: 1, likes: {$size: '$likes'}, comments: {$size: '$comments'}, createAt:1}},
+        {$sort:{name: orderby ? 1 : -1}}
+      ])
+      return res.status(200).send({success: true, count: result.length, data: result});
+    } catch (error) {
+      handleError.ServerError(error, res);
+    }
+  },
   findOneChapter: async (req, res) => {
     const id = req.query.id;
     try {
@@ -112,34 +166,4 @@ module.exports = {
     }
   },
 
-  searchChapter: async (req, res) =>{
-    const comicId = req.params.mangaId;
-
-    const PAGE_SIZE = 10;
-    let page = parseInt(req.query.page);
-    const sort = req.query.sort;
-
-    page < 0 ? (page = 1) : (page = page);
-    const skip = (page - 1) * PAGE_SIZE;
-
-    try {
-      const sortChapter = sort === 'name' ? { name: 1 } : null;
-
-      const count = await models.chapters.find({ book: comicId }).count();
-      // console.log(count)
-
-      const result = await models.chapters.find({ book: { $eq: comicId } })
-        // .populate('book')
-        .skip(skip)
-        .limit(PAGE_SIZE)
-        .sort(sortChapter);
-
-      // const sort1 = result[0].image;
-      // console.log("sort1", sort1)
-
-      return res.status(200).send({ data: result, count: count, message: 'Success' })
-    } catch (error) {
-      handleError.ServerError(error, res);
-    }
-  }
 }

@@ -7,7 +7,7 @@ const { subStr } = require("../../functions/globalFunc");
 module.exports = app => { 
   app.get(apiString.findOneGenre, middlewares.auth.accessPermission(subStr(apiString.findOneGenre)) , Controller.genre.findOneGenre);
   
-  app.get(apiString.findManyGenre, middlewares.auth.accessPermission(subStr(apiString.findManyGenre)) , Controller.genre.findManyGenre);
+  app.get(apiString.findManyGenre , Controller.genre.findManyGenre);
   
   app.get(apiString.searchGenre, middlewares.auth.accessPermission(subStr(apiString.searchGenre)) , Controller.genre.searchGenre);
   

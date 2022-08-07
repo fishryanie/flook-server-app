@@ -10,7 +10,7 @@ module.exports = app => {
 
   app.get(apiString.searchUser, middlewares.auth.accessPermission(subStr(apiString.searchUser)), Controller.user.FindManyUser);
 
-  app.get(apiString.findOneUser, middlewares.auth.accessPermission(subStr(apiString.findOneUser)), Controller.user.FindByIdUserController);
+
 
   app.get(apiString.setActiveUser, Controller.user.ActiveUserController);
 
@@ -27,8 +27,13 @@ module.exports = app => {
   ], Controller.user.Login);
 
   app.post(apiString.register, [
-    middlewares.auth.VerifyEmail('create_new'),
+    middlewares.auth.VerifyEmail(apiString.register),
   ], Controller.user.Register);
+  
+  //Mobile
+  app.get(apiString.findOneUser, [
+    middlewares.auth.accessPermission(subStr(apiString.findOneUser)),
+  ], Controller.user.FindOneUserController);
 
   // app.post(apiString.insertOneUser, [
   //   upload.single("avatar"),
@@ -40,13 +45,11 @@ module.exports = app => {
   app.post(apiString.insertOneUser, [
     upload.single("images"),
     middlewares.auth.accessPermission(subStr(apiString.insertOneUser)),
-    middlewares.auth.verifyUserName('create_new'),
-    middlewares.auth.VerifyEmail('create_new'),
+    middlewares.auth.verifyUserName(apiString.insertOneUser),
+    middlewares.auth.VerifyEmail(apiString.insertOneUser),
   ], Controller.user.CreateNewController);
 
-  app.put(apiString.forgotPassword, [
-    middlewares.auth.VerifyEmail('')
-  ], Controller.user.ForgotPasswordController);
+  app.put(apiString.forgotPassword, middlewares.auth.VerifyEmail(apiString.forgotPassword), Controller.user.ForgotPassword);
 
 
   app.put(apiString.changePassword, [
@@ -60,6 +63,11 @@ module.exports = app => {
     middlewares.auth.accessPermission(subStr(apiString.updateOneUser)),
     middlewares.auth.VerifyEmail(''),
   ], Controller.user.UpdateUserController);
+
+  app.put(apiString.updateOneUserMobile, [
+    middlewares.auth.accessPermission(subStr(apiString.updateOneUserMobile)),
+  ], Controller.user.UpdateUserMobileController);
+
 
 
 };

@@ -5,6 +5,7 @@ const genreBook = new mongoose.Schema({
   deleteAt: { type: Date, default: null},
   updateAt: { type: Date, default: null},
   deleted: { type: Boolean, default: false },
+  image: { type: String, default: null ,trim: true},
   name: { type: String , unique: true, trim: true, default: null },
 })
 

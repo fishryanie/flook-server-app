@@ -10,10 +10,11 @@ const roles = require('./auth/role')
 const chapter = require('./storybook/chapter')
 const feature = require('./auth/feature')
 const featureGroup = require('./auth/featureGroup')
+const payment =  require('./payment')
 
 
 const Controller = {
-  roles, user, movie, cast, comment, ebooks, genre, author, chapter, review, comment, feature, featureGroup
+  roles, user, movie, cast, comment, ebooks, genre, author, chapter, review, comment, feature, featureGroup,payment
 }
 
 module.exports = Controller

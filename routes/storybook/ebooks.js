@@ -9,9 +9,9 @@ module.exports = app => {
   
   app.get(apiString.findManyEbook, middlewares.auth.accessPermission(subStr(apiString.findManyEbook)) , Controller.ebooks.findManyEbook);
 
-  app.get('/api/management-ebooks/find-many-by-user', middlewares.auth.accessPermission('find-many-by-user') , Controller.ebooks.findManyByUser);
+  app.get(apiString.findManyByUser, middlewares.auth.accessPermission(apiString.findManyByUser) , Controller.ebooks.findManyByUser);
 
-  app.get(apiString.searchEbook, middlewares.auth.accessPermission(subStr(apiString.searchEbook)) , Controller.ebooks.searchEbook);
+  app.post(apiString.searchEbook, Controller.ebooks.searchEbook);
   
   app.put(apiString.updateOneEbook, middlewares.auth.accessPermission(subStr(apiString.updateOneEbook)) , Controller.ebooks.updateOneEbook);
   

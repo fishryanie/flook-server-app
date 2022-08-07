@@ -6,8 +6,11 @@ const handleError = require("../error/HandleError");
 const models = require("../models");
 const { subStr } = require("../functions/globalFunc");
 
-const accessPermission = typefunc => async (req, res, next) => {  
-  const array=[], token = req.headers?.authorization;
+const accessPermission = typefunc => async (req, res, next) => { 
+  try {
+    const array=[], token = req.headers?.authorization;
+  // console.log("🚀 ~ file: auth.js ~ line 11 ~ accessPermission ~ token", token)
+
   if (!token) {
     return handleError.NoTokenError(res)
   } else {
@@ -32,10 +35,14 @@ const accessPermission = typefunc => async (req, res, next) => {
           }
         }) 
       })
-      req.userIsLoggedId = userIsLogged
+      req.userIsLogged = userIsLogged
       array.length > 0 ? next() : handleError.PermissionError(res)
     })
   }
+  } catch (error) {
+    handleError.ServerError(error, res)
+  } 
+  
 }
 
 const verifyLogin = async (username, password, done) => {
@@ -57,7 +64,7 @@ const verifyUserName = typeUserName => async (req, res, next) => {
     
     if(typeUserName === subStr(apiString.login)) {
       if (!result) return handleError.NotFoundError(username, res);
-      req.result = result;
+      req.userIsLogged = result;
       next();
     } else {
       if (result) return handleError.AlreadyExistsError(username, res);
@@ -70,16 +77,17 @@ const verifyUserName = typeUserName => async (req, res, next) => {
 
 const VerifyEmail = typeEmail => async (req, res, next) => {
   try {
-    const email = req.body.email;
-    const USER = await models.users.findOne({ email: email });
-    if (typeEmail === 'create_new' && USER){
+    const { email } = req.body;
+    const USER = await models.users.findOne({email: email });
+    if((typeEmail === apiString.register || typeEmail === apiString.insertOneUser) && USER){
       return handleError.AlreadyExistsError(email, res)
-    }else if(typeEmail === 'create_new' && !USER) {
+    } else if((typeEmail === apiString.register || typeEmail === apiString.insertOneUser) && !USER) {
       next()
-    }
-    if (USER) {
-      req.user = USER;
-      next();
+    } else if(typeEmail === apiString.forgotPassword && !USER){
+      return handleError.NotFoundError(email, res)
+    } else if(typeEmail === apiString.forgotPassword && USER){
+      req.USER = USER;
+      next()
     }
   } catch (error) {
     return handleError.ServerError(error); 
@@ -89,7 +97,7 @@ const VerifyEmail = typeEmail => async (req, res, next) => {
 const VerifyPassword = async (req, res, next) => {
   try {
     const password = req.body.password;
-    const hash = req.result.password;
+    const hash = req.userIsLogged.password;
     const verifyPassword = await models.users.verifyPassword(password, hash);
     if (verifyPassword !== undefined) {
       return handleError.HashPasswordError(verifyPassword, res);
