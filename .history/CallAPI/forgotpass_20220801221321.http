@@ -1,7 +1,0 @@
-PUT http://localhost:8000/api/user-management/forgot-password
-Content-Type: application/json
-Accept:  application/json
-
-{
-  "email":"tuhoang.121299@gmail.com"
-}
