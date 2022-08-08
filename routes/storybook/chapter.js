@@ -5,15 +5,12 @@ const apiString = require('../../constants/api');
 const { subStr } = require("../../functions/globalFunc");
 
 module.exports = app => { 
-  // MOBILE
+ 
   app.get(apiString.searchChapter, Controller.chapter.searchChapter);
-  app.get(apiString.searchOneChapter, Controller.chapter.searchOneChapter);
-  // END MOBILE
-  app.get(apiString.findOneChapter, middlewares.auth.accessPermission(subStr(apiString.findOneChapter)) , Controller.chapter.findOneChapter);
+ 
+  app.get(apiString.findOneChapter, Controller.chapter.findOneChapter);
   
   app.get(apiString.findManyChapter, middlewares.auth.accessPermission(subStr(apiString.findManyChapter)) , Controller.chapter.findManyChapter);
-  
-  
   
   app.put(apiString.updateOneChapter, middlewares.auth.accessPermission(subStr(apiString.updateOneChapter)) , Controller.chapter.updateOneChapter);
   
