@@ -54,7 +54,7 @@ module.exports = {
           foreignField: 'chapterId',
           as: 'comments',
         }},
-        {$project:{name: { $substr: [ "$name", 0, 7 ] }, views: 1, likes: {$size: '$likes'}, comments: {$size: '$comments'}, createAt:1}},
+        {$project:{name: { $substr: [ "$name", 7, 9 ] }, views: 1, likes: {$size: '$likes'}, comments: {$size: '$comments'}, createAt:1}},
         {$sort:{name: orderby ? 1 : -1}}
       ]
       page && select.push({$skip: skip },{$limit: pageSize })
