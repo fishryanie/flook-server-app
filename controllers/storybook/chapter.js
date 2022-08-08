@@ -54,11 +54,11 @@ module.exports = {
           foreignField: 'chapterId',
           as: 'comments',
         }},
-        {$project:{name: { $substr: [ "$name", 8, 9 ] }, views: 1, likes: {$size: '$likes'}, comments: {$size: '$comments'}, createAt:1}},
+        {$project:{name: { $toInt:{ $substr: [ "$name", 8, 9 ] }}, views: 1, likes: {$size: '$likes'}, comments: {$size: '$comments'}, createAt:1}},
         {$sort:{name: orderby ? 1 : -1}}
       ]
-      page && select.push({$skip: skip },{$limit: pageSize })
-      const result = await models.chapters.aggregate(select)
+      page && select.push({$skip: skip },{$limit: pageSize});
+      const result = await models.chapters.aggregate(select);
       return res.status(200).send({success: true, data: result});
     } catch (error) {
       handleError.ServerError(error, res);
