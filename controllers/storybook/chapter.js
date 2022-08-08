@@ -41,10 +41,9 @@ module.exports = {
 
   searchChapter: async (req, res) => {
     try {
-      const { ebookId, orderby } = req.query;
-      console.log("🚀 ~ file: chapter.js ~ line 14 ~ searchChapter: ~ ebookId", ebookId)
-      // const { filter } = req.body;
-      const result = await models.chapters.aggregate([
+      const { ebookId, page, orderby } = req.query;
+      const pageSize = 12, skip = page ? (parseInt(page) - 1) * pageSize : null
+      const select = [
         {$match: {
           ebooks: new mongoose.Types.ObjectId(ebookId),
           deleted: false, 
@@ -57,7 +56,9 @@ module.exports = {
         }},
         {$project:{name:1, views: 1, likes: {$size: '$likes'}, comments: {$size: '$comments'}, createAt:1}},
         {$sort:{name: orderby ? 1 : -1}}
-      ])
+      ]
+      page && select.push({$skip: skip },{$limit: pageSize })
+      const result = await models.chapters.aggregate(select)
       return res.status(200).send({success: true, count: result.length, data: result});
     } catch (error) {
       handleError.ServerError(error, res);
