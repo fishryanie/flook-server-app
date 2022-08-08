@@ -62,7 +62,7 @@ const verifyUserName = typeUserName => async (req, res, next) => {
 
     const result = await models.users.findOne({username}).populate("roles","-__v");
     
-    if(typeUserName === subStr(apiString.login)) {
+    if(typeUserName === apiString.login) {
       if (!result) return handleError.NotFoundError(username, res);
       req.userIsLogged = result;
       next();
