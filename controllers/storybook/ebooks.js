@@ -176,7 +176,7 @@ module.exports = {
     
     
       const select = [ 
-        
+        {$match: {deleted: false, $and: match }},
         {$lookup: {from: 'authors',localField: 'authors',foreignField: '_id',as: 'authors', pipeline: [{$match: {deleted: false}},{$project: {name: 1, images: '$images.avatar.url'}}]}},
         {$lookup: {from: 'genres',localField: 'genres',foreignField: '_id',as: 'genres', pipeline: [{$match: {deleted: false}},{$project: {name: 1}}]}},
         {$lookup: {from: 'reviews',localField: '_id',foreignField: 'ebooks',as: 'reviews',pipeline: [{$match: {deleted: false}}]}},
@@ -200,7 +200,7 @@ module.exports = {
           sumPage: {$size: { '$setUnion': [ '$chapters._id', [] ]}}, 
           readers: {$sum: {$size: '$readers'}},
         }},
-        {$match: {deleted: false, $and: match }},
+
       ]
     
       if(genre && genre.length > 0){
