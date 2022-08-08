@@ -5,7 +5,7 @@ const folder = { folder: 'Flex-ticket/ImageBook' }
 const models = require("../../models");
 const mongoose = require('mongoose');
 const { addDays, addArrayDays } = require('../../functions/globalFunc');
-const showEbook = { title:1, images:1, authors:1, genres:1, status:1, description:1, allowedAge:1, views:1 }
+const showEbook = { title:1, images:1, authors:1, genres:1, status:1, description:1, allowedAge:1, views:1, createAt: 1}
 
 
 module.exports = {

@@ -105,7 +105,7 @@ module.exports = {
         username: email,
         password: newPassword
       })
-      const rolesName = await models.roles.find({name: 'user'});
+      const rolesName = await models.roles.find({name: 'User'});
       USER.roles = rolesName?.map((role) => role._id);
       const register = await USER.save();
       const sendMail = await SendMail(req, res, email, 'Register', newPassword, register._id);
