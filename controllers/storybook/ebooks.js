@@ -177,7 +177,6 @@ module.exports = {
   
   searchEbook: async (req, res) =>{
     try {
-    
       let alowAgeCondition, chapterCondition
       const { author, genre, status, allowedAge, newDay, chapter } = req.body;
       const { sort, page, orderby } = req.query;
