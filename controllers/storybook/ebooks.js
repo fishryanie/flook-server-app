@@ -20,20 +20,19 @@ module.exports = {
   },
 
   findManyEbook: async (req, res) => {
-    const findManga = async (req, res) => {
-      const deleted = req.query.deleted;
+    const deleted = req.query.deleted;
+      const populate = ['authors', 'genres']
       let result;
       try {
         (deleted === "true")
-          ? result = await models.ebooks.find({ deleted: { $in: true } })
+          ? result = await models.ebooks.find({ deleted: { $in: true } }).populate(populate)
           : (deleted === "false")
-            ? result = await models.ebooks.find({ deleted: { $in: false } })
-            : result = await models.ebooks.find();
-        return res.status(200).send(result);
+            ? result = await models.ebooks.find({ deleted: { $in: false } }).populate(populate)
+            : result = await models.ebooks.find().populate(populate);
+        return res.status(200).send({data: result, success: true, message: messages.FindSuccessfully});
       } catch (error) {
         handleError.ServerError(error, res);
       }
-    };
   },
 
   insertOneEbook: async (req, res) => {
