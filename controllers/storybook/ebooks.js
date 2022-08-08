@@ -21,20 +21,12 @@ module.exports = {
   },
 
   findManyEbook: async (req, res) => {
-    const findManga = async (req, res) => {
-      const deleted = req.query.deleted;
-      let result;
-      try {
-        (deleted === "true")
-          ? result = await models.ebooks.find({ deleted: { $in: true } })
-          : (deleted === "false")
-            ? result = await models.ebooks.find({ deleted: { $in: false } })
-            : result = await models.ebooks.find();
-        return res.status(200).send(result);
-      } catch (error) {
-        handleError.ServerError(error, res);
-      }
-    };
+    try {
+      const result = await models.ebooks.find({deleted:false}).populate([{path: 'authors', select: ['name']}, {path: 'genres', select: ['name']}])
+      result && res.status(200).send({success: true, data: result});
+    } catch (error) {
+      return handleError.ServerError(error, res);
+    }
   },
 
   insertOneEbook: async (req, res) => {
@@ -177,19 +169,14 @@ module.exports = {
   
   searchEbook: async (req, res) =>{
     try {
-      let alowAgeCondition, chapterCondition
       const { author, genre, status, allowedAge, newDay, chapter } = req.body;
       const { sort, page, orderby } = req.query;
-      const pageSize = 12, skip = page ? (parseInt(page) - 1) * pageSize : null
+      const match=[{}], pageSize = 12, skip = page ? (parseInt(page) - 1) * pageSize : null
+
+    
+    
       const select = [ 
-        {$match: {deleted: false, $and: [
-          genre ? { genres: { $in: genre } } : {}, 
-          author ? { authors: { $in: author } } : {},
-          status ? { status: status[0]} : {},
-          chapter ? { chapter: chapterCondition } : {},
-          allowedAge ? { allowedAge: alowAgeCondition } : {},
-          newDay ? {createAt:{$in: addArrayDays('EBOOKS_NEW')}} : {}
-        ]}},
+        
         {$lookup: {from: 'authors',localField: 'authors',foreignField: '_id',as: 'authors', pipeline: [{$match: {deleted: false}},{$project: {name: 1, images: '$images.avatar.url'}}]}},
         {$lookup: {from: 'genres',localField: 'genres',foreignField: '_id',as: 'genres', pipeline: [{$match: {deleted: false}},{$project: {name: 1}}]}},
         {$lookup: {from: 'reviews',localField: '_id',foreignField: 'ebooks',as: 'reviews',pipeline: [{$match: {deleted: false}}]}},
@@ -213,22 +200,36 @@ module.exports = {
           sumPage: {$size: { '$setUnion': [ '$chapters._id', [] ]}}, 
           readers: {$sum: {$size: '$readers'}},
         }},
+        {$match: {deleted: false, $and: match }},
       ]
-      if(allowedAge) {
-        switch (allowedAge) {
-          case 11: alowAgeCondition = { $lte: 11 }; break;
-          case 18: alowAgeCondition = { $lte: 18, $gte:12 }; break;
-          case 30: alowAgeCondition = { $lte: 30, $gte:18 }; break;
-          case 31: alowAgeCondition = { $gte: 31 }; break;
-          default: break;
-        }
+    
+      if(genre && genre.length > 0){
+        match.push({genres: {$in: genre.map((e) => mongoose.Types.ObjectId(e)) }})
+      }
+      if(author && author.length > 0){
+        match.push({authors: {$in: author.map((e) => mongoose.Types.ObjectId(e)) }})
+      }
+      if(status && status.length > 0){
+        match.push({status: status[0]})
+      }
+      if(newDay){
+        match.push({createAt:{$in: addArrayDays('EBOOKS_NEW')}})
       }
       if(chapter) {
         switch (chapter) {
-          case '0-50': chapterCondition = { $lte: 50 }; break;
-          case '50-200': chapterCondition = { $lte: 200, $gte: 50 }; break;
-          case '200-500': chapterCondition = { $lte: 500, $gte: 200 }; break;
-          case 'more500': chapterCondition = { $gte: 500}; break;
+          case 'lte50': match.push({sumPage: {$lte: 50}}); break;
+          case 'lte100': match.push({sumPage: {$lte: 100 }}); break;
+          case 'lte300': match.push({sumPage: {$lte: 300 }}); break;
+          case 'gte500': match.push({sumPage: {$gte: 500 }}); break;
+          default: break;
+        }
+      }
+      if(allowedAge) {
+        switch (allowedAge) {
+          case 11: match.push({ $lte: 11 }); break;
+          case 18: match.push({ $lte: 18, $gte:12 }); break;
+          case 30: match.push({ $lte: 30, $gte:18 }); break;
+          case 31: match.push({ $lte: 31 }); break;
           default: break;
         }
       }
