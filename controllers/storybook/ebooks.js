@@ -259,8 +259,7 @@ module.exports = {
       page && select.push({$skip: skip },{$limit: pageSize })
       const result = await models.ebooks.aggregate(select)
       if(!result){
-      return res.status(400).send({success: false,message:"search error"})
-        
+        return res.status(400).send({success: false,message:"search error"})
       }
       return res.status(200).send({success: true, length: result.length, data: result, message:"search successfully"})
     } catch (error) {
