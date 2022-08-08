@@ -55,7 +55,7 @@ module.exports = {
           as: 'comments',
         }},
         {$project:{name: { $toInt:{ $substr: [ "$name", 8, 9 ] }}, views: 1, likes: {$size: '$likes'}, comments: {$size: '$comments'}, createAt:1}},
-        {$sort:{name: orderby ? 1 : -1}}
+        {$sort:{name: parseInt(orderby) || -1}}
       ]
       page && select.push({$skip: skip },{$limit: pageSize});
       const result = await models.chapters.aggregate(select);
