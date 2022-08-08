@@ -25,7 +25,7 @@ module.exports = app => {
 
 
   app.post(routesString.login, [
-    middlewares.auth.verifyUserName('login_app'),
+    middlewares.auth.verifyUserName(subStr(routesString.login)),
     middlewares.auth.VerifyPassword,
   ], Controller.user.Login);
 
@@ -54,10 +54,12 @@ module.exports = app => {
 
 
   app.put(routesString.updateOneUser, [
-    upload.single("avatar"),
+    upload.single("images"),
     middlewares.auth.accessPermission(subStr(routesString.updateOneUser)),
     middlewares.auth.VerifyEmail(''),
   ], Controller.user.UpdateUserController);
 
   app.get(routesString.findUserLoggin, middlewares.auth.accessPermission(subStr(routesString.findUserLoggin)), Controller.user.findUserLoggin)
+
+  app.get(routesString.logout, middlewares.auth.accessPermission(subStr(routesString.logout)), Controller.user.logOut)
 };

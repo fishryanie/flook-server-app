@@ -9,7 +9,7 @@ Accept:  application/json
 }
 
 ### LOGIN APP ADMIN ====================================================>
-POST http://localhost:8000/api/user-management/login-in HTTP/1.1
+POST http://localhost:8000/api/user-management/login HTTP/1.1
 Content-Type: application/json
 Accept:  application/json
 
@@ -36,4 +36,29 @@ Accept:  application/json
 
 {
   "email":"qphanquan1998@gmail.com", 
+}
+
+###
+PUT http://localhost:8000/api/user-management/change-password
+Content-Type: application/json
+Accept:  application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyZTdjYTc5NTYxMWU1MWE5NTI1NWZlOCIsImlhdCI6MTY1OTQ0MDMxNSwiZXhwIjoxNjU5NDgzNTE1fQ.ckj-Qls2izN-D8m_5eAIr9Z9haAZTU6YpUbRcJTbwD4
+
+{
+  "password":"Qy5!2SR$72&^cuyc",
+  "password_New": "11",
+  "password_NewConfirm": "11"
+}
+
+###
+GET http://localhost:8000/api/feature-group-management/find-one-feature-group
+
+###
+PUT http://localhost:8000/api/feature-management/decentralization?setFeature=false
+Content-Type: application/json
+Accept:  application/json
+
+{
+  "_id": "62eb566823f95ebe9aa1395b",
+  "featureName": "find-many-user"
 }

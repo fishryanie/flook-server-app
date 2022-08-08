@@ -5,11 +5,15 @@ const apiString = require('../../constants/api');
 const { subStr } = require("../../functions/globalFunc");
 
 module.exports = app => { 
-  app.get(apiString.findOneEbook, middlewares.auth.accessPermission(subStr(apiString.findOneEbook)) , Controller.ebooks.findOneEbook);
+  app.get(apiString.findOneEbook, Controller.ebooks.findOneEbook);//, middlewares.auth.accessPermission(subStr(apiString.findOneEbook)) 
   
   app.get(apiString.findManyEbook, middlewares.auth.accessPermission(subStr(apiString.findManyEbook)) , Controller.ebooks.findManyEbook);
   
-  app.post(apiString.searchEbook, middlewares.auth.accessPermission(subStr(apiString.searchEbook)) , Controller.ebooks.searchEbook);
+  app.get(apiString.findEbookSubscribe, middlewares.auth.accessPermission(subStr(apiString.findEbookSubscribe)) , Controller.ebooks.findManyByUser);
+
+  app.get(apiString.findEbookHistory, middlewares.auth.accessPermission(subStr(apiString.findEbookHistory)) , Controller.ebooks.findManyByUser);
+
+  app.post(apiString.searchEbook, Controller.ebooks.searchEbook);
   
   app.put(apiString.updateOneEbook, upload.single("images"), middlewares.auth.accessPermission(subStr(apiString.updateOneEbook)) , Controller.ebooks.updateOneEbook);
   

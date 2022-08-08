@@ -167,18 +167,14 @@ module.exports = {
       const sortChapter = sort === 'name' ? { name: 1 } : null;
 
       const count = await models.chapters.find({ ebooks: ebookId }).count();
-      // console.log(count)
 
-      const result = await models.chapters.find({ ebooks: { $eq: ebookId } }).populate('ebooks')
-        // .populate('book')
+      const result = await models.chapters.find({ ebooks: { $eq: ebookId } })
+        .populate('ebooks')
         .skip(skip)
         .limit(PAGE_SIZE)
         .sort(sortChapter);
 
-      // const sort1 = result[0].image;
-      // console.log("sort1", sort1)
-
-      return res.status(200).send({ data: result, count: count, message: messages.FindSuccessfully })
+      return res.status(200).send({ data: result, count: count, success: true, message: messages.FindSuccessfully })
     } catch (error) {
       handleError.ServerError(error, res);
     }

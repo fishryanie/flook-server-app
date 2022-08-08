@@ -17,6 +17,7 @@ const movie = '/api/movie-management'
 
 const routesString = {
   login: `${user}/login`,
+  logout: `${user}/log-out`,
   register: `${user}/register`,
   forgotPassword: `${user}/forgot-password`,
   changePassword: `${user}/change-password`,
@@ -31,7 +32,6 @@ const routesString = {
   removeManyUser: `${user}/remove-many-user`,
   searchUser: `${user}/search-one-user`,
   findUserLoggin: `${user}/find-user-loggin`,
-
 
   // author
   findOneAuthor: `${author}/find-one-author`,
@@ -80,6 +80,8 @@ const routesString = {
   removeOneEbook: `${ebook}/remove-one-ebook`,
   removeManyEbook: `${ebook}/remove-many-ebook`,
   searchEbook: `${ebook}/search-ebook`,
+  findEbookSubscribe: `${ebook}/find-ebook-subscribe`,
+  findEbookHistory: `${ebook}/find-ebook-history`,
 
   // chapter
   findChapterByEbook: `${chapter}/find-chapter-by-ebook`,
@@ -129,6 +131,7 @@ const routesString = {
   removeOneFeature: `${feature}/remove-one-feature`,
   removeManyFeature: `${feature}/remove-many-feature`,
   searchFeature: `${feature}/search-one-feature`,
+  decentralization: `${feature}/decentralization`,
 
   // featuresGroup
   findOneFeatureGroup: `${featureGroup}/find-one-feature-group`,

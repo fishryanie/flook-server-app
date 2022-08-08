@@ -61,7 +61,7 @@ const RegisterByFacebook = (req, res) => { }
 const CreateNewController = async (req, res) => {
   const dataUser = req.body.username;
   const itemTrash = req.body.roles.pop();
-  // console.log('roles', req.body.roles.pop())
+
   try {
     const userName = await models.users.findOne({ username: dataUser })
     if (userName) {
@@ -86,30 +86,35 @@ const CreateNewController = async (req, res) => {
 
 
 const UpdateUserController = async (req, res) => {
-  const id = req.params.id;
-  const avatar = req.body.avatar;
-  const option = { new: true };
-  let avatarUpload
-  try {
-    const userFind = await models.users.findById(id);
-    if (req.file) {
-      await cloudinary.uploader.destroy(userFind.avatarId);
-      avatarUpload = await cloudinary.uploader.upload(req.file?.path, folder);
-    } else {
-      avatarUpload = await cloudinary.uploader.upload(avatar, folder);
-      await cloudinary.uploader.destroy(userFind.avatarId);
+  const id = req.query.id;
+    const itemTrash = req.body.roles.pop()
+    const image = req.body.images;
+    console.log('body', req.body);
+    const option = { new: true };
+    let imageUpload
+    try {
+      const userFind = await models.users.findById(id);
+      if (req.file) {
+        await cloudinary.uploader.destroy(userFind.images.avatar.id);
+        imageUpload = await cloudinary.uploader.upload(req.file?.path, folder);
+      } else {
+        imageUpload = await cloudinary.uploader.upload(image, folder);
+        await cloudinary.uploader.destroy(userFind.images.avatar.id);
+      }
+  
+      const updateUser = new models.users({
+        ...req.body, images: { avatar: { id: imageUpload.public_id, url: imageUpload.secure_url }}, updateAt: addDays(0), createAt: userFind.createAt, deleteAt: userFind.deleteAt
+      });
+  
+      const result = await models.users.findByIdAndUpdate(id, updateUser, option);
+  
+      if (!result) {
+        return handleError.NotFoundError(id, res)
+      }
+      return res.status(200).send({ message: messages.UpdateSuccessfully, data: result });
+    } catch (error) {
+      return handleError.ServerError(error, res)
     }
-    const Users = new models.users({ ...req.body, _id: id, avatarId: avatarUpload?.public_id, avatar: avatarUpload.secure_url });
-    const roles = await models.roles.find({ name: { $in: req.body.roles } });
-    Users.roles = roles?.map((role) => role._id);
-    const result = await models.users.findByIdAndUpdate(id, Users, option);
-    if (!result) {
-      return handleError.NotFoundError(id, res)
-    }
-    return res.status(200).send({ message: messages.UpdateSuccessfully, data: result });
-  } catch (error) {
-    return handleError.ServerError(error, res)
-  }
 };
 
 const AddListFavoriteController = async (req, res) => {
@@ -148,23 +153,20 @@ const ActiveUserController = async (req, res) => {
 
 const ForgotPasswordController = async (req, res) => {
   try {
-    const id = req.user._id.toString();
-    const email = req.user.email
-
-    console.log('id', id);
-    console.log('email', email);
+    const email = req.user.email    
 
     const newPassword = generatePassword();
-    const result = await models.users.findByIdAndUpdate(
-      { _id: id },
+
+    const result = await models.users.findOneAndUpdate(
+      { email: email },
       { password: await models.users.hashPassword(newPassword) },
       { new: true }
     );
     if (!result) {
-      return res.status(400).send({ message: messages.UpdatePasswordFail });
+      return res.status(400).send({success: false, message: messages.UpdateFail });
     }
     // await SendMail(email, null, newPassword, false);
-    const sendMail = await SendMail(req, res, email, 'ForgotPassword', newPassword, id);
+    const sendMail = await SendMail(req, res, email, 'ForgotPassword', newPassword);
 
     sendMail && result && res.status(200).send({ success: true, message: 'Forgot Password Successfully, Check your mail to get password!!!' });
   } catch (error) {
@@ -271,7 +273,7 @@ const DeleteUserController = async (req, res) => {
 
 module.exports = {
   Login: async (req, res) => {
-    const result = req.result;
+    const result = req.userIsLogged;
     const token = jwt.sign(
       { id: result.id },
       configsToken.secret,
@@ -287,7 +289,7 @@ module.exports = {
       roles: authorities[0],
       accessToken: token,
     };
-    return res.status(200).send({ data: data, userLoggin: result, success: true, message: messages.LoginSuccessfully });
+    return res.status(200).send({ data: data, success: true, message: messages.LoginSuccessfully });
   },
 
   Register: async (req, res) => {
@@ -367,6 +369,18 @@ module.exports = {
         return res.status(400).send({ message: 'No Login!!!' });
       }
       return res.status(200).send({success: true, data: userLoggin});
+    } catch (error) {
+      return handleError.ServerError(error, res)
+    }
+  },
+
+  logOut: async (req, res) => {
+    try {
+      const userLoggin = req.userIsLogged;
+      if(!userLoggin){
+        return res.status(400).send({ message: 'No Login!!!' });
+      }
+      return req.logOut().send({success: true, message: 'Đăng xuất thành công!!!'});
     } catch (error) {
       return handleError.ServerError(error, res)
     }

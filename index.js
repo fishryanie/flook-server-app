@@ -16,7 +16,7 @@ const hbs = require('hbs');
 
 const bodyParser = require("body-parser")
 
-const apiString = require('./constants/api');
+const routesString = require('./constants/api');
 
 const messages = require('./constants/messages');
 
@@ -52,7 +52,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.get("/", (req, res) => res.render('index', apiString));
+app.get("/", (req, res) => res.render('index', routesString));
 
 database.then(() => {
 

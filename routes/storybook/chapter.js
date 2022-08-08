@@ -6,11 +6,11 @@ const { subStr } = require("../../functions/globalFunc");
 
 module.exports = app => { 
 
-  app.get(apiString.findOneChapter, middlewares.auth.accessPermission(subStr(apiString.findOneChapter)) , Controller.chapter.findOneChapter);
+  app.get(apiString.findOneChapter, Controller.chapter.findOneChapter);//, middlewares.auth.accessPermission(subStr(apiString.findOneChapter)) 
   
   app.get(apiString.findManyChapter, middlewares.auth.accessPermission(subStr(apiString.findManyChapter)) , Controller.chapter.findManyChapter);
   
-  app.post(apiString.searchChapter, middlewares.auth.accessPermission(subStr(apiString.searchChapter)) , Controller.chapter.searchChapter);
+  app.post(apiString.searchChapter, Controller.chapter.searchChapter);//, middlewares.auth.accessPermission(subStr(apiString.searchChapter)) 
   
   app.put(apiString.updateOneChapter, upload.single("images"), middlewares.auth.accessPermission(subStr(apiString.updateOneChapter)) , Controller.chapter.updateOneChapter);
   

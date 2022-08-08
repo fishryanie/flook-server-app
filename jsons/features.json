@@ -25,9 +25,29 @@
     "roles": ["Admin", "Moderator"]
   },
   {
+    "featureName": "find-one-feature",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "find-one-feature-group",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator"]
+  },
+  {
     "featureName": "find-many-ebook",
     "featureGroup": "ebooks",
     "roles": ["Admin", "Moderator"]
+  },
+  {
+    "featureName": "find-ebook-subscribe",
+    "featureGroup": "ebooks",
+    "roles": ["Admin", "Moderator", "User"]
+  },
+  {
+    "featureName": "find-ebook-history",
+    "featureGroup": "ebooks",
+    "roles": ["Admin", "Moderator", "User"]
   },
   {
     "featureName": "find-one-ebook",
@@ -283,6 +303,12 @@
     "featureName": "change-password",
     "featureGroup": "auth",
     "roles": ["Admin", "Moderator", "User"]
+  },
+
+  {
+    "featureName": "decentralization",
+    "featureGroup": "auth",
+    "roles": ["Admin", "Moderator"]
   }
   
 ]

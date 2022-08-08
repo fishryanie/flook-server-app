@@ -4,8 +4,8 @@ const Controller = require('../../controllers');
 const apiString = require('../../constants/api');
 const { subStr } = require("../../functions/globalFunc");
 
-module.exports = app => { 
-  app.get(apiString.findOneFeatureGroup, middlewares.auth.accessPermission(subStr(apiString.findOneFeatureGroup)) , Controller.featureGroup.findOneFeatureGroup);
+module.exports = app => { //, middlewares.auth.accessPermission(subStr(apiString.findOneFeatureGroup))
+  app.get(apiString.findOneFeatureGroup,Controller.featureGroup.findOneFeatureGroup);
   
   app.get(apiString.findManyFeatureGroup, middlewares.auth.accessPermission(subStr(apiString.findManyFeatureGroup)) , Controller.featureGroup.findManyFeatureGroup);
   

@@ -25,5 +25,4 @@ module.exports = app => {
   app.delete(apiString.removeOneRole, middlewares.auth.accessPermission(subStr(apiString.removeOneRole)) , Controller.roles.removeOneRole);
 
   app.delete(apiString.removeManyRole, middlewares.auth.accessPermission(subStr(apiString.removeManyRole)) , Controller.roles.removeManyRole);
-
 }

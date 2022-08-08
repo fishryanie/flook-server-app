@@ -52,7 +52,7 @@ module.exports = {
   
       const imageUpload = await cloudinary.uploader.upload(req.file?.path, folder);
       const newBook = new models.ebooks({
-        ...req.body, images: { background: { id: imageUpload.public_id, url: imageUpload.secure_url }, wallPaper: { id: imageUpload.public_id, url: imageUpload.secure_url } }, createAt: Date.now()
+        ...req.body, images: { background: { id: imageUpload.public_id, url: imageUpload.secure_url }, wallPaper: { id: imageUpload.public_id, url: imageUpload.secure_url } }, createAt: addDays(0)
       });
   
       const result = await newBook.save();
@@ -94,8 +94,6 @@ module.exports = {
         ...req.body, images: { background: { id: imageUpload.public_id, url: imageUpload.secure_url }, wallPaper: { id: imageUpload.public_id, url: imageUpload.secure_url } }, updateAt: Date.now(), createAt: bookFind.createAt, deleteAt: bookFind.deleteAt
       });
   
-      // const genreBook = await models.genres.find({ name: { $in: req.body.genre } })
-      // updateBook.genre = genreBook?.map((genre) => genre._id);
       const result = await models.ebooks.findByIdAndUpdate(id, updateBook, option);
   
       if (!result) {
@@ -178,47 +176,121 @@ module.exports = {
   },
 
   searchEbook: async (req, res) =>{
-    const PAGE_SIZE = 12;
-    const numPages = parseInt(req.query.page)
-    const skip = numPages ? (numPages-1) * PAGE_SIZE : null
-    const { authors, genres, status, allowedAge, chapters } = req.body;
-    let find, sortBook, result=[], populate = ['authors', 'genres']
-
-    switch (req.query.sort) {
-      case 'view': sortBook={view: -1}; break;
-      case 'title': sortBook={title: -1}; break;
-      case 'rating': break;
-      default: break;
-    }
-
-    if(authors === undefined){
-      console.log('a');
-
-      find = null
-    } else if (authors?.length >= 0 && authors[0]==='All' && genres[0]==='All' && status[0]==='All' && allowedAge[0]==='All') {
-      find = null
-    } else {
-      find = { $or: [
-          { genres: { $in: genres } },
-          { authors: { $in: authors } },
-          { status: { $in: status } },
-          { allowedAge: { $in: allowedAge } },
-        ]
-      }
-    }
+    const showEbook = { title:1, images:1, authors:1, genres:1, status:1, description:1, allowedAge:1, views:1 };
     try {
-      const count = await models.ebooks.find(find).count();
-      if (req.query.sort > 0 && req.query.page > 0) {
-        result = await models.ebooks.find(find).populate(populate).skip(skip).limit(PAGE_SIZE).sort(sortBook);
+      let alowAgeCondition, chapterCondition
+      const { author, genre, status, allowedAge, newDay, chapter } = req.body;
+      const { sort, page, orderby } = req.query;
+      const pageSize = 12, skip = page ? (parseInt(page) - 1) * pageSize : null
+      const select = [
+        {$match: {deleted: false, $and: [
+          genre ? { genres: { $in: genre } } : {},
+          author ? { authors: { $in: author } } : {},
+          status ? { status: status[0]} : {},
+          chapter ? { chapter: chapterCondition } : {},
+          allowedAge ? { allowedAge: alowAgeCondition } : {},
+          newDay ? {createAt: { $in: addArrayDays('EBOOKS_NEW') }} : {}
+        ]}},
+        {$lookup: {from: 'authors',localField: 'authors',foreignField: '_id',as: 'authors', pipeline: [{$match: {deleted: false}},{$project: {name: 1, images: '$images.avatar.url'}}]}},
+        {$lookup: {from: 'genres',localField: 'genres',foreignField: '_id',as: 'genres', pipeline: [{$match: {deleted: false}},{$project: {name: 1}}]}},
+        {$lookup: {from: 'reviews',localField: '_id',foreignField: 'ebooks',as: 'reviews',pipeline: [{$match: {deleted: false}}]}},
+        {$lookup: {from: 'chapters',localField: '_id',foreignField: 'ebooks',as: 'chapters', pipeline: [{$match: {deleted: false}}]}},
+        {$lookup: {from: 'users',localField: '_id',foreignField: 'subscribe.ebooks',as: 'subscribers',pipeline: [{$match: {deleted: false}}]}},
+        {$lookup: {from: 'users',localField: '_id',foreignField: 'history.read.ebooks',as: "readers",pipeline: [{$match: {deleted: false}}]}},
+        {$lookup: {from: 'comments',localField: 'reviews._id',foreignField: 'reviewId',as: 'commentsReview',pipeline: [{$match: {deleted: false}}]}},
+        {$lookup: {from: 'comments',localField: 'chapters._id',foreignField: 'chapterId',as: 'commentsChapter',pipeline: [{$match: {deleted: false}}]}},
+        {$project: {...showEbook,
+          sumHot: { $sum: [
+            {$size: '$reviews'},
+            {$size: '$reviews.likes'}, 
+            {$size: '$chapters.likes'}, 
+            {$size: '$commentsReview'}, 
+            {$size: '$commentsChapter'}, 
+            {$size: '$commentsReview.likes'}, 
+            {$size: '$commentsChapter.likes'}
+          ]},
+          avgScore:{'$divide': [{'$trunc':{'$add':[{'$multiply': [{$avg:'$reviews.rating' }, 100]}, 0.5]}}, 100]},
+          subscribers: {$size: { "$setUnion": [ "$subscribers._id", [] ]}},
+          sumPage: {$size: { '$setUnion': [ '$chapters._id', [] ]}}, 
+          readers: {$sum: {$size: '$readers'}},
+        }},
+      ]
+      if(allowedAge) {
+        switch (allowedAge) {
+          case 11: alowAgeCondition = { $lte: 11 }; break;
+          case 18: alowAgeCondition = { $lte: 18, $gte:12 }; break;
+          case 30: alowAgeCondition = { $lte: 30, $gte:18 }; break;
+          case 31: alowAgeCondition = { $gte: 31 }; break;
+          default: break;
+        }
       }
-      if (req.query.sort == 0) {
-        result = await models.ebooks.find(find).populate(populate).skip(skip).limit(PAGE_SIZE);
+      if(chapter) {
+        switch (chapter) {
+          case '0-50': chapterCondition = { $lte: 50 }; break;
+          case '50-200': chapterCondition = { $lte: 200, $gte: 50 }; break;
+          case '200-500': chapterCondition = { $lte: 500, $gte: 200 }; break;
+          case 'more500': chapterCondition = { $gte: 500}; break;
+          default: break;
+        }
       }
-      result.length > 0 && res.status(200).send({data: result, count: count, success:true, message: messages.FindSuccessfully})
+      if(sort) {
+        switch (sort) {
+          case 'hot':
+            select.push({$sort:{sumHot: parseInt(orderby) || -1}})
+            break;
+          case 'name':
+            select.push({$sort:{title: parseInt(orderby) || -1}})
+            break;
+          case 'view':
+            select.push({$sort:{view: parseInt(orderby)|| -1}})
+            break;
+          case 'score':
+            select.push({$sort:{avgScore: parseInt(orderby) || -1}})
+            break;
+          case 'reader':
+            select.push({$sort:{readers: parseInt(orderby)|| -1}})
+            break;
+          case 'subscribers':
+            select.push({$sort:{subscribers: parseInt(orderby) || -1}})
+            break;
+          default: break;
+        }
+      } 
+      page && select.push({$skip: skip },{$limit: pageSize })
+      const result = await models.ebooks.aggregate(select)
+      result && res.send({success: true, length: result.length, data: result})
     } catch (error) {
       return handleError.ServerError(error, res)
     }
-  }
+  },
+
+
+  findManyByUser: async (req, res) => {
+    try {
+      let userId = req.userIsLogged._id
+      const { type, page } = req.query;
+      switch (type) {
+        case 'readed':{
+          const result = await models.users.findOne({_id: userId, deleted: false}, {'history.read.ebooks': 1}).populate('history.read.ebooks')
+          result && res.status(200).send({success: true, count: result.history.read.ebooks.length, data: result.history.read.ebooks})
+          break;
+        }
+        case 'download': {
+          const result = await models.users.findOne({_id: userId, deleted: false}, {'history.download.ebooks': 1}).populate('history.download.ebooks')
+          result && res.status(200).send({success: true, count: result.history.download.ebooks.length, data: result.history.download.ebooks})
+          break;
+        }
+        case 'subscribe': {
+          const result = await models.users.findOne({_id: userId, deleted: false}, {'subscribe.ebooks': 1}).populate('subscribe.ebooks')
+          result && res.status(200).send({success: true, count: result.subscribe.ebookslength, data: result.subscribe.ebooks})
+          break;
+        }
+        default: break;
+      }
+    } catch (error) {
+      return handleError.ServerError(error, res)
+    }
+  },
 }
 
 
