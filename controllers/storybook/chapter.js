@@ -81,26 +81,28 @@ module.exports = {
 
   insertOneChapter: async (req, res) => {
     try {
+      const itemTrash = req.body.ebooks.pop();
       const data = req.body;
-  
-      const result = await new models.chaptercomics({ ...data }).save();
-      // console.log("result", result._id)
-  
+
+      const imageUpload = await cloudinary.uploader.upload(req.file?.path, folder);
+
+      const result = await new models.chapters({ ...data, images: { url: imageUpload.secure_url, id: imageUpload.public_id } }).save();
+
       if (result) {
         console.log("result")
-        const update = await models.chaptercomics.updateOne(
+        const update = await models.chapters.updateOne(
           { name: result._id },
-          { $inc: { "image.number": 1 } }
+          { $inc: { "images.number": 1 } }
         )
         if (update) {
-          return res.status(200).send({ data: result, messages: true })
+          return res.status(200).send({ data: result, success: true, message: messages.InsertSuccessfully })
         }
-        return res.status(400).send({ messages: true })
+        return res.status(400).send({ message: messages.InsertFail })
       }
-      return res.status(400).send({ messages: true })
-  
+      return res.status(400).send({ message: messages.InsertFail })
+
     } catch (error) {
-      handleError.ServerError(error)
+      handleError.ServerError(error, res);
     }
   },
 
