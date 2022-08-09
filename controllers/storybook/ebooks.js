@@ -84,7 +84,7 @@ module.exports = {
       }
   
       const updateBook = new models.ebooks({
-        ...req.body, images: { background: { id: imageUpload.public_id, url: imageUpload.secure_url }, wallPaper: { id: imageUpload.public_id, url: imageUpload.secure_url } }, updateAt: addDay(0), createAt: bookFind.createAt, deleteAt: bookFind.deleteAt
+        ...req.body, images: { background: { id: imageUpload.public_id, url: imageUpload.secure_url }, wallPaper: { id: imageUpload.public_id, url: imageUpload.secure_url } }, updateAt: addDays(0), createAt: bookFind.createAt, deleteAt: bookFind.deleteAt
       });
   
       const result = await models.ebooks.findByIdAndUpdate(id, updateBook, option);
