@@ -29,7 +29,7 @@ module.exports = {
   
       if (name){
         console.log("tên loại đã tồn tại!!!");
-        res.status(200).send(name);
+        return res.status(400).send({message: `tên ${name} đã tồn tại!!!`});
       }
       const result = await newGenreBook.save();
       if (result){

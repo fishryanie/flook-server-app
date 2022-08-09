@@ -41,7 +41,7 @@ module.exports = {
   
       if (title) {
         console.log("tên sách tồn tại!!!");
-        return res.status(400).send(title);
+        return res.status(400).send({message: `tên ${title} đã tồn tại!!!`});
       }
   
       const imageUpload = await cloudinary.uploader.upload(req.file?.path, folder);

@@ -159,7 +159,7 @@ module.exports = {
     const userId = req.query.id;
     try {
       if (!userId) {
-        return res.status(400).send({ messages: "not userId or isActive" });
+        return res.status(400).send({ message: "not userId or isActive" });
       }
       const result = await models.users.findOneAndUpdate(
         { _id: userId },
