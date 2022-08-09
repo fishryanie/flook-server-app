@@ -80,9 +80,9 @@ module.exports = {
     try {
       Promise.all([
         models.reviews.find({ deleted: false }).populate(populate),
-        models.reviews.find({ deleted: false }).count()
+        models.reviews.find().count()
       ]).then((result) => {
-        return res.status(200).send({data: result[0], count: result[1], success: true});
+        return res.status(200).send({data: result[0], count: result[1], success: true, message: messages.GetDataSuccessfully});
       })
     } catch (error) {
       return handleError.ServerError(error, res);
@@ -91,9 +91,9 @@ module.exports = {
 
   insertOneReview: async (req, res) => {
     try {
-      const idUser = req.userIsLoggedId._id;
-      const review = new models.reviews.create({ ...req.body, users: idUser })
-      review && res.status(200).send({data: data, success: true, message: messages.CreateSuccessfully})
+      const userId = req.userIsLogged._id.toString();
+      const review = new models.reviews({ ...req.body }).save();
+      review && res.status(200).send({data: review, success: true, message: messages.CreateSuccessfully})
     } catch (error) {
       return handleError.ServerError(error, res)
     }
@@ -101,7 +101,7 @@ module.exports = {
 
   updateOneReview: async (req, res) => {
     try {
-      const user = req.userIsLoggedId;
+      const user = req.userIsLogged;
       const reviewId = req.query.id;
       const option = { new: true };
       let find
@@ -110,19 +110,19 @@ module.exports = {
           find = { _id: reviewId }
           break;
         } else {
-          find = { _id: reviewId, users: user._id }
+          find = { _id: reviewId, users: user }
           break;
         }
       }
     
-      const review = { ...req.body, updateAt: Date.now() };
+      const review = { ...req.body, updateAt: addDays(0) };
       const result = await models.reviews.findOneAndUpdate(
         find,
         review,
         option
       );
       if(!result) {
-        return res.status(400).send({ success: false,message: messages.UpdateNotSuccessfully});
+        return res.status(400).send({ success: false,message: messages.UpdateFail});
       }
       const response = {
         data: result,
@@ -163,7 +163,7 @@ module.exports = {
         { new: true }
       );
       if(!result){
-        return res.status(400).send({ success: false,message: messages.RemoveNotSuccessfully});
+        return res.status(400).send({ success: false,message: messages.DeleteFail});
       }
       const response = {
         success: true,
@@ -177,7 +177,7 @@ module.exports = {
 
   removeOneReview: async (req, res) => {
     try {
-      const user = req.userIsLoggedId;
+      const user = req.userIsLogged;
       const reviewId = req.query.id;
       const option = { new: true };
       let find
@@ -190,14 +190,14 @@ module.exports = {
           break;
         }
       }
-      const review = { deleted:true, deleteAt:Date.now()};
+      const review = { deleted:true, deleteAt: addDays(0)};
       const result = await models.reviews.findOneAndUpdate(find,review, option);
       if(!result) {
-        return res.status(400).send({ success: false,message: messages.RemoveNotSuccessfully});
+        return res.status(400).send({ success: false,message: messages.DeleteFail});
       }
       const response = {
         success: true,
-        message: messages.RemoveSuccessfully,
+        message: messages.DeleteSuccessfully,
       };
       return res.status(200).send(response);
     
@@ -208,19 +208,19 @@ module.exports = {
   },
 
   removeManyReview: async (req, res) => {
-    const { listReviewId } = req.body
+    const listReviewId  = req.body
     try {
       const result = await models.reviews.updateMany(
         { "_id": { $in: listReviewId } }, 
-        { $set: { deleted: true, deleteAt: Date.now() } },
+        { $set: { deleted: true, deleteAt: addDays(0) } },
         { new: true }
       );
       if(!result){
-        return res.status(400).send({ success: false,message: messages.RemoveNotSuccessfully});
+        return res.status(400).send({ success: false,message: messages.DeleteFail});
       }
       const response = {
         success: true,
-        message: messages.RemoveSuccessfully,
+        message: messages.DeleteSuccessfully,
       };
       return res.status(200).send(response);
     } catch (error) {
