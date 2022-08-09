@@ -66,7 +66,7 @@ module.exports = {
   },
 
   findManyChapter: async (req, res) => {
-    const populate = ['numLikes', 'ebooks']
+    const populate = ['likes', 'ebooks']
     try {
       Promise.all([
         models.chapters.find({ deleted: { $in: false } }).populate(populate),
