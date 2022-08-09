@@ -12,12 +12,13 @@ module.exports = {
   },
 
   findManyComment: async (req, res) => {
+    const populate = ['userId', 'reviewId', 'commentId', 'chapterId']
     try {
       Promise.all([
-        models.comments.find({ deleted: false }),
-        models.comments.find({ deleted: false }).count()
+        models.comments.find({ deleted: false }).populate(populate),
+        models.comments.find().count()
       ]).then((result) => {
-        return res.status(200).send({data: result[0], count: result[1], success: true});
+        return res.status(200).send({ data: result[0], count: result[1], success: true });
       })
     } catch (error) {
       return handleError.ServerError(error, res);
@@ -25,11 +26,11 @@ module.exports = {
   },
 
   insertOneComment: async (req, res) => {
-    const idUser = req.userId;
+    const idUser = req.userIsLogged._id.toString();
     if (req.body.content.trim().length === 0) {
-      res.status(400).send({ message: messages.validateContenComment });
+      res.status(400).send({ message: 'Nội dung không được để trống' });
     } else {
-      const Comment = new models.comments({ ...req.body, idUser });
+      const Comment = new models.comments({ ...req.body });
       Comment.save()
         .then((data) =>
           res.status(200).send({
