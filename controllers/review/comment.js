@@ -26,11 +26,21 @@ module.exports = {
   },
 
   insertOneComment: async (req, res) => {
-    const idUser = req.userIsLogged._id.toString();
+    const user = req.userIsLogged;
+    let Comment;
     if (req.body.content.trim().length === 0) {
       res.status(400).send({ message: 'Nội dung không được để trống' });
     } else {
-      const Comment = new models.comments({ ...req.body });
+      for (const role of user.roles) {
+        if (role.name === "Moderator" || role.name === "Admin") {
+          Comment = new models.comments({ ...req.body })
+          break;
+        } else {
+          Comment = new models.comments({ ...req.body, userId: user._id.toString() });
+          break;
+        }
+      }
+      // const Comment = new models.comments({ ...req.body });
       Comment.save()
         .then((data) =>
           res.status(200).send({

@@ -91,12 +91,33 @@ module.exports = {
   },
 
   insertOneReview: async (req, res) => {
-    try {
-      const userId = req.userIsLogged._id.toString();
-      const review = new models.reviews({ ...req.body }).save();
-      review && res.status(200).send({data: review, success: true, message: messages.CreateSuccessfully})
-    } catch (error) {
-      return handleError.ServerError(error, res)
+    const user = req.userIsLogged;
+    let Review;
+    if (req.body.content.trim().length === 0) {
+      res.status(400).send({ message: 'Nội dung không được để trống' });
+    } else {
+      for (const role of user.roles) {
+        if (role.name === "Moderator" || role.name === "Admin") {
+          Review = new models.reviews({ ...req.body })
+          break;
+        } else {
+          Review = new models.reviews({ ...req.body, users: user._id.toString() });
+          break;
+        }
+      }
+      // const Comment = new models.comments({ ...req.body });
+      Review.save()
+        .then((data) =>
+          res.status(200).send({
+            data: data,
+            status: 200,
+            messages: messages.CreateSuccessfully,
+          })
+        )
+        .catch((error) => {
+          console.log(`error ${error}`);
+          handleError.ServerError(error, res);
+        });
     }
   },
 
@@ -111,7 +132,7 @@ module.exports = {
           find = { _id: reviewId }
           break;
         } else {
-          find = { _id: reviewId, users: user }
+          find = { _id: reviewId, users: user._id.toString() }
           break;
         }
       }
