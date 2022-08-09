@@ -173,6 +173,7 @@ module.exports = {
   },
 
   updateOneUser: async (req, res) => {
+    const itemTrash = req.body.roles.pop();
     try {
       let update, avatarUpload
       const userUpdate = req.userIsLogged._id.toString();
