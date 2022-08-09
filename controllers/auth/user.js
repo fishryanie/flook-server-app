@@ -278,9 +278,11 @@ module.exports = {
 
   insertOneUser: async (req, res) => {
     const itemTrash = req.body.roles.pop();
+    const active = req.body.isActive;
+    const isActive = (active === true) ? true : false;
     try {
       const avatarUpload = await cloudinary.uploader.upload(req.file?.path, folder);
-      const USER = new models.users({ ...req.body, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } } });
+      const USER = new models.users({ ...req.body, isActive: isActive, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } } });
       const result = await USER.save();
       if (result) {
         const response = {
