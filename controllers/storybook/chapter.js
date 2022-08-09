@@ -85,6 +85,13 @@ module.exports = {
     try {
       const itemTrash = req.body.ebooks.pop();
       const data = req.body;
+      const nameChapter = req.body.name;
+
+      const name = await models.authors.findOne({ name: nameChapter });
+      if (name) {
+        console.log("tên tác giả tồn tại!!!");
+        return res.status(400).send({message: `tên ${name.name} đã tồn tại!!!`});
+      }
 
       const imageUpload = await cloudinary.uploader.upload(req.file?.path, folder);
 
@@ -156,7 +163,7 @@ module.exports = {
         option
       );
       if (!result) {
-        return res.status(400).send({ success: false, message: messages.RemoveNotSuccessfully });
+        return res.status(400).send({ success: false, message: messages.DeleteFail });
       }
       return res.status(200).send({success:true, message: messages.DeleteSuccessfully });
     } catch (error) {
