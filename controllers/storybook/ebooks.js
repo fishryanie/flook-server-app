@@ -68,33 +68,31 @@ module.exports = {
   },
 
   updateOneEbook: async (req, res) => {
-    const id = req.params.id;
-    const image = req.body.image;
-    console.log(image);
+    const id = req.query.id;
+    const itemTrash = req.body.genres.pop() && req.body.authors.pop();
+    const image = req.body.images;
     const option = { new: true };
     let imageUpload
     try {
       const bookFind = await models.ebooks.findById(id);
       if (req.file) {
-        await cloudinary.uploader.destroy(bookFind.image.id);
+        await cloudinary.uploader.destroy(bookFind.images.background.id);
         imageUpload = await cloudinary.uploader.upload(req.file?.path, folder);
       } else {
         imageUpload = await cloudinary.uploader.upload(image, folder);
-        await cloudinary.uploader.destroy(bookFind.image.id);
+        await cloudinary.uploader.destroy(bookFind.images.background.id);
       }
   
       const updateBook = new models.ebooks({
-        ...req.body, _id: id, image: { id: imageUpload?.public_id, url: imageUpload?.secure_url }, updateAt: Date.now(), createAt: bookFind.createAt, deleteAt: bookFind.deleteAt
+        ...req.body, images: { background: { id: imageUpload.public_id, url: imageUpload.secure_url }, wallPaper: { id: imageUpload.public_id, url: imageUpload.secure_url } }, updateAt: addDay(0), createAt: bookFind.createAt, deleteAt: bookFind.deleteAt
       });
   
-      const genreBook = await models.genres.find({ name: { $in: req.body.genre } })
-      updateBook.genre = genreBook?.map((genre) => genre._id);
       const result = await models.ebooks.findByIdAndUpdate(id, updateBook, option);
   
       if (!result) {
         return handleError.NotFoundError(id, res)
       }
-      return res.status(200).send({ messages: messages.UpdateSuccessfully, data: result });
+      return res.status(200).send({ message: messages.UpdateSuccessfully, data: result });
     } catch (error) {
       return handleError.ServerError(error, res)
     }

@@ -13,9 +13,9 @@ module.exports = app => {
 
   app.post(apiString.searchEbook, Controller.ebooks.searchEbook);
   
-  app.put(apiString.updateOneEbook, middlewares.auth.accessPermission(subStr(apiString.updateOneEbook)) , Controller.ebooks.updateOneEbook);
+  app.put(apiString.updateOneEbook, upload.single("images"), middlewares.auth.accessPermission(subStr(apiString.updateOneEbook)) , Controller.ebooks.updateOneEbook);
   
-  app.post(apiString.insertOneEbook, middlewares.auth.accessPermission(subStr(apiString.insertOneEbook)) , Controller.ebooks.insertOneEbook);
+  app.post(apiString.insertOneEbook, upload.single("images"), middlewares.auth.accessPermission(subStr(apiString.insertOneEbook)) , Controller.ebooks.insertOneEbook);
   
   app.post(apiString.insertManyEbook, middlewares.auth.accessPermission(subStr(apiString.insertManyEbook)) , Controller.ebooks.insertManyEbook);
   
