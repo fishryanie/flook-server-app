@@ -72,7 +72,7 @@ module.exports = {
         models.chapters.find({ deleted: { $in: false } }).populate(populate),
         models.chapters.find({ deleted: { $in: false } }).count()
       ]).then((result) => {
-        return res.status(200).send({ data: result[0], count: result[1], success: true });
+        return res.status(200).send({ data: result[0], count: result[1], success: true, message: messages.GetDataSuccessfully });
       })
     } catch (error) {
       handleError.ServerError(error, res);
