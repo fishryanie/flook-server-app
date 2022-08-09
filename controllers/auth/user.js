@@ -280,10 +280,10 @@ module.exports = {
     const itemTrash = req.body.roles.pop();
     const active = req.body.isActive;
     let isActive;
-    if(active.includes(true)){
-      isActive === true;
+    if(active.includes("true")){
+      isActive = true;
     }else{
-      isActive === false;
+      isActive = false;
     }
     try {
       const avatarUpload = await cloudinary.uploader.upload(req.file?.path, folder);
