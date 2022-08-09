@@ -166,7 +166,7 @@ module.exports = {
         { isActive: true },
         { new: true, upsert: true }
       );
-      return res.status(200).send({ messages: "Update isActive thành công", result });
+      return res.status(200).send({ message: "Update isActive thành công", result });
     } catch (error) {
       return handleError.ServerError(error, res)
     }
@@ -278,11 +278,10 @@ module.exports = {
 
   insertOneUser: async (req, res) => {
     const itemTrash = req.body.roles.pop();
-    const active = req.body.isActive === "true" ? true : false;
-    // const isActive = (active === "true") ? true : false;
+    const active = req.body.isActive;
     try {
       const avatarUpload = await cloudinary.uploader.upload(req.file?.path, folder);
-      const USER = new models.users({ ...req.body, isActive: active, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } } });
+      const USER = new models.users({ ...req.body, isActive: active === "true" ? true : false, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } } });
       const result = await USER.save();
       if (result) {
         const response = {
