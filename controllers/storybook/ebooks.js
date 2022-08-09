@@ -34,27 +34,32 @@ module.exports = {
   },
 
   insertOneEbook: async (req, res) => {
-    const dataUser = req.body.username;
-    console.log('roles', req.body.roles)
+    const dataBook = req.body.title;
+    const itemTrash = req.body.authors.pop() && req.body.genres.pop();
     try {
-      const userName = await models.users.findOne({username: dataUser})
-      if(userName){
-        return res.status(400).send(userName);
+      const title = await models.ebooks.findOne({ title: dataBook });
+  
+      if (title) {
+        console.log("tên sách tồn tại!!!");
+        return res.status(400).send(title);
       }
-      const avatarUpload = await cloudinary.uploader.upload(req.file?.path, folder);
-      const USER = new models.users({...req.body, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url }} });
-      USER.roles = req.body.roles.pop()
-      const result = await USER.save();
-      if(result){
+  
+      const imageUpload = await cloudinary.uploader.upload(req.file?.path, folder);
+      const newBook = new models.ebooks({
+        ...req.body, images: { background: { id: imageUpload.public_id, url: imageUpload.secure_url }, wallPaper: { id: imageUpload.public_id, url: imageUpload.secure_url } }, createAt: addDays(0)
+      });
+  
+      const result = await newBook.save();
+      if (result) {
         const response = {
           data: result,
-          status: 200,
-          message: messages.InsertSuccessfully,
+          message: messages.CreateSuccessfully,
+          success: true
         }
-        return res.status(200).send(response)
+        return res.status(200).send(response);
       }
     } catch (error) {
-      return handleError.ServerError(error, res)
+      handleError.ServerError(error, res);
     }
   },
 
