@@ -174,6 +174,13 @@ module.exports = {
 
   updateOneUser: async (req, res) => {
     const itemTrash = req.body.roles.pop();
+    const active = req.body.isActive;
+    let isActive;
+    if(active.includes("true")){
+      isActive = true;
+    }else{
+      isActive = false;
+    }
     try {
       let update, avatarUpload;
       let userUpdate = req.userIsLogged;
@@ -218,13 +225,13 @@ module.exports = {
       if(req.file){
         await cloudinary.uploader.destroy(userUpdate.images.avatar.id);
         avatarUpload = await cloudinary.uploader.upload(req.file?.path, folder);
-        update={$set:{...req.body, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } }}}
+        update={$set:{...req.body, isActive: isActive, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } }}}
       }else if (req.body.images){
         await cloudinary.uploader.destroy(userUpdate.images.avatar.id);
         avatarUpload = await cloudinary.uploader.upload(req.body.images, folder);
-        update={$set:{...req.body, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } }}}
+        update={$set:{...req.body, isActive: isActive, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } }}}
       }else {
-        update={$set:{...req.body}}
+        update={$set:{...req.body, isActive: isActive}}
       }
       for (const role of userUpdate.roles) {
         if (role.name == "Moderator" || role.name == "Admin") {
