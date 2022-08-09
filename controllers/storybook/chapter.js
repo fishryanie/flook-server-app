@@ -85,12 +85,16 @@ module.exports = {
     try {
       const itemTrash = req.body.ebooks.pop();
       const data = req.body;
+      const idEbooks = req.body.ebooks;
       const nameChapter = req.body.name;
 
-      const name = await models.authors.findOne({ name: nameChapter });
-      if (name) {
-        console.log("tên tác giả tồn tại!!!");
-        return res.status(400).send({message: `tên ${name.name} đã tồn tại!!!`});
+      const idEbook = await models.chapters.findOne({ ebooks: idEbooks });
+      if (idEbook) {
+        const name = await models.chapters.findOne({ name: nameChapter });
+        if (name) {
+          console.log("tên tác giả tồn tại!!!");
+          return res.status(400).send({message: `tên ${name.name} đã tồn tại!!!`});
+        }
       }
 
       const imageUpload = await cloudinary.uploader.upload(req.file?.path, folder);
