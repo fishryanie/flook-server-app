@@ -280,7 +280,7 @@ module.exports = {
     const itemTrash = req.body.roles.pop();
     const active = req.body.isActive;
     let isActive;
-    if(active.includes("true")){
+    if(active.includes(true)){
       isActive === true;
     }else{
       isActive === false;
