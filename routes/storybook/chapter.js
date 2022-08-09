@@ -12,9 +12,9 @@ module.exports = app => {
   
   app.get(apiString.findManyChapter, middlewares.auth.accessPermission(subStr(apiString.findManyChapter)) , Controller.chapter.findManyChapter);
   
-  app.put(apiString.updateOneChapter, middlewares.auth.accessPermission(subStr(apiString.updateOneChapter)) , Controller.chapter.updateOneChapter);
+  app.put(apiString.updateOneChapter, upload.single("images"), middlewares.auth.accessPermission(subStr(apiString.updateOneChapter)) , Controller.chapter.updateOneChapter);
   
-  app.post(apiString.insertOneChapter, middlewares.auth.accessPermission(subStr(apiString.insertOneChapter)) , Controller.chapter.insertOneChapter);
+  app.post(apiString.insertOneChapter, upload.single("images"), middlewares.auth.accessPermission(subStr(apiString.insertOneChapter)) , Controller.chapter.insertOneChapter);
   
   app.post(apiString.insertManyChapter, middlewares.auth.accessPermission(subStr(apiString.insertManyChapter)) , Controller.chapter.insertManyChapter);
   
