@@ -175,8 +175,9 @@ module.exports = {
   updateOneUser: async (req, res) => {
     const itemTrash = req.body.roles.pop();
     try {
-      let update, avatarUpload
-      const userUpdate = req.userIsLogged._id.toString();
+      let update, avatarUpload;
+      let userUpdate = req.userIsLogged;
+      const idUser = req.query.id;
       const { type } = req.query
       const { userId, authorId, ebookId, chapterId, notify } = req.body
       if(type){
@@ -224,6 +225,15 @@ module.exports = {
         update={$set:{...req.body, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } }}}
       }else {
         update={$set:{...req.body}}
+      }
+      for (const role of userUpdate.roles) {
+        if (role.name == "Moderator" || role.name == "Admin") {
+          userUpdate =  req.body._id;
+          break;
+        } else {
+          userUpdate = userUpdate._id.toString();
+          break;
+        }
       }
       const result = await models.users.findByIdAndUpdate(userUpdate, update, {new: true})
       if(!result){
