@@ -40,7 +40,6 @@ module.exports = {
           break;
         }
       }
-      // const Comment = new models.comments({ ...req.body });
       Comment.save()
         .then((data) =>
           res.status(200).send({
@@ -61,32 +60,65 @@ module.exports = {
   },
 
   updateOneComment: async (req, res) => {
-    const commentUserId = req.userId;
-    const commentUserIdBody = req.body.idUser;
+    const user = req.userIsLogged;
+    const commentUserIdBody = req.body.userId;
     const like = req.params.likeordislike;
-    const commentId = req.params.id;
+    const commentId = req.query.id;
     const option = { new: true };
-  
-    if (commentUserId === commentUserIdBody) {
-      try {
-        const Comment = new models.comments({ ...req.body, _id: commentId });
-        const result = await models.comments.findByIdAndUpdate(
-          commentId,
-          Comment,
-          option
-        );
-        const response = {
-          data: result,
-          status: 200,
-          message: messages.UpdateSuccessfully,
-        };
-        return res.status(200).send(response);
-      } catch (error) {
-        handleError.ServerError(error, res);
+    let find
+
+    try {
+      if (req.body.content.trim().length === 0) {
+        res.status(400).send({ message: 'Nội dung không được để trống' });
+      } else {
+        for (const role of user.roles) {
+          if (role.name === "Moderator" || role.name === "Admin") {
+            find = { _id: commentId }
+            break;
+          } else if (user._id.toString() === commentUserIdBody){
+            find = { _id: commentId, userId: user._id.toString()}
+            break;
+          }else {
+            return res.status(404).send({ message: "Không thể sửa comment của người khác" });
+          }
+        }
       }
-    } else {
-      return res.status(404).send({ messages: "Không thể sửa comment của người khác" });
+      const comment = { ...req.body, updateAt: addDays(0) };
+      const result = await models.comments.findByIdAndUpdate(
+        find,
+        comment,
+        option
+      );
+      const response = {
+        data: result,
+        status: 200,
+        message: messages.UpdateSuccessfully,
+      };
+      return res.status(200).send(response);
+    } catch (error) {
+      handleError.ServerError(error, res);
     }
+  
+    // if (user._id.toString() === commentUserIdBody) {
+    //   try {
+    //     const Comment = new models.comments({ ...req.body, _id: commentId });
+    //     const result = await models.comments.findByIdAndUpdate(
+    //       commentId,
+    //       Comment,
+    //       option
+    //     );
+    //     const response = {
+    //       data: result,
+    //       status: 200,
+    //       message: messages.UpdateSuccessfully,
+    //     };
+    //     return res.status(200).send(response);
+    //   } catch (error) {
+    //     handleError.ServerError(error, res);
+    //   }
+    // } else {
+    //   return res.status(404).send({ message: "Không thể sửa comment của người khác" });
+    // }
   },
 
   deleteOneComment: async (req, res) => {
@@ -118,40 +150,54 @@ module.exports = {
   },
 
   removeOneComment: async (req, res) => {
-    const option = { new: true };
-    const id = req.query.id;
-    const COMMENT = await models.comments.findById(id);
-    let row;
     try {
-      if (COMMENT.deleted === true) {
-        row = await models.comments.findByIdAndUpdate(id, { deleted: false, deleteAt: null, updateAt: COMMENT.updateAt, createAt: COMMENT.createAt }, option);
-      } else {
-        row = await models.comments.findByIdAndUpdate(id, { deleted: true, deleteAt: addDays(0), updateAt: COMMENT.updateAt, createAt: COMMENT.createAt }, option);
+      const user = req.userIsLogged;
+      const commentId = req.query.id;
+      const option = { new: true };
+      let find
+      for (const role of user.roles) {
+        if (role.name == "Moderator" || role.name == "Admin") {
+          find = { _id: commentId }
+          break;
+        } else {
+          find = { _id: commentId, users: user._id.toString() }
+          break;
+        }
       }
-      if (!row) {
-       return handleError.NotFoundError(id, res)
+      const comment = { deleted: true, deleteAt: addDays(0) };
+      const result = await models.comments.findOneAndUpdate(find, comment, option);
+      if (!result) {
+        return res.status(400).send({ success: false, message: messages.RemoveFail });
       }
-      return res.status(200).send({success:true, message: messages.DeleteSuccessfully });
+      const response = {
+        success: true,
+        message: messages.RemoveSuccessfully,
+      };
+      return res.status(200).send(response);
+
     } catch (error) {
-      return handleError.ServerError(error, res)
+      handleError.ServerError(error, res);
     }
   },
 
   removeManyComment: async (req, res) => {
-    const listDelete = req.body;
-    const option = { new: true };
+    const listCommentId = req.body
     try {
       const result = await models.comments.updateMany(
-        { "_id": { $in: listDelete } },
+        { "_id": { $in: listCommentId } },
         { $set: { deleted: true, deleteAt: addDays(0) } },
-        option
+        { new: true }
       );
       if (!result) {
-        return res.status(400).send({ success: false, message: messages.RemoveNotSuccessfully });
+        return res.status(400).send({ success: false, message: messages.DeleteFail });
       }
-      return res.status(200).send({success:true, message: messages.DeleteSuccessfully });
+      const response = {
+        success: true,
+        message: messages.DeleteSuccessfully,
+      };
+      return res.status(200).send(response);
     } catch (error) {
-      return handleError.ServerError(error, res);
+      handleError.ServerError(error, res);
     }
   },
 
