@@ -156,11 +156,11 @@ module.exports = {
         option
       );
       if(!result){
-        return res.status(400).send({ success: false,message: messages.RemoveNotSuccessfully});
+        return res.status(400).send({ success: false,message: messages.DeleteFail});
       }
       const response = {
         success: true,
-        message: messages.RemoveSuccessfully,
+        message: messages.DeleteSuccessfully,
       };
       return res.status(200).send(response);
     } catch (error) {
