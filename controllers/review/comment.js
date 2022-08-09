@@ -46,7 +46,7 @@ module.exports = {
           res.status(200).send({
             data: data,
             status: 200,
-            messages: messages.CreateSuccessfully,
+            message: messages.CreateSuccessfully,
           })
         )
         .catch((error) => {
@@ -78,7 +78,7 @@ module.exports = {
         const response = {
           data: result,
           status: 200,
-          messages: messages.UpdateSuccessfully,
+          message: messages.UpdateSuccessfully,
         };
         return res.status(200).send(response);
       } catch (error) {

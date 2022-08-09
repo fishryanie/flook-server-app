@@ -111,7 +111,7 @@ module.exports = {
           res.status(200).send({
             data: data,
             status: 200,
-            messages: messages.CreateSuccessfully,
+            message: messages.CreateSuccessfully,
           })
         )
         .catch((error) => {
