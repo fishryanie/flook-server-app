@@ -175,7 +175,7 @@ module.exports = {
   updateOneUser: async (req, res) => {
     try {
       let update, avatarUpload
-      const userUpdate = req.userIsLogged._id
+      const userUpdate = req.userIsLogged._id.toString();
       const { type } = req.query
       const { userId, authorId, ebookId, chapterId, notify } = req.body
       if(type){
@@ -316,7 +316,7 @@ module.exports = {
         { new: true }
       );
       if (!result) {
-        return res.status(400).send({ success: false, message: messages.RemoveNotSuccessfully });
+        return res.status(400).send({ success: false, message: messages.DeleteFail });
       }
       const response = {
         success: true,
