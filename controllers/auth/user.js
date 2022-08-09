@@ -54,30 +54,30 @@ const folder = { folder: 'Flex-ticket/ImageUser' }
 // };
 
 
- 
- 
 
-  const DeleteUserController = async (req, res) => {
-    try {
-      const id = req.params.id;
-      const row = await models.users.findByIdAndRemove(id).exec();
-      if (!row) {
-        console.log(messages.NotFound);
-        return res.status(404).send({ messages: messages.NotFound + id });
-      }
-      console.log(messages.DeleteSuccessfully);
-      return res.status(200).send({ messages: messages.DeleteSuccessfully });
-    } catch (error) {
-      return handleError.ServerError(error, res)
+
+
+const DeleteUserController = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const row = await models.users.findByIdAndRemove(id).exec();
+    if (!row) {
+      console.log(messages.NotFound);
+      return res.status(404).send({ messages: messages.NotFound + id });
     }
-  };
+    console.log(messages.DeleteSuccessfully);
+    return res.status(200).send({ messages: messages.DeleteSuccessfully });
+  } catch (error) {
+    return handleError.ServerError(error, res)
+  }
+};
 
 module.exports = {
   Login: async (req, res) => {
     const result = req.userIsLogged;
     const token = jwt.sign(
-      { id: result._id }, 
-      configsToken.secret, 
+      { id: result._id },
+      configsToken.secret,
       { expiresIn: configsToken.jwtExpiration }
     );
     const authorities = [];
@@ -90,10 +90,10 @@ module.exports = {
       roles: authorities[0],
       accessToken: token,
     };
-    if(!result.isActive){
-      return res.status(400).send({ success: false, message: messages.LoginFailed});
+    if (!result.isActive) {
+      return res.status(400).send({ success: false, message: messages.LoginFailed });
     }
-    return res.status(200).send({data, success: true, message: messages.LoginSuccessfully});
+    return res.status(200).send({ data, success: true, message: messages.LoginSuccessfully });
   },
 
   Register: async (req, res) => {
@@ -105,13 +105,13 @@ module.exports = {
         username: email,
         password: newPassword
       })
-      const rolesName = await models.roles.find({name: 'User'});
+      const rolesName = await models.roles.find({ name: 'User' });
       USER.roles = rolesName?.map((role) => role._id);
       const register = await USER.save();
       const sendMail = await SendMail(req, res, email, 'Register', newPassword, register._id);
-      
-      sendMail && register && res.status(200).send({data: register, success: true, messages: 'sign up successfully, check your mail to get password'});
-    
+
+      sendMail && register && res.status(200).send({ data: register, success: true, messages: 'sign up successfully, check your mail to get password' });
+
     } catch (error) {
       return handleError.ServerError(error, res)
     }
@@ -123,14 +123,14 @@ module.exports = {
       const newPassword = generatePassword();
       const result = await models.users.findOneAndUpdate(
         { email: email },
-        { password: await models.users.hashPassword(newPassword)},
+        { password: await models.users.hashPassword(newPassword) },
         { new: true }
       );
       if (!result) {
-        return res.status(400).send({success: false, messages: messages.UpdatePasswordFail });
+        return res.status(400).send({ success: false, messages: messages.UpdatePasswordFail });
       }
       const sendMail = await SendMail(req, res, email, 'Forgot Password', newPassword, userId);
-      sendMail && result && res.status(200).send({success: true, messages: 'Check your mail to get new password'});
+      sendMail && result && res.status(200).send({ success: true, messages: 'Check your mail to get new password' });
     } catch (error) {
       return handleError.ServerError(error, res)
     }
@@ -139,7 +139,7 @@ module.exports = {
   changePassword: async (req, res) => {
     const userId = req.userIsLogged._id.toString();
     const passwordNew = req.body.password_New
-  
+
     try {
       const result = await models.users.findOneAndUpdate(
         { _id: userId },
@@ -147,9 +147,9 @@ module.exports = {
         { new: true, upsert: true }
       );
       if (!result) {
-        return res.status(400).send({message: "Update that bai" });
+        return res.status(400).send({ message: "Update that bai" });
       }
-      return res.status(200).send({success: true, message: 'Change Password Successfully!!!' });
+      return res.status(200).send({ success: true, message: 'Change Password Successfully!!!' });
     } catch (error) {
       return handleError.ServerError(error, res)
     }
@@ -174,79 +174,79 @@ module.exports = {
 
   updateOneUser: async (req, res) => {
     const itemTrash = req.body.roles.pop();
-    const active = req.body.isActive;
-    let isActive;
-    if(active.includes("true")){
-      isActive = true;
-    }else{
-      isActive = false;
-    }
     try {
       let update, avatarUpload;
       let userUpdate = req.userIsLogged;
       const idUser = req.query.id;
       const { type } = req.query
       const { userId, authorId, ebookId, chapterId, notify } = req.body
-      if(type){
+      const active = req.body.isActive;
+      let isActive;
+      if (active.includes("true")) {
+        isActive = true;
+      } else {
+        isActive = false;
+      }
+      if (type) {
         switch (type) {
           case 'notify':
-            update={$addToSet: {"notify": authorId}}
+            update = { $addToSet: { "notify": authorId } }
             break
           case 'subscribe-author':
-            update={$addToSet: {"subscribe.author": authorId}}
+            update = { $addToSet: { "subscribe.author": authorId } }
             break
           case 'subscribe-ebooks':
-            update={$addToSet: {"subscribe.ebooks": ebookId}}
+            update = { $addToSet: { "subscribe.ebooks": ebookId } }
             break
           case 'subscribe-users':
-            update={$addToSet: {"subscribe.users": userId}}
+            update = { $addToSet: { "subscribe.users": userId } }
             break
           case 'history-readed':
-            update={
-              $addToSet: {"history.read.ebooks": ebookId},
-              $addToSet: {"history.read.chapters": chapterId}
+            update = {
+              $addToSet: { "history.read.ebooks": ebookId },
+              $addToSet: { "history.read.chapters": chapterId }
             }
             break
           case 'history-download':
-            update={
-              $addToSet: {"history.download.ebooks": ebookId},
-              $addToSet: {"history.download.chapters": chapterId}
+            update = {
+              $addToSet: { "history.download.ebooks": ebookId },
+              $addToSet: { "history.download.chapters": chapterId }
             }
             break;
           case "history-bought":
-            update={
-              $set:{coin:req.body.coin},
-              $addToSet:{"history.bought": chapterId}
+            update = {
+              $set: { coin: req.body.coin },
+              $addToSet: { "history.bought": chapterId }
             }
             break;
           default: break;
         }
       }
-      if(req.file){
+      if (req.file) {
         await cloudinary.uploader.destroy(userUpdate.images.avatar.id);
         avatarUpload = await cloudinary.uploader.upload(req.file?.path, folder);
-        update={$set:{...req.body, isActive: isActive, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } }}}
-      }else if (req.body.images){
+        update = { $set: { ...req.body, isActive: isActive, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } } } }
+      } else if (req.body.images) {
         await cloudinary.uploader.destroy(userUpdate.images.avatar.id);
         avatarUpload = await cloudinary.uploader.upload(req.body.images, folder);
-        update={$set:{...req.body, isActive: isActive, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } }}}
-      }else {
-        update={$set:{...req.body, isActive: isActive}}
+        update = { $set: { ...req.body, isActive: isActive, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } } } }
+      } else {
+        update = { $set: { ...req.body, isActive: isActive } }
       }
       for (const role of userUpdate.roles) {
         if (role.name == "Moderator" || role.name == "Admin") {
-          userUpdate =  req.body._id;
+          userUpdate = req.body._id;
           break;
         } else {
           userUpdate = userUpdate._id.toString();
           break;
         }
       }
-      const result = await models.users.findByIdAndUpdate(userUpdate, update, {new: true})
-      if(!result){
-        res.send({success:false, message:messages.UpdateFail})
+      const result = await models.users.findByIdAndUpdate(userUpdate, update, { new: true })
+      if (!result) {
+        res.send({ success: false, message: messages.UpdateFail })
       }
-      return res.send({success:true, message:messages.UpdateSuccessfully })
+      return res.send({ success: true, message: messages.UpdateSuccessfully })
     } catch (error) {
       return handleError.ServerError(error, res)
     }
@@ -255,28 +255,28 @@ module.exports = {
   findOneUser: async (req, res) => {
     const id = req.userIsLogged._id;
     try {
-      const data = await models.users.findOne({_id: id},{password:0}).populate('roles', 'name');
-      if(data) {
-       return res.status(200).send({data:data, success:true, message:messages.GetDataSuccessfully});
-      } 
-      else{
-       return res.send({success:false, message:messages.GetDataNotSuccessfully});
+      const data = await models.users.findOne({ _id: id }, { password: 0 }).populate('roles', 'name');
+      if (data) {
+        return res.status(200).send({ data: data, success: true, message: messages.GetDataSuccessfully });
+      }
+      else {
+        return res.send({ success: false, message: messages.GetDataNotSuccessfully });
       }
     } catch (error) {
-      return handleError.ServerError(error, res) 
+      return handleError.ServerError(error, res)
     }
   },
 
   findManyUser: async (req, res) => {
-    try {    
+    try {
       Promise.all([
         models.users.count(),
-        models.users.find({deleted: false},{password:0}).populate("roles")
+        models.users.find({ deleted: false }, { password: 0 }).populate("roles")
       ]).then((result) => {
         const response = {
           count: result[0], data: result[1], success: true
         }
-        return res.status(200).send(response); 
+        return res.status(200).send(response);
       })
     } catch (error) {
       return handleError.ServerError(error, res)
@@ -287,9 +287,9 @@ module.exports = {
     const itemTrash = req.body.roles.pop();
     const active = req.body.isActive;
     let isActive;
-    if(active.includes("true")){
+    if (active.includes("true")) {
       isActive = true;
-    }else{
+    } else {
       isActive = false;
     }
     try {
@@ -314,9 +314,9 @@ module.exports = {
     const id = req.query.id;
     const userFind = await models.users.findById(id);
     let row;
-  
+
     try {
-  
+
       if (userFind.deleted === true) {
         row = await models.users.findByIdAndUpdate(id, { deleted: false, deleteAt: null, updateAt: userFind.updateAt, createAt: userFind.createAt }, option);
       } else {
@@ -353,7 +353,7 @@ module.exports = {
       handleError.ServerError(error, res);
     }
   },
-  
+
   DeleteUserController,
 
 
