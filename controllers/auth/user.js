@@ -266,6 +266,7 @@ module.exports = {
   },
 
   insertOneUser: async (req, res) => {
+    const itemTrash = req.body.roles.pop();
     try {
       const avatarUpload = await cloudinary.uploader.upload(req.file?.path, folder);
       const USER = new models.users({ ...req.body, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } } });
