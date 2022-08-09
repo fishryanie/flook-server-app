@@ -33,7 +33,7 @@ module.exports = {
       const name = await models.authors.findOne({ name: dataAuthor });
       if (name) {
         console.log("tên tác giả tồn tại!!!");
-        return res.status(400).send(name);
+        return res.status(400).send({message: `tên ${name.name} đã tồn tại!!!`});
       }
 
       const newAuthor = new models.authors({
