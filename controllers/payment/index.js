@@ -7,8 +7,8 @@ const link = 'https://flook-app.herokuapp.com/api/payment-management';
 
 paypal.configure({
   'mode': 'sandbox', //sandbox or live
-  'client_id': 'ATczMpfFApy3QGI5x9kbR36ibyeO7i8VhgOswlkbIB9-kHraPc_u3Z1oS5JSee1Yp26hy_V7OLXLm-0m',
-  'client_secret': 'EMYCWQoK2y6RkEHpslLr7AT1pGxXmnAiyqwyzKcrNSd2cVigjn3TPxIXxmBbACKxl4VB0n2WNbe-jBT-'
+  'client_id': process.env.PAYPAL_CLIENT_ID,
+  'client_secret': process.env.PAYPAL_CLIENT_SECRET
 });
 
 
