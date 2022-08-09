@@ -123,7 +123,7 @@ module.exports = {
 
   removeOneEbook: async (req, res) => {
     const option = { new: true };
-    const id = req.params.id;
+    const id = req.query.id;
     const bookFind = await models.ebooks.findById(id);
     let row;
   
@@ -137,10 +137,10 @@ module.exports = {
       console.log(row);
       if (!row) {
         console.log(messages.NotFound);
-        return res.status(404).send({ messages: messages.NotFound + id });
+        return res.status(404).send({ message: messages.NotFound + id });
       }
       console.log(messages.DeleteSuccessfully);
-      return res.status(200).send({ messages: messages.DeleteSuccessfully });
+      return res.status(200).send({ message: messages.DeleteSuccessfully });
     } catch (error) {
       return handleError.ServerError(error, res)
     }
