@@ -1,3 +1,5 @@
+const folder = { folder: 'Flex-ticket/ImageChapter' }
+const cloudinary = require('../../configs/cloudnary');
 const models = require("../../models");
 const messages = require("../../constants/messages");
 const handleError = require("../../error/HandleError");
@@ -95,7 +97,7 @@ module.exports = {
           { $inc: { "images.number": 1 } }
         )
         if (update) {
-          return res.status(200).send({ data: result, success: true, message: messages.InsertSuccessfully })
+          return res.status(200).send({ data: result, success: true, message: messages.CreateSuccessfully })
         }
         return res.status(400).send({ message: messages.InsertFail })
       }
