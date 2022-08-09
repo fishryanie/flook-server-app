@@ -90,8 +90,8 @@ module.exports = {
 
       const idEbook = await models.chapters.findOne({ ebooks: idEbooks });
       if (idEbook) {
-        const name = await idEbook.name;
-        if (name) {
+        const name = idEbook.name;
+        if (nameChapter === name) {
           console.log("tên tác giả tồn tại!!!");
           return res.status(400).send({message: `tên ${name.name} đã tồn tại!!!`});
         }
