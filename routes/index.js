@@ -88,19 +88,40 @@ module.exports = app => {
 
   app.get('/api/statistical/new-members', async (req, res) => {
     try {
-      function options(type){
+      function match(type){
         return {$match: {deleted:false, createAt: { 
           $gte: moment().startOf(type === 'week' ? 'isoWeek' : type).toDate(),
           $lt: moment().endOf(type === 'week' ? 'isoWeek' : type).toDate()
         }}}
       }
-      const select = [
-        {$project: {displayName:1, createAt:1}},
-        {$group: {_id: {$month:"$createAt"}, count:{$sum:1}, listUser: { $push: '$$ROOT' }}},
-        {$project: {_id:0, month: '$_id', listUser: 1}},
-        {$sort: {month: 1}}
-      ]
-      select.unshift(options(req.query.time))
+      const select = [match(req.query.time),{$project: {displayName:1, createAt:1}}]
+      switch (req.query.time) {
+        case 'day':
+          select.push(
+            {$group: {_id: {$hour:"$createAt"}, count:{$sum:1}, listUser: { $push: '$$ROOT' }}},
+            {$project: {_id:0, hour: '$_id', countUserInDay: {$size: '$listUser'}}},
+            {$sort: {week: 1}}
+          ); break
+        case 'week':
+          select.push(
+            {$group: {_id: {$dayOfMonth:"$createAt"}, count:{$sum:1}, listUser: { $push: '$$ROOT' }}},
+            {$project: {_id:0, dayOfMonth: '$_id', countUserInDate: {$size: '$listUser'}}},
+            {$sort: {week: 1}}
+          ); break
+        case 'month':
+          select.push(
+            {$group: {_id: {$week:"$createAt"}, count:{$sum:1}, listUser: { $push: '$$ROOT' }}},
+            {$project: {_id:0, week: '$_id', countUserInWeek: {$size: '$listUser'}}},
+            {$sort: {week: 1}}
+          ); break
+        case 'year':
+          select.push(
+            {$group: {_id: {$month:"$createAt"}, count:{$sum:1}, listUser: { $push: '$$ROOT' }}},
+            {$project: {_id:0, month: '$_id', countUserInMonth: {$size: '$listUser'}}},
+            {$sort: {month: 1}}
+          ); break
+        default: break;
+      }
       const result = await models.users.aggregate(select)
       result && res.status(200).send({count:result.length, success:true, data:result})
     } catch (error) {
