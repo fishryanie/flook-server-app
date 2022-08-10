@@ -5,7 +5,7 @@ const folder = { folder: 'Flex-ticket/ImageBook' }
 const models = require("../../models");
 const mongoose = require('mongoose');
 const { addDays, addArrayDays } = require('../../functions/globalFunc');
-const showEbook = { title:1, images:1, authors:1, genres:1, status:1, description:1, allowedAge:1, views:1, createAt: 1}
+const showEbook = { title: 1, images: 1, authors: 1, genres: 1, status: 1, description: 1, allowedAge: 1, views: 1, createAt: 1 }
 
 
 module.exports = {
@@ -14,7 +14,7 @@ module.exports = {
     try {
       const id = req.query.id;
       const result = await models.ebooks.findById(id)
-      result && res.status(200).send({success: true, data: result});
+      result && res.status(200).send({ success: true, data: result });
     } catch (error) {
       return handleError.ServerError(error, res);
     }
@@ -22,8 +22,8 @@ module.exports = {
 
   findManyEbook: async (req, res) => {
     try {
-      const result = await models.ebooks.find({deleted:false}).populate([{path: 'authors', select: ['name']}, {path: 'genres', select: ['name']}])
-      result && res.status(200).send({success: true, data: result});
+      const result = await models.ebooks.find({ deleted: false }).populate([{ path: 'authors', select: ['name'] }, { path: 'genres', select: ['name'] }])
+      result && res.status(200).send({ success: true, data: result });
     } catch (error) {
       return handleError.ServerError(error, res);
     }
@@ -38,17 +38,17 @@ module.exports = {
     const itemTrash = req.body.authors.pop() && req.body.genres.pop();
     try {
       const title = await models.ebooks.findOne({ title: dataBook });
-  
+
       if (title) {
         console.log("tên sách tồn tại!!!");
-        return res.status(400).send({message: `tên ${title.title} đã tồn tại!!!`});
+        return res.status(400).send({ message: `tên ${title.title} đã tồn tại!!!` });
       }
-  
+
       const imageUpload = await cloudinary.uploader.upload(req.file?.path, folder);
       const newBook = new models.ebooks({
         ...req.body, images: { background: { id: imageUpload.public_id, url: imageUpload.secure_url }, wallPaper: { id: imageUpload.public_id, url: imageUpload.secure_url } }, createAt: addDays(0)
       });
-  
+
       const result = await newBook.save();
       if (result) {
         const response = {
@@ -82,13 +82,13 @@ module.exports = {
         imageUpload = await cloudinary.uploader.upload(image, folder);
         await cloudinary.uploader.destroy(bookFind.images.background.id);
       }
-  
+
       const updateBook = new models.ebooks({
         ...req.body, images: { background: { id: imageUpload.public_id, url: imageUpload.secure_url }, wallPaper: { id: imageUpload.public_id, url: imageUpload.secure_url } }, updateAt: addDays(0), createAt: bookFind.createAt, deleteAt: bookFind.deleteAt
       });
-  
+
       const result = await models.ebooks.findByIdAndUpdate(id, updateBook, option);
-  
+
       if (!result) {
         return handleError.NotFoundError(id, res)
       }
@@ -102,7 +102,7 @@ module.exports = {
     const id = req.params.id;
     const bookFind = await models.ebooks.findById(id);
     let row;
-  
+
     try {
       row = await models.ebooks.findByIdAndDelete(id).exec() && await cloudinary.uploader.destroy(bookFind.image.id);
       console.log(row);
@@ -126,9 +126,9 @@ module.exports = {
     const id = req.query.id;
     const bookFind = await models.ebooks.findById(id);
     let row;
-  
+
     try {
-  
+
       if (bookFind.deleted === true) {
         row = await models.ebooks.findByIdAndUpdate(id, { deleted: false, deleteAt: "", updateAt: bookFind.updateAt, createAt: bookFind.createAt }, option);
       } else {
@@ -151,12 +151,12 @@ module.exports = {
     const option = { new: true };
     try {
       const result = await models.ebooks.updateMany(
-        { "_id": { $in: listDelete } }, 
+        { "_id": { $in: listDelete } },
         { $set: { deleted: true, deleteAt: Date.now() } },
         option
       );
-      if(!result){
-        return res.status(400).send({ success: false,message: messages.DeleteFail});
+      if (!result) {
+        return res.status(400).send({ success: false, message: messages.DeleteFail });
       }
       const response = {
         success: true,
@@ -169,102 +169,107 @@ module.exports = {
   },
 
 
-  
-  searchEbook: async (req, res) =>{
+
+  searchEbook: async (req, res) => {
     try {
       const { author, genre, status, allowedAge, newDay, chapter } = req.body;
       const { sort, page, orderby } = req.query;
-      const match=[{}], pageSize = 12, skip = page ? (parseInt(page) - 1) * pageSize : null
+      const match = [{}], pageSize = 12, skip = page ? (parseInt(page) - 1) * pageSize : null
 
-    
-    
-      const select = [ 
-        {$match: {deleted: false, $and: match }},
-        {$lookup: {from: 'authors',localField: 'authors',foreignField: '_id',as: 'authors', pipeline: [{$match: {deleted: false}},{$project: {name: 1, images: '$images.avatar.url'}}]}},
-        {$lookup: {from: 'genres',localField: 'genres',foreignField: '_id',as: 'genres', pipeline: [{$match: {deleted: false}},{$project: {name: 1}}]}},
-        {$lookup: {from: 'reviews',localField: '_id',foreignField: 'ebooks',as: 'reviews',pipeline: [{$match: {deleted: false}}]}},
-        {$lookup: {from: 'chapters',localField: '_id',foreignField: 'ebooks',as: 'chapters', pipeline: [{$match: {deleted: false}}]}},
-        {$lookup: {from: 'users',localField: '_id',foreignField: 'subscribe.ebooks',as: 'subscribers',pipeline: [{$match: {deleted: false}}]}},
-        {$lookup: {from: 'users',localField: '_id',foreignField: 'history.read.ebooks',as: "readers",pipeline: [{$match: {deleted: false}}]}},
-        {$lookup: {from: 'comments',localField: 'reviews._id',foreignField: 'reviewId',as: 'commentsReview',pipeline: [{$match: {deleted: false}}]}},
-        {$lookup: {from: 'comments',localField: 'chapters._id',foreignField: 'chapterId',as: 'commentsChapter',pipeline: [{$match: {deleted: false}}]}},
-        {$project: {...showEbook,
-          sumHot: { $sum: [
-            {$size: '$reviews'}, 
-            {$size: '$reviews.likes'}, 
-            {$size: '$chapters.likes'}, 
-            {$size: '$commentsReview'}, 
-            {$size: '$commentsChapter'}, 
-            {$size: '$commentsReview.likes'}, 
-            {$size: '$commentsChapter.likes'}
-          ]},
-          avgScore:{'$divide': [{'$trunc':{'$add':[{'$multiply': [{$avg:'$reviews.rating' }, 100]}, 0.5]}}, 100]},
-          subscribers: {$size: { "$setUnion": [ "$subscribers._id", [] ]}},
-          sumPage: {$size: { '$setUnion': [ '$chapters._id', [] ]}}, 
-          readers: {$sum: {$size: '$readers'}},
-        }},
+
+
+      const select = [
+        { $match: { deleted: false, $and: match } },
+        { $lookup: { from: 'authors', localField: 'authors', foreignField: '_id', as: 'authors', pipeline: [{ $match: { deleted: false } }, { $project: { name: 1, images: '$images.avatar.url' } }] } },
+        { $lookup: { from: 'genres', localField: 'genres', foreignField: '_id', as: 'genres', pipeline: [{ $match: { deleted: false } }, { $project: { name: 1 } }] } },
+        { $lookup: { from: 'reviews', localField: '_id', foreignField: 'ebooks', as: 'reviews', pipeline: [{ $match: { deleted: false } }] } },
+        { $lookup: { from: 'chapters', localField: '_id', foreignField: 'ebooks', as: 'chapters', pipeline: [{ $match: { deleted: false } }] } },
+        { $lookup: { from: 'users', localField: '_id', foreignField: 'subscribe.ebooks', as: 'subscribers', pipeline: [{ $match: { deleted: false } }] } },
+        { $lookup: { from: 'users', localField: '_id', foreignField: 'history.read.ebooks', as: "readers", pipeline: [{ $match: { deleted: false } }] } },
+        { $lookup: { from: 'comments', localField: 'reviews._id', foreignField: 'reviewId', as: 'commentsReview', pipeline: [{ $match: { deleted: false } }] } },
+        { $lookup: { from: 'comments', localField: 'chapters._id', foreignField: 'chapterId', as: 'commentsChapter', pipeline: [{ $match: { deleted: false } }] } },
+        {
+          $project: {
+            ...showEbook,
+            sumHot: {
+              $sum: [
+                { $size: '$reviews' },
+                { $size: '$reviews.likes' },
+                { $size: '$chapters.likes' },
+                { $size: '$commentsReview' },
+                { $size: '$commentsChapter' },
+                { $size: '$commentsReview.likes' },
+                { $size: '$commentsChapter.likes' }
+              ]
+            },
+            avgScore: { '$divide': [{ '$trunc': { '$add': [{ '$multiply': [{ $avg: '$reviews.rating' }, 100] }, 0.5] } }, 100] },
+            subscribers: { $size: { "$setUnion": ["$subscribers._id", []] } },
+            sumPage: { $size: { '$setUnion': ['$chapters._id', []] } },
+            readers: { $sum: { $size: '$readers' } },
+          }
+        },
 
       ]
-    
-      if(genre && genre.length > 0){
-        match.push({genres: {$in: genre.map((e) => mongoose.Types.ObjectId(e)) }})
+
+      if (genre && genre.length > 0) {
+        match.push({ genres: { $in: genre.map((e) => mongoose.Types.ObjectId(e)) } })
       }
-      if(author && author.length > 0){
-        match.push({authors: {$in: author.map((e) => mongoose.Types.ObjectId(e)) }})
+      if (author && author.length > 0) {
+        match.push({ authors: { $in: author.map((e) => mongoose.Types.ObjectId(e)) } })
       }
-      if(status && status.length > 0){
-        match.push({status: status[0]})
+      if (status && status.length > 0) {
+        match.push({ status: status[0] })
       }
-      if(newDay){
-        match.push({createAt:{$in: addArrayDays('EBOOKS_NEW')}})
+      if (newDay) {
+        match.push({ createAt: { $in: addArrayDays('EBOOKS_NEW') } })
       }
-      if(chapter) {
+      if (chapter) {
         switch (chapter) {
-          case 'lte50': match.push({sumPage: {$lte: 50}}); break;
-          case 'lte100': match.push({sumPage: {$lte: 100 }}); break;
-          case 'lte300': match.push({sumPage: {$lte: 300 }}); break;
-          case 'gte500': match.push({sumPage: {$gte: 500 }}); break;
+          case 'lte50': match.push({ sumPage: { $lte: 50 } }); break;
+          case 'lte100': match.push({ sumPage: { $lte: 100 } }); break;
+          case 'lte300': match.push({ sumPage: { $lte: 300 } }); break;
+          case 'gte500': match.push({ sumPage: { $gte: 500 } }); break;
           default: break;
         }
       }
-      if(allowedAge) {
+      if (allowedAge) {
         switch (allowedAge) {
           case 11: match.push({ $lte: 11 }); break;
-          case 18: match.push({ $lte: 18, $gte:12 }); break;
-          case 30: match.push({ $lte: 30, $gte:18 }); break;
+          case 18: match.push({ $lte: 18, $gte: 12 }); break;
+          case 30: match.push({ $lte: 30, $gte: 18 }); break;
           case 31: match.push({ $lte: 31 }); break;
           default: break;
         }
       }
-      if(sort) {
+      if (sort) {
         switch (sort) {
           case 'hot':
-            select.push({$sort:{sumHot: parseInt(orderby) || -1}})
+            select.push({ $sort: { sumHot: parseInt(orderby) || -1 } })
             break;
           case 'name':
-            select.push({$sort:{title: parseInt(orderby) || -1}})
+            select.push({ $sort: { title: parseInt(orderby) || -1 } })
             break;
           case 'view':
-            select.push({$sort:{view: parseInt(orderby)|| -1}})
+            select.push({ $sort: { view: parseInt(orderby) || -1 } })
             break;
           case 'score':
-            select.push({$sort:{avgScore: parseInt(orderby) || -1}})
+            select.push({ $sort: { avgScore: parseInt(orderby) || -1 } })
             break;
           case 'reader':
-            select.push({$sort:{readers: parseInt(orderby)|| -1}})
+            select.push({ $sort: { readers: parseInt(orderby) || -1 } })
             break;
           case 'subscribers':
-            select.push({$sort:{subscribers: parseInt(orderby) || -1}})
+            select.push({ $sort: { subscribers: parseInt(orderby) || -1 } })
             break;
           default: break;
         }
-      } 
-      page && select.push({$skip: skip },{$limit: pageSize })
-      const result = await models.ebooks.aggregate(select)
-      if(!result){
-        return res.status(400).send({success: false,message:"search error"})
       }
-      return res.status(200).send({success: true, length: result.length, data: result, message:"search successfully"})
+      page && select.push({ $skip: skip }, { $limit: pageSize })
+      const result = await models.ebooks.aggregate(select)
+      if (!result) {
+        return res.status(400).send({ success: false, message: "search error" })
+      }
+      return res.status(200).send({ success: true, length: result.length, data: result, message: "search successfully" })
     } catch (error) {
       return handleError.ServerError(error, res)
     }
@@ -272,7 +277,7 @@ module.exports = {
 
   findManyByUser: async (req, res) => {
     try {
-      const userId = req.userIsLogged._id, {type} = req.query
+      const userId = req.userIsLogged._id, { type } = req.query
       let localField
 
       switch (type) {
@@ -291,46 +296,53 @@ module.exports = {
         default: break;
       }
       const result = await models.users.aggregate([
-        {$match: {deleted: false, isActive: true, _id: new mongoose.Types.ObjectId(userId)}},
+        { $match: { deleted: false, isActive: true, _id: new mongoose.Types.ObjectId(userId) } },
         {
           $lookup: {
-            from: 'ebooks', 
-            localField: localField, 
+            from: 'ebooks',
+            localField: localField,
             foreignField: '_id',
-            as:'data', 
+            as: 'data',
             pipeline: [
-              {$match: {deleted: false}},
-              {$lookup: {from: 'authors',localField: 'authors',foreignField: '_id',as: 'authors', pipeline: [{$match: {deleted: false}},{$project: {name: 1, images: '$images.avatar.url'}}]}},
-              {$lookup: {from: 'genres',localField: 'genres',foreignField: '_id',as: 'genres', pipeline: [{$match: {deleted: false}},{$project: {name: 1}}]}},
-              {$lookup: {from: 'users',localField: '_id',foreignField: 'history.read.ebooks',as: "readers",pipeline: [{$match: {deleted: false}}]}},
-              {$lookup: {from: 'reviews',localField: '_id',foreignField: 'ebooks',as: 'reviews',pipeline: [{$match: {deleted: false}}]}},
-              {$lookup: {from: 'chapters',localField: '_id',foreignField: 'ebooks',as: 'chapters', pipeline: [{$match: {deleted: false}}]}},
-              {$lookup: {from: 'comments',localField: 'reviews._id',foreignField: 'reviewId',as: 'commentsReview',pipeline: [{$match: {deleted: false}}]}},
-              {$lookup: {from: 'comments',localField: 'chapters._id',foreignField: 'chapterId',as: 'commentsChapter',pipeline: [{$match: {deleted: false}}]}},
-              {$project: {...showEbook, 
-                readers: {$sum: {$size: '$readers'}},
-                avgScore:{'$divide': [{'$trunc':{'$add':[{'$multiply': [{$avg:'$reviews.rating' }, 100]}, 0.5]}}, 100]},
-                sumPage: {$size: { '$setUnion': [ '$chapters._id', [] ]}}, 
-                sumComment: { $sum: [
-                  {$size: '$commentsReview'}, 
-                  {$size: '$commentsChapter'}
-                ]},
-                sumHot: { $sum: [
-                  {$size: '$reviews'}, 
-                  {$size: '$reviews.likes'}, 
-                  {$size: '$chapters.likes'}, 
-                  {$size: '$commentsReview'}, 
-                  {$size: '$commentsChapter'}, 
-                  {$size: '$commentsReview.likes'}, 
-                  {$size: '$commentsChapter.likes'}
-                ]},
-              }},
+              { $match: { deleted: false } },
+              { $lookup: { from: 'authors', localField: 'authors', foreignField: '_id', as: 'authors', pipeline: [{ $match: { deleted: false } }, { $project: { name: 1, images: '$images.avatar.url' } }] } },
+              { $lookup: { from: 'genres', localField: 'genres', foreignField: '_id', as: 'genres', pipeline: [{ $match: { deleted: false } }, { $project: { name: 1 } }] } },
+              { $lookup: { from: 'users', localField: '_id', foreignField: 'history.read.ebooks', as: "readers", pipeline: [{ $match: { deleted: false } }] } },
+              { $lookup: { from: 'reviews', localField: '_id', foreignField: 'ebooks', as: 'reviews', pipeline: [{ $match: { deleted: false } }] } },
+              { $lookup: { from: 'chapters', localField: '_id', foreignField: 'ebooks', as: 'chapters', pipeline: [{ $match: { deleted: false } }] } },
+              { $lookup: { from: 'comments', localField: 'reviews._id', foreignField: 'reviewId', as: 'commentsReview', pipeline: [{ $match: { deleted: false } }] } },
+              { $lookup: { from: 'comments', localField: 'chapters._id', foreignField: 'chapterId', as: 'commentsChapter', pipeline: [{ $match: { deleted: false } }] } },
+              {
+                $project: {
+                  ...showEbook,
+                  readers: { $sum: { $size: '$readers' } },
+                  avgScore: { '$divide': [{ '$trunc': { '$add': [{ '$multiply': [{ $avg: '$reviews.rating' }, 100] }, 0.5] } }, 100] },
+                  sumPage: { $size: { '$setUnion': ['$chapters._id', []] } },
+                  sumComment: {
+                    $sum: [
+                      { $size: '$commentsReview' },
+                      { $size: '$commentsChapter' }
+                    ]
+                  },
+                  sumHot: {
+                    $sum: [
+                      { $size: '$reviews' },
+                      { $size: '$reviews.likes' },
+                      { $size: '$chapters.likes' },
+                      { $size: '$commentsReview' },
+                      { $size: '$commentsChapter' },
+                      { $size: '$commentsReview.likes' },
+                      { $size: '$commentsChapter.likes' }
+                    ]
+                  },
+                }
+              },
             ]
           }
         },
       ])
-      result && res.status(200).send({success:true, count: result[0].data.length, data: result[0].data })
-} catch (error) {
+      result && res.status(200).send({ success: true, count: result[0].data.length, data: result[0].data })
+    } catch (error) {
       return handleError.ServerError(error, res)
     }
   },
@@ -338,7 +350,7 @@ module.exports = {
   changePassword: async (req, res) => {
     const userId = req.userIsLogged._id.toString();
     const passwordNew = req.body.password_New
-    
+
     try {
       const result = await models.users.findOneAndUpdate(
         { _id: userId },
@@ -348,13 +360,13 @@ module.exports = {
       if (!result) {
         return res.status(400).send({ message: "Update that bai" });
       }
-      return res.status(200).send({data: result, success: true, message: 'Change Password Successfully!!!'});
+      return res.status(200).send({ data: result, success: true, message: 'Change Password Successfully!!!' });
     } catch (error) {
       return handleError.ServerError(error, res)
     }
   },
 
- 
+
 }
 
 
@@ -362,13 +374,13 @@ module.exports = {
 const findNewDate = async (req, res, next) => {
   try {
     const booksnews = addArrayDays('EBOOKS_NEW')
-    const result = await models.ebooks.find({createAt: {$in: booksnews}})
-    if( result && result.length > 0 ) {
-      return res.status(200).send({data: result, success: true})
+    const result = await models.ebooks.find({ createAt: { $in: booksnews } })
+    if (result && result.length > 0) {
+      return res.status(200).send({ data: result, success: true })
     } else if (result.length <= 0) {
-      return res.status(200).send({data: result, success: false, error: {message: 'No data'}})
+      return res.status(200).send({ data: result, success: false, error: { message: 'No data' } })
     } else if (!result) {
-      return res.status(400).send({data: result, success: false, error: {message: 'Can not found data'}})
+      return res.status(400).send({ data: result, success: false, error: { message: 'Can not found data' } })
     }
   } catch (error) {
     handleError.ServerError(error, res)
