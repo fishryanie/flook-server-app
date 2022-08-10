@@ -102,7 +102,7 @@ module.exports = app => {
       ]
       select.unshift(options(req.query.time))
       const result = await models.users.aggregate(select)
-      result && res.status(200).send({count:result.length, success:true, data:{result: result, count: result.length}})
+      result && res.status(200).send({count:result.length, success:true, data:result})
     } catch (error) {
       handleError.ServerError(error, res)
     }
