@@ -311,8 +311,8 @@ module.exports = {
   updateOneUserWeb: async (req, res) => {
     try {
       const itemTrash = req.body.roles.pop();
-      let update, avatarUpload, userUpdate;
-      let idUpdate = req.userIsLogged;
+      let update, avatarUpload, userUpdate, idUpdate;
+      let user = req.userIsLogged;
       const { type } = req.query
       const { userId, authorId, ebookId, chapterId, notify } = req.body
       const active = req.body.isActive;
@@ -357,13 +357,13 @@ module.exports = {
           default: break;
         }
       }
-      for (const role of idUpdate.roles) {
+      for (const role of user.roles) {
         if (role.name === "Moderator" || role.name === "Admin") {
           idUpdate = req.body._id;
           userUpdate = await models.users.findById(idUpdate)
           break;
         } else {
-          idUpdate = userUpdate._id.toString();
+          idUpdate = user._id.toString();
           userUpdate = await models.users.findById(idUpdate);
           break;
         }
