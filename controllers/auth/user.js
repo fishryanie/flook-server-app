@@ -358,7 +358,7 @@ module.exports = {
         }
       }
       for (const role of idUpdate.roles) {
-        if (role.name == "Moderator" || role.name == "Admin") {
+        if (role.name === "Moderator" || role.name === "Admin") {
           idUpdate = req.body._id;
           userUpdate = await models.users.findOne({_id: idUpdate})
           break;
@@ -374,7 +374,7 @@ module.exports = {
         update = { $set: { ...req.body, isActive: isActive, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } } } }
       } else if (req.body.images) {
         await cloudinary.uploader.destroy(userUpdate.images.avatar.id);
-        avatarUpload = await cloudinary.uploader.upload(req.body.images, folder);
+        avatarUpload = await cloudinary.uploader.upload(req.body.images.avatar.url, folder);
         update = { $set: { ...req.body, isActive: isActive, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } } } }
       } else {
         update = { $set: { ...req.body, isActive: isActive } }
