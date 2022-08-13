@@ -360,11 +360,11 @@ module.exports = {
       for (const role of user.roles) {
         if (role.name === "Moderator" || role.name === "Admin") {
           idUpdate = req.body._id;
-          userUpdate = await models.users.findById(idUpdate)
+          userUpdate = await models.users.findOne({_id: idUpdate})
           break;
         } else {
           idUpdate = user._id.toString();
-          userUpdate = await models.users.findById(idUpdate);
+          userUpdate = await models.users.findById({_id: idUpdate});
           break;
         }
       }
