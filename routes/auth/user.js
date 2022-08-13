@@ -45,7 +45,7 @@ module.exports = app => {
     upload.single("images"),
     middlewares.auth.accessPermission(subStr(apiString.updateOneUser)),
     middlewares.auth.VerifyEmail(''),
-  ], Controller.user.updateOneUser);
+  ], Controller.user.updateOneUserWeb);
 
 
 
