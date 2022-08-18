@@ -137,6 +137,7 @@ const apiString = {
   removeOneFeature: `${feature}/remove-one-feature`,
   removeManyFeature: `${feature}/remove-many-feature`,
   searchFeature: `${feature}/search-one-feature`,
+  decentralization: `${feature}/decentralization`,
 
   // featuresGroup
   findOneFeatureGroup: `${featureGroup}/find-one-feature-group`,

@@ -25,5 +25,6 @@ module.exports = app => {
 
   app.delete(apiString.removeManyFeature, middlewares.auth.accessPermission(subStr(apiString.removeManyFeature)) , Controller.feature.removeManyFeature);
 
-  
+  app.put(apiString.decentralization, middlewares.auth.accessPermission(subStr(apiString.decentralization)), Controller.feature.decentralization);
+
 }
