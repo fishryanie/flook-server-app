@@ -13,7 +13,7 @@ module.exports = app => {
   app.get(routesString.searchUser, middlewares.auth.accessPermission(subStr(routesString.searchUser)), Controller.user.FindManyUser);
 
   app.get(routesString.findOneUser, middlewares.auth.accessPermission(subStr(routesString.findOneUser)),
-    Controller.user.FindByIdUserController);
+    Controller.user.findUserLoggin);
 
   app.get(routesString.setActiveUser, Controller.user.ActiveUserController);
 
