@@ -27,6 +27,7 @@ const apiString = {
   insertOneUser: `${user}/insert-one-user`,
   updateOneUser: `${user}/update-one-user`,
   updateOneUserMobile: `${user}/update-one-user-mobile`,
+  updateOneUserWeb: `${user}/update-one-user-web`,
   deleteOneUser: `${user}/delete-one-user`,
   deleteManyUser: `${user}/delete-many-user`,
   removeOneUser: `${user}/remove-one-user`,

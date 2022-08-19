@@ -58,4 +58,9 @@ module.exports = app => {
     middlewares.auth.accessPermission(subStr(apiString.updateOneUserMobile)),
   ], Controller.user.updateOneUserMobile);
 
+  app.put(apiString.updateOneUserWeb, [
+    upload.single("images"),
+    middlewares.auth.accessPermission(subStr(apiString.updateOneUserWeb)),
+  ], Controller.user.updateOneUserWeb);
+
 };
