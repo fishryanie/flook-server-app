@@ -348,7 +348,7 @@ module.exports = {
       }
       for (const role of userUpdate.roles) {
         if (role.name == "Moderator" || role.name == "Admin") {
-          userUpdate =  req.body._id;
+          userUpdate =  req.query.id;
           break;
         } else {
           userUpdate = userUpdate._id;
