@@ -330,7 +330,7 @@ module.exports = {
       let avatarUpload;
       let userUpdate = req.userIsLogged;
 
-      const itemTrash = req?.body?.roles?.pop();
+      // const itemTrash = req?.body?.roles?.pop();
       if(req.file){
         // console.log('vào file', req.file);
         await cloudinary.uploader.destroy(userUpdate.images.avatar.id);
