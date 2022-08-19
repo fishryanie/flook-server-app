@@ -25,7 +25,7 @@ const routesString = {
   findManyUser: `${user}/find-many-user`,
   findOneUser: `${user}/find-one-user`,
   insertOneUser: `${user}/insert-one-user`,
-  updateOneUser: `${user}/update-one-user`,
+  updateOneUser: `${user}/update-one-user-web`,
   deleteOneUser: `${user}/delete-one-user`,
   deleteManyUser: `${user}/delete-many-user`,
   removeOneUser: `${user}/remove-one-user`,
