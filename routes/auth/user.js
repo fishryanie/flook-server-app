@@ -53,10 +53,15 @@ module.exports = app => {
   ], Controller.user.ChangePasswordController);
 
 
+  // app.put(routesString.updateOneUser, [
+  //   upload.single("images"),
+  //   middlewares.auth.accessPermission(subStr(routesString.updateOneUser)),
+  //   middlewares.auth.VerifyEmail(''),
+  // ], Controller.user.UpdateUserController);
+
   app.put(routesString.updateOneUser, [
     upload.single("images"),
     middlewares.auth.accessPermission(subStr(routesString.updateOneUser)),
-    middlewares.auth.VerifyEmail(''),
   ], Controller.user.UpdateUserController);
 
   app.get(routesString.findUserLoggin, middlewares.auth.accessPermission(subStr(routesString.findUserLoggin)), Controller.user.findUserLoggin)

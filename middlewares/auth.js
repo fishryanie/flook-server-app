@@ -104,19 +104,17 @@ const verifyUserName = typeUserName => async (req, res, next) => {
 
 const VerifyEmail = typeEmail => async (req, res, next) => {
   try {
-    const email = req.body.email;
-    const USER = await models.users.findOne({ email: email });
-    if (typeEmail === 'create_new' && USER){
+    const { email } = req.body;
+    const USER = await models.users.findOne({email: email });
+    if((typeEmail === apiString.register || typeEmail === apiString.insertOneUser) && USER){
       return handleError.AlreadyExistsError(email, res)
-    }else if(typeEmail === 'create_new' && !USER) {
+    } else if((typeEmail === apiString.register || typeEmail === apiString.insertOneUser) && !USER) {
       next()
-    }
-    if (USER) {
-      req.user = USER;
-      next();
-    }else{
-      req.user = {email:null};
-      next();
+    } else if(typeEmail === apiString.forgotPassword && !USER){
+      return handleError.NotFoundError(email, res)
+    } else if(typeEmail === apiString.forgotPassword && USER){
+      req.USER = USER;
+      next()
     }
   } catch (error) {
     return handleError.ServerError(error); 
