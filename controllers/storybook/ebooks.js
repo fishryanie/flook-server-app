@@ -74,32 +74,66 @@ module.exports = {
   },
 
   updateOneEbook: async (req, res) => {
-    const id = req.query.id;
-    const itemTrash = req.body.genres.pop() && req.body.authors.pop();
-    const image = req.body.images;
-    console.log('body', req.body);
-    const option = { new: true };
-    let imageUpload
+    // const id = req.query.id;
+    // const itemTrash = req.body.genres.pop() && req.body.authors.pop();
+    // const image = req.body.images;
+    // console.log('body', req.body);
+    // const option = { new: true };
+    // let imageUpload
+    // try {
+    //   const bookFind = await models.ebooks.findById(id);
+    //   if (req.file) {
+    //     await cloudinary.uploader.destroy(bookFind.images.background.id);
+    //     imageUpload = await cloudinary.uploader.upload(req.file?.path, folder);
+    //   } else {
+    //     imageUpload = await cloudinary.uploader.upload(image, folder);
+    //     await cloudinary.uploader.destroy(bookFind.images.background.id);
+    //   }
+  
+    //   const updateBook = new models.ebooks({
+    //     ...req.body, images: { background: { id: imageUpload.public_id, url: imageUpload.secure_url }, wallPaper: { id: imageUpload.public_id, url: imageUpload.secure_url } }, updateAt: Date.now(), createAt: bookFind.createAt, deleteAt: bookFind.deleteAt
+    //   });
+  
+    //   const result = await models.ebooks.findByIdAndUpdate(id, updateBook, option);
+  
+    //   if (!result) {
+    //     return handleError.NotFoundError(id, res)
+    //   }
+    //   return res.status(200).send({ message: messages.UpdateSuccessfully, data: result });
+    // } catch (error) {
+    //   return handleError.ServerError(error, res)
+    // }
     try {
-      const bookFind = await models.ebooks.findById(id);
-      if (req.file) {
-        await cloudinary.uploader.destroy(bookFind.images.background.id);
+      let imageUpload;
+      let userUpdate = req.userIsLogged;
+  
+      for (const role of userUpdate.roles) {
+        if (role.name === "Moderator" || role.name === "Admin") {
+          userUpdate =  req.query.id;
+          break;
+        } else {
+          userUpdate = userUpdate._id;
+          break;
+        }
+      }
+  
+      const ebook = await models.ebooks.findById(userUpdate)
+  
+      if(req.file){
+        const itemTrash = req.body.authors.pop() && req.body.genres.pop();
+        await cloudinary.uploader.destroy(ebook.images.background.id);
         imageUpload = await cloudinary.uploader.upload(req.file?.path, folder);
-      } else {
-        imageUpload = await cloudinary.uploader.upload(image, folder);
-        await cloudinary.uploader.destroy(bookFind.images.background.id);
+        update={$set:{...req.body, updateAt: addDays(0), deleteAt: ebook.deleteAt, createAt: ebook.createAt, launchDate: ebook.launchDate, images: { background: { id: imageUpload.public_id, url: imageUpload.secure_url }, wallPaper: { id: imageUpload.public_id, url: imageUpload.secure_url } }}}
+      }else {
+        update={$set:{...req.body}}
       }
-  
-      const updateBook = new models.ebooks({
-        ...req.body, images: { background: { id: imageUpload.public_id, url: imageUpload.secure_url }, wallPaper: { id: imageUpload.public_id, url: imageUpload.secure_url } }, updateAt: Date.now(), createAt: bookFind.createAt, deleteAt: bookFind.deleteAt
-      });
-  
-      const result = await models.ebooks.findByIdAndUpdate(id, updateBook, option);
-  
-      if (!result) {
-        return handleError.NotFoundError(id, res)
+      
+      const result = await models.ebooks.findByIdAndUpdate(userUpdate, update, {new:true})
+      if(!result){
+       return res.status(200).send({success:false, message:messages.UpdateFail})
       }
-      return res.status(200).send({ message: messages.UpdateSuccessfully, data: result });
+      
+      return res.status(200).send({data: result, success:true, message:messages.UpdateSuccessfully })
     } catch (error) {
       return handleError.ServerError(error, res)
     }
