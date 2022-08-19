@@ -224,22 +224,6 @@ const UpdateUserController = async (req, res) => {
     let avatarUpload;
     let userUpdate = req.userIsLogged;
 
-    // const itemTrash = req?.body?.roles?.pop();
-    if(req.file){
-      console.log('vào file', req.file);
-      await cloudinary.uploader.destroy(userUpdate.images.avatar.id);
-      avatarUpload = await cloudinary.uploader.upload(req.file?.path, folder);
-      update={$set:{...req.body, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } }}}
-
-    }else if (req.body.images){
-      console.log("vào images",req.body.images)
-      await cloudinary.uploader.destroy(userUpdate.images.avatar.id);
-      avatarUpload = await cloudinary.uploader.upload(req.body.images, folder);
-      update={$set:{...req.body, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } }}}
-    }else {
-      console.log("vào body");
-      update={$set:{...req.body}}
-    }
     for (const role of userUpdate.roles) {
       if (role.name === "Moderator" || role.name === "Admin") {
         userUpdate =  req.query.id;
@@ -251,7 +235,33 @@ const UpdateUserController = async (req, res) => {
         break;
       }
     }
-    console.log("🚀 ~ file: user.js ~ line 246 ~ UpdateUserController ~ userUpdate", userUpdate)
+
+    const user = await models.users.findById(userUpdate)
+
+    let isActive;
+    const active = req.body.isActive;
+    if (active.includes("true")) {
+      isActive = true;
+    } else {
+      isActive = false;
+    }
+
+    if(req.file){
+      console.log('vào file', req.file);
+      const itemTrash = req?.body?.roles?.pop();
+      await cloudinary.uploader.destroy(user.images.avatar.id);
+      avatarUpload = await cloudinary.uploader.upload(req.file?.path, folder);
+      update={$set:{...req.body, isActive: isActive, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } }}}
+
+    }else if (req.body.images){
+      console.log("vào images",req.body.images)
+      await cloudinary.uploader.destroy(user.images.avatar.id);
+      avatarUpload = await cloudinary.uploader.upload(req.body.images, folder);
+      update={$set:{...req.body, isActive: isActive, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } }}}
+    }else {
+      console.log("vào body");
+      update={$set:{...req.body, isActive: isActive}}
+    }
     const result = await models.users.findByIdAndUpdate(userUpdate, update, {new:true})
     // console.log("🚀 ~ file: user.js ~ line 297 ~ updateOneUser: ~ result", result)
     if(!result){
