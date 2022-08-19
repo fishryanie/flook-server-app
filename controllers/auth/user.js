@@ -241,15 +241,18 @@ const UpdateUserController = async (req, res) => {
       update={$set:{...req.body}}
     }
     for (const role of userUpdate.roles) {
-      if (role.name == "Moderator" || role.name == "Admin") {
-        userUpdate =  req.body._id;
+      if (role.name === "Moderator" || role.name === "Admin") {
+        userUpdate =  req.query.id;
+        console.log("vô admin")
         break;
       } else {
         userUpdate = userUpdate._id;
+        console.log("vô user")
         break;
       }
     }
-    const result = await models.users.findOneAndUpdate(userUpdate, update, {new:true})
+    console.log("🚀 ~ file: user.js ~ line 246 ~ UpdateUserController ~ userUpdate", userUpdate)
+    const result = await models.users.findByIdAndUpdate(userUpdate, update, {new:true})
     // console.log("🚀 ~ file: user.js ~ line 297 ~ updateOneUser: ~ result", result)
     if(!result){
      return res.status(200).send({success:false, message:messages.UpdateFail})
