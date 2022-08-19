@@ -333,7 +333,7 @@ module.exports = {
       // const itemTrash = req?.body?.roles?.pop();
       if(req.file){
         // console.log('vào file', req.file);
-        await cloudinary.uploader.destroy(userUpdate.images.avatar.id);
+        await cloudinary.uploader.destroy(req.body.images.avatar.id);
         avatarUpload = await cloudinary.uploader.upload(req.file?.path, folder);
         update={$set:{...req.body, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } }}}
 
