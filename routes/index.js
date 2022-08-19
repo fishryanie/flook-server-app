@@ -86,47 +86,54 @@ module.exports = app => {
     }
   })
 
-  app.get('/api/statistical/new-members', async (req, res) => {
-    try {
-      function match(type){
-        return {$match: {deleted:false, createAt: { 
-          $gte: moment().startOf(type === 'week' ? 'isoWeek' : type).toDate(),
-          $lt: moment().endOf(type === 'week' ? 'isoWeek' : type).toDate()
-        }}}
-      }
-      const select = [match(req.query.time),{$project: {displayName:1, createAt:1}}]
-      switch (req.query.time) {
-        case 'day':
-          select.push(
-            {$group: {_id: {$hour:"$createAt"}, count:{$sum:1}, listUser: { $push: '$$ROOT' }}},
-            {$project: {_id:0, hour: '$_id', countUserInDay: {$size: '$listUser'}}},
-            {$sort: {week: 1}}
-          ); break
-        case 'week':
-          select.push(
-            {$group: {_id: {$dayOfMonth:"$createAt"}, count:{$sum:1}, listUser: { $push: '$$ROOT' }}},
-            {$project: {_id:0, dayOfMonth: '$_id', countUserInDate: {$size: '$listUser'}}},
-            {$sort: {week: 1}}
-          ); break
-        case 'month':
-          select.push(
-            {$group: {_id: {$week:"$createAt"}, count:{$sum:1}, listUser: { $push: '$$ROOT' }}},
-            {$project: {_id:0, week: '$_id', countUserInWeek: {$size: '$listUser'}}},
-            {$sort: {week: 1}}
-          ); break
-        case 'year':
-          select.push(
-            {$group: {_id: {$month:"$createAt"}, count:{$sum:1}, listUser: { $push: '$$ROOT' }}},
-            {$project: {_id:0, month: '$_id', countUserInMonth: {$size: '$listUser'}}},
-            {$sort: {month: 1}}
-          ); break
-        default: break;
-      }
-      const result = await models.users.aggregate(select)
-      result && res.status(200).send({count:result.length, success:true, data:result})
-    } catch (error) {
-      handleError.ServerError(error, res)
+  app.get('/api/statistical/new-members', (req, res) => {
+    function match(type){
+      return {$match: {deleted:false, createAt: { 
+        $gte: moment().startOf(type === 'week' ? 'isoWeek' : type).toDate(),
+        $lt: moment().endOf(type === 'week' ? 'isoWeek' : type).toDate()
+      }}}
     }
+    const select = [match(req.query.time)]
+    switch (req.query.time) {
+      case 'day':
+        select.push(
+          {$group: {_id: {$hour:"$createAt"}, count:{$sum:1}, data: { $push: '$$ROOT' }}},
+          {$project: {_id:0, time: '$_id', count: {$size: '$data'}}},
+          {$sort: {time: 1}}
+        ); break
+      case 'week':
+        select.push(
+          {$group: {_id: {$dayOfWeek:"$createAt"}, count:{$sum:1}, data: { $push: '$$ROOT' }}},
+          {$project: {_id:0, time: '$_id', count: {$size: '$data'}}},
+          {$sort: {time: 1}}
+        ); break
+      case 'month':
+        select.push(
+          {$group: {_id: {$week:"$createAt"}, count:{$sum:1}, data: { $push: '$$ROOT' }}},
+          {$project: {_id:0, time: '$_id', count: {$size: '$data'}}},
+          {$sort: {time: 1}}
+        ); break
+      case 'year':
+        select.push(
+          {$group: {_id: {$month:"$createAt"}, count:{$sum:1}, data: { $push: '$$ROOT' }}},
+          {$project: {_id:0, time: '$_id', count: {$size: '$data'}}},
+          {$sort: {time: 1}}
+        ); break
+      default: break;
+    }
+
+    Promise.all([
+      models.reviews.aggregate(select),
+      models.comments.aggregate(select)
+    ]).then((result) => {
+      const newArray = result[0].concat(result[1]).reduce((acc, cur) => {
+        const {time, count} = cur;
+        const item = acc.find(it => it.time === time);
+        item ? item.count += count : acc.push({time, count});
+        return acc;   
+      },[])
+      newArray && res.status(200).send({success:true, data:newArray})
+    }).catch(error => handleError.ServerError(error, res))
   })
 
   app.get('/api/statistical/author-rankings-by-subscribers', async (req, res) => {
