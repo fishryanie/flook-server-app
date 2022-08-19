@@ -3,7 +3,7 @@ const models = require("../../models");
 const handleError = require("../../error/HandleError");
 const messages = require("../../constants/messages");
 const { addDays } = require('../../functions/globalFunc');
-const folder = { folder: 'Flex-ticket/ImageAuther' }
+const folder = { folder: 'Flex-ticket/ImageAuthor' }
 
 
 module.exports = {
