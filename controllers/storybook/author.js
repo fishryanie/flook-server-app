@@ -59,19 +59,39 @@ module.exports = {
   },
 
   updateOneAuthor: async (req, res) => {
-    const id = req.query.id
-    const authorData = new models.authors({ ...req.body, _id: id });
-    const option = { new: true };
     try {
-      const result = await models.authors.findByIdAndUpdate(id, authorData, option);
-      if (!result) {
-        console.log(messages.NotFound);
-        return res.status(404).send({ message: messages.NotFound });
+      let avatarUpload;
+      let userUpdate = req.userIsLogged;
+  
+      for (const role of userUpdate.roles) {
+        if (role.name === "Moderator" || role.name === "Admin") {
+          userUpdate =  req.query.id;
+          break;
+        } else {
+          userUpdate = userUpdate._id;
+          break;
+        }
       }
-      console.log({ data: result });
-      return res.status(200).send({ message: messages.UpdateSuccessfully, data: result });
+  
+      const author = await models.authors.findById(userUpdate)
+  
+      if(req.file){
+        const itemTrash = req.body.license.pop();
+        await cloudinary.uploader.destroy(author.images.avatar.id);
+        avatarUpload = await cloudinary.uploader.upload(req.file?.path, folder);
+        update={$set:{...req.body, updateAt: addDays(0), deleteAt: author.deleteAt, createAt: author.createAt, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } }}}
+      }else {
+        update={$set:{...req.body}}
+      }
+      
+      const result = await models.authors.findByIdAndUpdate(userUpdate, update, {new:true})
+      if(!result){
+       return res.status(200).send({success:false, message:messages.UpdateFail})
+      }
+      
+      return res.status(200).send({data: result, success:true, message:messages.UpdateSuccessfully })
     } catch (error) {
-      handleError.ServerError(error, res)
+      return handleError.ServerError(error, res)
     }
   },
 
