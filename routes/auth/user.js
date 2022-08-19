@@ -41,13 +41,21 @@ module.exports = app => {
   ], Controller.user.changePassword);
 
 
+  // app.put(apiString.updateOneUser, [
+  //   upload.single("images"),
+  //   middlewares.auth.accessPermission(subStr(apiString.updateOneUser)),
+  //   middlewares.auth.VerifyEmail(''),
+  // ], Controller.user.updateOneUser);
+
   app.put(apiString.updateOneUser, [
     upload.single("images"),
     middlewares.auth.accessPermission(subStr(apiString.updateOneUser)),
-    middlewares.auth.VerifyEmail(''),
   ], Controller.user.updateOneUser);
 
-
-
+ 
+  app.put(apiString.updateOneUserMobile, [
+    upload.single("images"),
+    middlewares.auth.accessPermission(subStr(apiString.updateOneUserMobile)),
+  ], Controller.user.updateOneUserMobile);
 
 };

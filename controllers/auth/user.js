@@ -172,80 +172,196 @@ module.exports = {
     }
   },
 
-  updateOneUser: async (req, res) => {
-    const itemTrash = req.body.roles.pop();
+  // updateOneUser: async (req, res) => {
+  //   const itemTrash = req.body.roles.pop();
+  //   try {
+  //     let update, avatarUpload;
+  //     let userUpdate = req.userIsLogged;
+  //     const { type } = req.query
+  //     const { userId, authorId, ebookId, chapterId, notify } = req.body
+  //     const active = req.body.isActive;
+  //     let isActive;
+  //     if (active.includes("true")) {
+  //       isActive = true;
+  //     } else {
+  //       isActive = false;
+  //     }
+  //     if (type) {
+  //       switch (type) {
+  //         case 'notify':
+  //           update = { $addToSet: { "notify": authorId } }
+  //           break
+  //         case 'subscribe-author':
+  //           update = { $addToSet: { "subscribe.author": authorId } }
+  //           break
+  //         case 'subscribe-ebooks':
+  //           update = { $addToSet: { "subscribe.ebooks": ebookId } }
+  //           break
+  //         case 'subscribe-users':
+  //           update = { $addToSet: { "subscribe.users": userId } }
+  //           break
+  //         case 'history-readed':
+  //           update = {
+  //             $addToSet: { "history.read.ebooks": ebookId },
+  //             $addToSet: { "history.read.chapters": chapterId }
+  //           }
+  //           break
+  //         case 'history-download':
+  //           update = {
+  //             $addToSet: { "history.download.ebooks": ebookId },
+  //             $addToSet: { "history.download.chapters": chapterId }
+  //           }
+  //           break;
+  //         case "history-bought":
+  //           update = {
+  //             $set: { coin: req.body.coin },
+  //             $addToSet: { "history.bought": chapterId }
+  //           }
+  //           break;
+  //         default: break;
+  //       }
+  //     }
+  //     if (req.file) {
+  //       await cloudinary.uploader.destroy(userUpdate.images.avatar.id);
+  //       avatarUpload = await cloudinary.uploader.upload(req.file?.path, folder);
+  //       update = { $set: { ...req.body, isActive: isActive, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } } } }
+  //     } else if (req.body.images) {
+  //       await cloudinary.uploader.destroy(userUpdate.images.avatar.id);
+  //       avatarUpload = await cloudinary.uploader.upload(req.body.images, folder);
+  //       update = { $set: { ...req.body, isActive: isActive, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } } } }
+  //     } else {
+  //       update = { $set: { ...req.body, isActive: isActive } }
+  //     }
+  //     for (const role of userUpdate.roles) {
+  //       if (role.name == "Moderator" || role.name == "Admin") {
+  //         userUpdate = req.body._id;
+  //         break;
+  //       } else {
+  //         userUpdate = userUpdate._id.toString();
+  //         break;
+  //       }
+  //     }
+  //     const result = await models.users.findByIdAndUpdate(userUpdate, update, { new: true })
+  //     if (!result) {
+  //       res.send({ success: false, message: messages.UpdateFail })
+  //     }
+  //     return res.send({ success: true, message: messages.UpdateSuccessfully })
+  //   } catch (error) {
+  //     return handleError.ServerError(error, res)
+  //   }
+  // },
+
+  updateOneUserMobile: async (req, res) => {
     try {
-      let update, avatarUpload;
-      let userUpdate = req.userIsLogged;
+      let update;
+      let userIdLogin = req.userIsLogged._id;
+      
       const { type } = req.query
-      const { userId, authorId, ebookId, chapterId, notify } = req.body
-      const active = req.body.isActive;
-      let isActive;
-      if (active.includes("true")) {
-        isActive = true;
-      } else {
-        isActive = false;
-      }
-      if (type) {
+      const {  authorId, ebookId, chapterId, notify, deviceToken,coin } = req.body
+      if(type){
         switch (type) {
           case 'notify':
-            update = { $addToSet: { "notify": authorId } }
+            update={$addToSet: {"notify": notify}}
             break
           case 'subscribe-author':
-            update = { $addToSet: { "subscribe.author": authorId } }
+            update={$addToSet: {"subscribe.author": authorId}}
             break
           case 'subscribe-ebooks':
-            update = { $addToSet: { "subscribe.ebooks": ebookId } }
+            const ebook = await models.users.findOne({"subscribe.ebooks": { $eq: ebookId }});
+            update =  ebook ?   { $pull: { "subscribe.ebooks": ebookId }} : {$addToSet: {"subscribe.ebooks": ebookId}}
             break
           case 'subscribe-users':
-            update = { $addToSet: { "subscribe.users": userId } }
+            update={$addToSet: {"subscribe.users": userIdLogin}}
             break
           case 'history-readed':
-            update = {
-              $addToSet: { "history.read.ebooks": ebookId },
-              $addToSet: { "history.read.chapters": chapterId }
-            }
+            // console.log('history-readed',ebookId)
+            update={$addToSet: {"history.read.chapters": chapterId, "history.read.ebooks": ebookId}}
+            break
+          case 'delete-history-readed':
+          const listChapter =  await models.chapters.find({ebooks:ebookId},{name:1})
+            const chapId = listChapter.map((item, index)=> item._id.toString())
+            update={$pull: {"history.read.ebooks": ebookId, "history.read.chapters":{$in: chapId}}}
             break
           case 'history-download':
-            update = {
-              $addToSet: { "history.download.ebooks": ebookId },
-              $addToSet: { "history.download.chapters": chapterId }
+            update={
+              $addToSet: {"history.download.ebooks": ebookId},
+              $addToSet: {"history.download.chapters": chapterId}
             }
             break;
           case "history-bought":
-            update = {
-              $set: { coin: req.body.coin },
-              $addToSet: { "history.bought": chapterId }
+            // console.log("🚀 ~ file: user.js ~ line 266 ~ updateOneUserMobile: ~ history-bought",req.body)
+            update={ coin:coin, $addToSet:{"history.bought":chapterId }}
+            break;
+
+          case "deviceToken":
+            // console.log("vào deviceToken", deviceToken)
+            update={"deviceToken": deviceToken}
+            break;
+          case "updateCoin":
+            // console.log("vào coin", coin)
+            if(coin == null){
+              break;
             }
+            update={"coin": coin}
             break;
           default: break;
         }
+         
+         
       }
-      if (req.file) {
+     
+      const result = await models.users.findByIdAndUpdate(userIdLogin, update, {new: true})
+      if(!result){
+        return res.send({success:false, message:messages.UpdateFail})
+      }
+      return res.send({success:true, message:messages.UpdateSuccessfully })
+    } catch (error) {
+      return handleError.ServerError(error, res)
+    }
+  },
+
+
+  updateOneUser: async (req, res)=>{
+    // console.log("🚀 ~ file: user.js ~ line 268 ~ updateOneUser: ~ reqaaaaaaaaa", req.file)
+    // console.log("🚀 ~ file: user.js ~ line 230 ~ updateOneUser: ~ updateOneUser",{...req.body})
+    // console.log("🚀 ~ file: user.js ~ line 232 ~ updateOneUser: ~ userUpdate", )
+
+    try {
+      let avatarUpload;
+      let userUpdate = req.userIsLogged;
+
+      const itemTrash = req?.body?.roles?.pop();
+      if(req.file){
+        // console.log('vào file', req.file);
         await cloudinary.uploader.destroy(userUpdate.images.avatar.id);
         avatarUpload = await cloudinary.uploader.upload(req.file?.path, folder);
-        update = { $set: { ...req.body, isActive: isActive, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } } } }
-      } else if (req.body.images) {
+        update={$set:{...req.body, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } }}}
+
+      }else if (req.body.images){
+        // console.log("vào images",req.body.images)
         await cloudinary.uploader.destroy(userUpdate.images.avatar.id);
         avatarUpload = await cloudinary.uploader.upload(req.body.images, folder);
-        update = { $set: { ...req.body, isActive: isActive, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } } } }
-      } else {
-        update = { $set: { ...req.body, isActive: isActive } }
+        update={$set:{...req.body, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } }}}
+      }else {
+        // console.log("vào body");
+        update={$set:{...req.body}}
       }
       for (const role of userUpdate.roles) {
         if (role.name == "Moderator" || role.name == "Admin") {
-          userUpdate = req.body._id;
+          userUpdate =  req.body._id;
           break;
         } else {
-          userUpdate = userUpdate._id.toString();
+          userUpdate = userUpdate._id;
           break;
         }
       }
-      const result = await models.users.findByIdAndUpdate(userUpdate, update, { new: true })
-      if (!result) {
-        res.send({ success: false, message: messages.UpdateFail })
+      const result = await models.users.findOneAndUpdate(userUpdate, update, {new:true})
+      // console.log("🚀 ~ file: user.js ~ line 297 ~ updateOneUser: ~ result", result)
+      if(!result){
+       return res.status(200).send({success:false, message:messages.UpdateFail})
       }
-      return res.send({ success: true, message: messages.UpdateSuccessfully })
+      
+      return res.status(200).send({data: result, success:true, message:messages.UpdateSuccessfully })
     } catch (error) {
       return handleError.ServerError(error, res)
     }
