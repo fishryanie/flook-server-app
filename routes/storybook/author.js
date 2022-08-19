@@ -11,9 +11,9 @@ module.exports = app => {
   
   app.get(apiString.searchAuthor, middlewares.auth.accessPermission(subStr(apiString.searchAuthor)) , Controller.author.searchAuthor);
   
-  app.put(apiString.updateOneAuthor, middlewares.auth.accessPermission(subStr(apiString.updateOneAuthor)) , Controller.author.updateOneAuthor);
+  app.put(apiString.updateOneAuthor, upload.single("image"), middlewares.auth.accessPermission(subStr(apiString.updateOneAuthor)) , Controller.author.updateOneAuthor);
   
-  app.post(apiString.insertOneAuthor,[upload.single("image"), middlewares.auth.accessPermission(subStr(apiString.insertOneAuthor))] , Controller.author.insertOneAuthor);
+  app.post(apiString.insertOneAuthor,[middlewares.auth.accessPermission(subStr(apiString.insertOneAuthor))] , Controller.author.insertOneAuthor);
   
   app.post(apiString.insertManyAuthor, middlewares.auth.accessPermission(subStr(apiString.insertManyAuthor)) , Controller.author.insertManyAuthor);
   
