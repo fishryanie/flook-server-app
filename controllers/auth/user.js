@@ -355,7 +355,7 @@ module.exports = {
           break;
         }
       }
-      const result = await models.users.findOneAndUpdate(userUpdate, update, {new:true})
+      const result = await models.users.findByIdAndUpdate(userUpdate, update, {new:true})
       // console.log("🚀 ~ file: user.js ~ line 297 ~ updateOneUser: ~ result", result)
       if(!result){
        return res.status(200).send({success:false, message:messages.UpdateFail})
