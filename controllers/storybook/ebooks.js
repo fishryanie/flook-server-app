@@ -88,7 +88,7 @@ module.exports = {
         const itemTrash = req.body.authors.pop() && req.body.genres.pop();
         await cloudinary.uploader.destroy(ebook.images.background.id);
         imageUpload = await cloudinary.uploader.upload(req.file?.path, folder);
-        update={$set:{...req.body, updateAt: addDays(0), deleteAt: ebook.deleteAt, createAt: ebook.createAt, images: { background: { id: imageUpload.public_id, url: imageUpload.secure_url }, wallPaper: { id: imageUpload.public_id, url: imageUpload.secure_url } }}}
+        update={$set:{...req.body, updateAt: addDays(0), deleteAt: ebook.deleteAt, createAt: ebook.createAt, launchDate: ebook.launchDate, images: { background: { id: imageUpload.public_id, url: imageUpload.secure_url }, wallPaper: { id: imageUpload.public_id, url: imageUpload.secure_url } }}}
       }else {
         update={$set:{...req.body}}
       }
