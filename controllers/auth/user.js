@@ -206,7 +206,7 @@ module.exports = {
         avatarUpload = await cloudinary.uploader.upload(req.body.images, folder);
         update={$set:{...req.body, isActive: isActive, updateAt: addDays(0), deleteAt: user.deleteAt, createAt: user.createAt, images: { avatar: { id: avatarUpload.public_id, url: avatarUpload.secure_url } }}}
       }else {
-        update={$set:{...req.body, isActive: isActive, updateAt: addDays(0), deleteAt: user.deleteAt, createAt: user.createAt}}
+        update={$set:{...req.body}}
       }
       
       const result = await models.users.findOneAndUpdate(userUpdate, update, {new:true})
