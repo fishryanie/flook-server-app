@@ -8,6 +8,7 @@ const Reviews = new mongoose.Schema({
   deleted: { type: Boolean, default: false },
   createAt: { type: Date, default: Date.now },
   deleteAt: { type: Date, default: null },
+  likes:[{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
   updateAt: { type: Date, default: null },
   
 });

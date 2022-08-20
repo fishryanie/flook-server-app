@@ -14,6 +14,8 @@ const Comments = new mongoose.Schema({
   status: { type: String, default: null },
 
   content: { type: String, trim: true, default: '',},
+
+  likes:[{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
   
   deleted: { type: Boolean, default: false },
   
