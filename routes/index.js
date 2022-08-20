@@ -129,6 +129,56 @@ module.exports = app => {
     }
   })
 
+  app.get('/api/statistical/interactive-user', (req, res) => {
+    function match(type){
+      return {$match: {deleted:false, createAt: { 
+        $gte: moment().startOf(type === 'week' ? 'isoWeek' : type).toDate(),
+        $lt: moment().endOf(type === 'week' ? 'isoWeek' : type).toDate()
+      }}}
+    }
+    const select = [match(req.query.time)]
+    switch (req.query.time) {
+      case 'day':
+        select.push(
+          {$group: {_id: {$hour:"$createAt"}, count:{$sum:1}, data: { $push: '$$ROOT' }}},
+          {$project: {_id:0, time: '$_id', count: {$size: '$data'}}},
+          {$sort: {time: 1}}
+        ); break
+      case 'week':
+        select.push(
+          {$group: {_id: {$dayOfWeek:"$createAt"}, count:{$sum:1}, data: { $push: '$$ROOT' }}},
+          {$project: {_id:0, time: '$_id', count: {$size: '$data'}}},
+          {$sort: {time: 1}}
+        ); break
+      case 'month':
+        select.push(
+          {$group: {_id: {$week:"$createAt"}, count:{$sum:1}, data: { $push: '$$ROOT' }}},
+          {$project: {_id:0, time: '$_id', count: {$size: '$data'}}},
+          {$sort: {time: 1}}
+        ); break
+      case 'year':
+        select.push(
+          {$group: {_id: {$month:"$createAt"}, count:{$sum:1}, data: { $push: '$$ROOT' }}},
+          {$project: {_id:0, time: '$_id', count: {$size: '$data'}}},
+          {$sort: {time: 1}}
+        ); break
+      default: break;
+    }
+
+    Promise.all([
+      models.reviews.aggregate(select),
+      models.comments.aggregate(select)
+    ]).then((result) => {
+      const newArray = result[0].concat(result[1]).reduce((acc, cur) => {
+        const {time, count} = cur;
+        const item = acc.find(it => it.time === time);
+        item ? item.count += count : acc.push({time, count});
+        return acc;   
+      },[])
+      newArray && res.status(200).send({success:true, data:newArray})
+    }).catch(error => handleError.ServerError(error, res))
+  })
+
   app.get('/api/statistical/author-rankings-by-subscribers', async (req, res) => {
     try {
       const select = [
