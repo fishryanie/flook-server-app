@@ -99,25 +99,25 @@ module.exports = app => {
         case 'day':
           select.push(
             {$group: {_id: {$hour:"$createAt"}, count:{$sum:1}, listUser: { $push: '$$ROOT' }}},
-            {$project: {_id:0, hour: '$_id', countUserInDay: {$size: '$listUser'}}},
+            {$project: {_id:0, hour: '$_id', countUserInDay: {$size: '$listUser'}, nameUserInDay: '$listUser'}},
             {$sort: {week: 1}}
           ); break
         case 'week':
           select.push(
             {$group: {_id: {$dayOfMonth:"$createAt"}, count:{$sum:1}, listUser: { $push: '$$ROOT' }}},
-            {$project: {_id:0, dayOfMonth: '$_id', countUserInDate: {$size: '$listUser'}}},
+            {$project: {_id:0, dayOfMonth: '$_id', countUserInDate: {$size: '$listUser'}, nameUserInDate: '$listUser'}},
             {$sort: {week: 1}}
           ); break
         case 'month':
           select.push(
             {$group: {_id: {$week:"$createAt"}, count:{$sum:1}, listUser: { $push: '$$ROOT' }}},
-            {$project: {_id:0, week: '$_id', countUserInWeek: {$size: '$listUser'}}},
+            {$project: {_id:0, week: '$_id', countUserInWeek: {$size: '$listUser'}, nameUserInWeek: '$listUser'}},
             {$sort: {week: 1}}
           ); break
         case 'year':
           select.push(
             {$group: {_id: {$month:"$createAt"}, count:{$sum:1}, listUser: { $push: '$$ROOT' }}},
-            {$project: {_id:0, month: '$_id', countUserInMonth: {$size: '$listUser'}}},
+            {$project: {_id:0, month: '$_id', countUserInMonth: {$size: '$listUser'}, nameUserInMonth: '$listUser'}},
             {$sort: {month: 1}}
           ); break
         default: break;
