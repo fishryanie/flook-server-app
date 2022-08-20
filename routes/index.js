@@ -123,7 +123,7 @@ module.exports = app => {
         default: break;
       }
       const result = await models.users.aggregate(select)
-      result && res.status(200).send({count:result.length, success:true, data:result})
+      result && res.status(200).send({data: result, count:result.length, success:true, data:result})
     } catch (error) {
       handleError.ServerError(error, res)
     }
