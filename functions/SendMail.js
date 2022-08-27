@@ -18,7 +18,7 @@ const SendMail = async (req, res, toMail, subject, newPassword, userId) => {
 
 
   let renderMailForgotPassword = fs
-  .readFileSync(process.cwd() + '/views/fogot.hbs', 'utf8')
+  .readFileSync(process.cwd() + '/views/email.hbs', 'utf8')
   .replace('TEXT_API', apiForgotPassword)
   .replace('TEXT_SUBJECT', subject)
   .replace('TEXT_BUTTON', 'Update new password')
