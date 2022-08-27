@@ -34,6 +34,8 @@ const apiString = {
   removeManyUser: `${user}/remove-many-user`,
   searchUser: `${user}/search-one-user`,
   getCoinUser: `${user}/get-coin-user`,
+  updateNotify: `${user}/update-notify`,
+  getNotify: `${user}/get-notify`,
 
   //pay 
   payment:`${payment}/payment`,
@@ -88,6 +90,7 @@ const apiString = {
   removeOneEbook: `${ebook}/remove-one-ebook`,
   removeManyEbook: `${ebook}/remove-many-ebook`,
   searchEbook: `${ebook}/search-ebook`,
+  filterEbookChannel: `${ebook}/filter-ebook-channel`,
 
   // chapter
   findOneChapter: `${chapter}/find-one-chapter`,
@@ -101,6 +104,8 @@ const apiString = {
   removeManyChapter: `${chapter}/remove-many-chapter`,
   searchChapter: `${chapter}/search-chapter`,
   searchOneChapter: `${chapter}/search-one-chapter`,
+  likeChapter:`${chapter}/like-chapter`,
+  addViewChapter:`${chapter}/add-view-chapter`,
 
   // review
   findOneReview: `${review}/find-One-review`,
@@ -126,6 +131,7 @@ const apiString = {
   removeOneComment: `${comment}/remove-one-comment`,
   removeManyComment: `${comment}/remove-many-comment`,
   searchComment: `${comment}/search-one-comment`,
+  likeComment: `${comment}/like-comment`,
 
   // feature
   findOneFeature: `${feature}/find-one-feature`,

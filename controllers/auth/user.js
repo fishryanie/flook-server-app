@@ -224,62 +224,64 @@ module.exports = {
     try {
       let update;
       let userIdLogin = req.userIsLogged._id;
-      
+
       const { type } = req.query
-      const {  authorId, ebookId, chapterId, notify, deviceToken,coin } = req.body
-      if(type){
+      const { authorId, ebookId, chapterId, notify, deviceToken, coin } = req.body
+      if (type) {
         switch (type) {
           case 'notify':
-            update={$addToSet: {"notify": notify}}
+            update = { $push: { "notify": notify } }
             break
           case 'subscribe-author':
-            update={$addToSet: {"subscribe.author": authorId}}
+            update = { $addToSet: { "subscribe.author": authorId } }
             break
           case 'subscribe-ebooks':
-            const ebook = await models.users.findOne({"subscribe.ebooks": { $eq: ebookId }});
-            update =  ebook ?   { $pull: { "subscribe.ebooks": ebookId }} : {$addToSet: {"subscribe.ebooks": ebookId}}
+            const user = await models.users.findById(userIdLogin);
+            const containBookId = user?.subscribe?.ebooks.includes(ebookId)
+
+            update = containBookId ? { $pull: { "subscribe.ebooks": ebookId } } : { $addToSet: { "subscribe.ebooks": ebookId } }
             break
           case 'subscribe-users':
-            update={$addToSet: {"subscribe.users": userIdLogin}}
+            update = { $addToSet: { "subscribe.users": userIdLogin } }
             break
           case 'history-readed':
-            update={$addToSet: {"history.read.chapters": chapterId, "history.read.ebooks": ebookId}}
+            update = { $addToSet: { "history.read.chapters": chapterId, "history.read.ebooks": ebookId } }
             break
           case 'delete-history-readed':
-          const listChapter =  await models.chapters.find({ebooks:ebookId},{name:1})
-            const chapId = listChapter.map((item, index)=> item._id.toString())
-            update={$pull: {"history.read.ebooks": ebookId, "history.read.chapters":{$in: chapId}}}
+            const listChapter = await models.chapters.find({ ebooks: ebookId }, { name: 1 })
+            const chapId = listChapter.map((item, index) => item._id.toString())
+            update = { $pull: { "history.read.ebooks": ebookId, "history.read.chapters": { $in: chapId } } }
             break
           case 'history-download':
-            update={
-              $addToSet: {"history.download.ebooks": ebookId},
-              $addToSet: {"history.download.chapters": chapterId}
+            update = {
+              $addToSet: { "history.download.ebooks": ebookId },
+              $addToSet: { "history.download.chapters": chapterId }
             }
             break;
           case "history-bought":
-            update={ coin:coin, $addToSet:{"history.bought":chapterId }}
+            update = { coin: coin, $addToSet: { "history.bought": chapterId } }
             break;
 
           case "deviceToken":
-            update={"deviceToken": deviceToken}
+            update = { "deviceToken": deviceToken }
             break;
           case "updateCoin":
-            if(coin == null){
+            if (coin == null) {
               break;
             }
-            update={"coin": coin}
+            update = { "coin": coin }
             break;
           default: break;
         }
-         
-         
+
+
       }
-     
-      const result = await models.users.findByIdAndUpdate(userIdLogin, update, {new: true})
-      if(!result){
-        return res.send({success:false, message:messages.UpdateFail})
+
+      const result = await models.users.findByIdAndUpdate(userIdLogin, update, { new: true })
+      if (!result) {
+        return res.send({ success: false, message: messages.UpdateFail })
       }
-      return res.send({success:true, message:messages.UpdateSuccessfully })
+      return res.send({ success: true, message: messages.UpdateSuccessfully })
     } catch (error) {
       return handleError.ServerError(error, res)
     }

@@ -63,4 +63,8 @@ module.exports = app => {
     middlewares.auth.accessPermission(subStr(apiString.updateOneUserWeb)),
   ], Controller.user.updateOneUserWeb);
 
+  app.put(apiString.updateNotify, middlewares.auth.accessPermission(subStr(apiString.updateNotify)), Controller.user.updateNotify);
+  
+  app.get(apiString.getNotify, middlewares.auth.accessPermission(subStr(apiString.getNotify)), Controller.user.getNotify);
+
 };

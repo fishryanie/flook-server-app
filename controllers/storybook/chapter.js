@@ -172,4 +172,36 @@ module.exports = {
     }
   },
 
+  addViewChapter: async (req, res) => {
+    try {
+      const chapterId = req.query.chapId
+      const result = await models.chapters.findByIdAndUpdate(chapterId, { $inc: { views: 1 } })
+      if(!result){
+        return res.status(400).send({success:false, message:messages.UpdateFail})
+      }
+      return res.status(200).send({success:true, message:messages.UpdateSuccessfully})
+    } catch (error) {
+      handleError.ServerError(error, res);
+    }
+  },
+  likeChapter: async (req, res) => {
+    try {
+      let userIdLogin = req.userIsLogged._id;
+      const chapterId = req.query.chapId
+   
+      const chapter = await models.chapters.findById(chapterId);
+      const containUserId = chapter?.likes.includes(userIdLogin)
+ 
+      update =  containUserId ?   { $pull: { "likes": userIdLogin }} : {$addToSet: {"likes": userIdLogin}}
+      
+      const result = await models.chapters.findByIdAndUpdate(chapterId, update, {new: true})
+      if(!result){
+        return res.status(400).send({success:false, message:messages.UpdateFail})
+      }
+      return res.status(200).send({success:true, message:messages.UpdateSuccessfully})
+    } catch (error) {
+      handleError.ServerError(error, res);
+    }
+  },
+
 }

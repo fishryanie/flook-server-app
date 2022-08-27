@@ -26,6 +26,9 @@ module.exports = app => {
   
   app.delete(apiString.removeManyChapter, middlewares.auth.accessPermission(subStr(apiString.removeManyChapter)) , Controller.chapter.removeManyChapter);
   
+  app.put(apiString.addViewChapter, Controller.chapter.addViewChapter);
+  
+  app.put(apiString.likeChapter, middlewares.auth.accessPermission(subStr(apiString.likeChapter)),Controller.chapter.likeChapter);
 }
 
 

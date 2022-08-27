@@ -372,6 +372,86 @@ module.exports = {
     }
   },
 
+  filterEbookChannel: async (req, res) => {
+    try {
+  
+      const PAGE_SIZE =20;
+      const numPages = parseInt(req.query.page)
+      const skip = numPages ? (numPages - 1) * PAGE_SIZE : null
+      const { author, genre, status, allowedAge, sort } = req.body;
+    
+      let find, populate = ['authors', 'genres']
+  
+      let alowAgeCondition, sortCondition
+  
+      if (allowedAge.length > 0) {
+        switch (allowedAge[0]) {
+          case 11: alowAgeCondition = { $lte: 11 }
+            break;
+          case 17: alowAgeCondition = { $lte: 17 , $gte:12 }
+          break;
+          case 18: alowAgeCondition = { $gte:18 }
+            break;
+          default: alowAgeCondition = null
+            break;
+        }
+      }
+    
+      if (sort.length > 0) {
+        switch (sort[0].title) {
+        
+          case "name":
+            if (sort[0].type === 1) {            
+              sortCondition = { title: 1 }
+            } else sortCondition = { title: -1 }
+            break;
+          case "view":
+            if (sort[0].type === 1) {
+              sortCondition = { views: 1 }
+            } else sortCondition = { views: -1 }
+            break;
+          case "date":
+            if (sort[0].type === 1) {
+              sortCondition = { createAt: 1 }
+            } else sortCondition = { createAt: -1 }
+            break;
+  
+          default: sortCondition = null
+            break;
+        }
+      }
+  
+      if (author.length == 0  && genre.length == 0 && allowedAge.length == 0 && status.length == 0) {
+        find = null
+      } else {
+        find = {
+          $and: [
+            genre.length  > 0 ? { genres:  { $in: genre }} : {},
+            author.length > 0 ? { authors:  { $in: author }} : {},
+            status.length > 0 ? { status: status[0] } : {},
+            allowedAge.length > 0 ? { allowedAge: alowAgeCondition } : {},
+           
+          ]
+        }
+      }
+  
+      const count = await models.ebooks.find(find).count();
+  
+      if (sort.length > 0) {
+        result = await models.ebooks.find(find).populate(populate).skip(skip).limit(PAGE_SIZE).sort(sortCondition);
+      }
+      else if (sort.length === 0) {
+        result = await models.ebooks.find(find).populate(populate).skip(skip).limit(PAGE_SIZE);
+      }
+  
+     res.status(200).send({ data: { data: result, count: count }, success: true, message: messages.GetDataSuccessfully })
+  
+  
+    } catch (error) {
+      return handleError.ServerError(error, res)
+    }
+  },
+
 
 }
 
@@ -392,8 +472,6 @@ const findNewDate = async (req, res, next) => {
     handleError.ServerError(error, res)
   }
 }
-
-
 
 
 

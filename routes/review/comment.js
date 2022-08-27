@@ -25,6 +25,8 @@ module.exports = app => {
   
   app.delete(apiString.removeManyComment, middlewares.auth.accessPermission(subStr(apiString.removeManyComment)) , Controller.comment.removeManyComment);
   
+  app.put(apiString.likeComment, middlewares.auth.accessPermission(subStr(apiString.likeComment)), Controller.comment.likeComment);
+  
 }
 
 

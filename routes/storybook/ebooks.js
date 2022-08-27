@@ -27,7 +27,7 @@ module.exports = app => {
   
   app.delete(apiString.removeManyEbook, middlewares.auth.accessPermission(subStr(apiString.removeManyEbook)) , Controller.ebooks.removeManyEbook);
   
-
+  app.post(apiString.filterEbookChannel, Controller.ebooks.filterEbookChannel);
 
 
 

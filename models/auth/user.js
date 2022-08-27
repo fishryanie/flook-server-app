@@ -21,7 +21,14 @@ const Users = new mongoose.Schema({
   vip: { type: Boolean, trim: true, default: false },
   coin:{ type: Number, trim: true, default: 0 },
   deviceToken:{ type: String, trim: true, default: null },
-  notify:{ type: String, trim: true, default: null },
+  notify:[{ 
+    _id: {type:String, default: null},
+    content: {type:String, default: null},
+    idCommentOrReview:{type:String, default: null},
+    idUser: {type: mongoose.Schema.Types.ObjectId, ref:'users',default: null},
+    createAt: {type:String, default: null},
+    seen:{type:Boolean, default:false}
+  }],
   history: {
     bought:[{type: mongoose.Schema.Types.ObjectId, ref:'chapters', default: []}],
     read: { 
