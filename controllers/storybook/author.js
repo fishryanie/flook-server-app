@@ -26,6 +26,19 @@ module.exports = {
     }
   },
 
+  findManyAuthorMobile: (req, res) => {
+    try {
+      Promise.all([
+        models.authors.find({ deleted: false},{name:1}),
+        models.authors.find({ deleted: false }).count()
+      ]).then((result) => {
+        return res.status(200).send({ data: result[0], count: result[1], success: true });
+      })
+    } catch (error) {
+      handleError.ServerError(error, res);
+    }
+  },
+
 
   insertOneAuthor: async (req, res) => {
     const dataAuthor = req.body.name;

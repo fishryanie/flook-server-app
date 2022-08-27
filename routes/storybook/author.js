@@ -25,4 +25,6 @@ module.exports = app => {
   
   app.delete(apiString.removeManyAuthor, middlewares.auth.accessPermission(subStr(apiString.removeManyAuthor)) , Controller.author.removeManyAuthor);
   
+  app.get(apiString.findManyAuthorMobile, Controller.author.findManyAuthorMobile);
+
 }

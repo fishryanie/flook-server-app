@@ -53,6 +53,7 @@ const apiString = {
   removeOneAuthor: `${author}/remove-one-author`,
   removeManyAuthor: `${author}/remove-many-author`,
   searchAuthor: `${author}/search-one-author`,
+  findManyAuthorMobile: `${author}/find-many-author-mobile`,
 
   //role
   findOneRole: `${role}/find-one-role`,
