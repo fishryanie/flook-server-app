@@ -62,7 +62,7 @@ module.exports = {
               {$project: {deviceToken: 1, displayName:1,  images:'$images.avatar.url'}}
             ]
           }},
-          {$sort:{createAt: -1}}
+          // {$sort:{createAt: -1}}
       ])
       if(!result){
        return res.status(400).send({success: false, message:messages.GetDataNotSuccessfully});
