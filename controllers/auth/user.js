@@ -167,7 +167,9 @@ module.exports = {
         { isActive: true },
         { new: true, upsert: true }
       );
-      return res.sendFile(process.cwd() + '/views/isactive.hbs');
+      if(result){
+        return res.sendFile(process.cwd() + '/views/isactive.hbs');
+      }
     } catch (error) {
       return handleError.ServerError(error, res)
     }
