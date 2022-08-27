@@ -43,7 +43,8 @@
     "paypal-rest-sdk": "^1.8.1",
     "pm2": "^5.2.0",
     "serve-favicon": "^2.5.0",
-    "toastr": "^2.1.4"
+    "toastr": "^2.1.4",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/react-slick": "^0.23.10",

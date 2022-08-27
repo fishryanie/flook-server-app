@@ -2,6 +2,7 @@ const models = require("../../models");
 const cloudinary = require('../../configs/cloudnary')
 const jwt = require("jsonwebtoken");
 const SendMail = require("../../functions/SendMail");
+const uuid = require('uuid');
 
 const configsToken = require("../../configs/token");
 const messages = require("../../constants/messages");
@@ -307,16 +308,16 @@ module.exports = {
       }else {
         update={$set:{...req.body}}
       }
-      for (const role of userUpdate.roles) {
-        if (role.name == "Moderator" || role.name == "Admin") {
-          userUpdate =  req.body._id;
-          break;
-        } else {
-          userUpdate = userUpdate._id;
-          break;
-        }
-      }
-      const result = await models.users.findByIdAndUpdate(userUpdate, update, {new:true})
+      // for (const role of userUpdate.roles) {
+      //   if (role.name == "Moderator" || role.name == "Admin") {
+      //     userUpdate =  req.body._id;
+      //     break;
+      //   } else {
+      //     userUpdate = userUpdate._id;
+      //     break;
+      //   }
+      // }
+      const result = await models.users.findByIdAndUpdate(userUpdate._id, update, {new:true})
       if(!result){
        return res.status(200).send({success:false, message:messages.UpdateFail})
       }
