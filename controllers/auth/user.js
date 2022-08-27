@@ -102,6 +102,7 @@ module.exports = {
     try {
       const USER = new models.users({
         email: email,
+        displayName: email.slice(0,email.indexOf('@')),
         username: email,
         password: newPassword
       })
