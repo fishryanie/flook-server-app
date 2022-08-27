@@ -7,7 +7,7 @@ const Ebooks = new mongoose.Schema({
   launchDate: {type: Date, default: null},
   authors: [{ type: mongoose.Schema.Types.ObjectId, ref: "authors", }],
   genres: [{ type: mongoose.Schema.Types.ObjectId, ref: "genres",}],
-  status: { type: String, default: null, trim: true },
+  status: { type: String, default: "Đang cập nhật", trim: true },
   deleted: { type: Boolean, default: false },
   description: { type: String, trim: true, default: null},
   numChapters: { type: Number, default: 0 },
