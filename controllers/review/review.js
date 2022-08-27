@@ -250,6 +250,45 @@ module.exports = {
     }
   },
 
+  addReview : async (req, res) => {
+    const idUser = req.userIsLogged._id;  
+   
+      const review = new models.reviews({ ...req.body, users: idUser });
+      review.save()
+        .then((data) =>
+          res.status(200).send({
+            data: data,
+            success: true,
+            message: messages.CreateSuccessfully,
+          })
+        )
+        .catch((error) => {
+          handleError.ServerError(error, res);
+        });
+    
+  },
+
+   likeReview : async (req, res) => {
+    try {
+      const idUser = req.userIsLogged._id;
+      const reviewId = req.query.reviewId
+      
+      const review = await models.reviews.findById(reviewId);
+      const containUserId = review?.likes?.includes(idUser)
+       
+        let condition = containUserId ?   { $pull: { "likes": idUser }} : {$addToSet: {"likes": idUser}}
+      
+       const likeReview = await models.reviews.findByIdAndUpdate(reviewId, condition , {new:true})
+       if(!likeReview){
+        return res.status(400).send({message:"like thất bại", success:false})
+       }
+       return res.status(200).send({data:likeReview, message:"like success", success:true})
+    } catch (error) {
+      handleError.ServerError(error, res);
+    }
+ 
+  },
+
   // searchReview: async (req, res) =>{
   //   try {
   //     const comicId = req.query.idComic;

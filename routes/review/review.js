@@ -26,7 +26,11 @@ module.exports = app => {
   app.delete(apiString.removeOneReview, middlewares.auth.accessPermission(subStr(apiString.removeOneReview)) , Controller.review.removeOneReview);
   
   app.delete(apiString.removeManyReview, middlewares.auth.accessPermission(subStr(apiString.removeManyReview)) , Controller.review.removeManyReview);
-  
+ 
+  app.post(apiString.addReview,middlewares.auth.accessPermission(subStr(apiString.addReview)),Controller.review.addReview);
+   
+  app.put(apiString.likeReview, middlewares.auth.accessPermission(subStr(apiString.likeReview)), Controller.review.likeReview);
+
 }
 
 

@@ -119,6 +119,8 @@ const apiString = {
   deleteManyReview: `${review}/delete-many-review`,
   removeOneReview: `${review}/remove-one-review`,
   removeManyReview: `${review}/remove-many-review`,
+  addReview: `${review}/add-review`,
+  likeReview: `${review}/like-review`,
   // searchReview: `${review}/search-one-chapter`,
 
   // comment
