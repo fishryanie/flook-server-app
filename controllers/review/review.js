@@ -38,7 +38,7 @@ module.exports = {
                     {$project: {deviceToken: 1, displayName:1, images:'$images.avatar.url'}}
                   ]
                 }},
-                {$project: {userId: 1,reviewId: 1, likes: 1, createAt: 1, content: 1}}
+                {$project: {userId: 1,reviewId: 1, likes: 1, createAt: -1, content: 1}}
 
               ]}},
               {$lookup: {
@@ -51,7 +51,7 @@ module.exports = {
                   {$project: {deviceToken: 1, displayName:1, images:'$images.avatar.url'}}
                 ]
               }},
-            {$project: {commentsChild: 1, userId: 1,reviewId: 1, likes: 1, createAt: 1, content: 1, countCommentChild: {$size: '$commentsChild'}}}
+            {$project: {commentsChild: 1, userId: 1,reviewId: 1, likes: 1, createAt: -1, content: 1, countCommentChild: {$size: '$commentsChild'}}}
           ]}},
           {$lookup: {
             from: 'users',
