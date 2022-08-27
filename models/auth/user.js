@@ -47,12 +47,12 @@ const Users = new mongoose.Schema({
   },
   images: {
     avatar: {
-      url: { type: String, default: "https://res.cloudinary.com/dwnucvodc/image/upload/v1655780951/Flex-ticket/ImageUser/avatar-default_kzmdk1.png"},
-      id: { type: String, default: "Flex-ticket/ImageBook/wallpaper-default_pbgxfu" },
+      url: { type: String, default: "https://res.cloudinary.com/dwnucvodc/image/upload/v1661606345/Flex-ticket/ImageUser/icon_qtihnv.png"},
+      id: { type: String, default: "Flex-ticket/ImageUser/icon_qtihnv.png" },
     },
     wallPaper: {
-      url: { type: String, default: "https://res.cloudinary.com/dwnucvodc/image/upload/v1655801754/Flex-ticket/ImageUser/wallpaper-default_pbgxfu.png" },
-      id: { type: String, default: "Flex-ticket/ImageBook/wallpaper-default_pbgxfu" },
+      url: { type: String, default: "https://res.cloudinary.com/dwnucvodc/image/upload/v1661606345/Flex-ticket/ImageUser/icon_qtihnv.png" },
+      id: { type: String, default: "Flex-ticket/ImageUser/icon_qtihnv.png" },
     },
   },
 })
