@@ -25,8 +25,8 @@ const accessPermission = typefunc => async (req, res, next) => {
       let feature = await models.features.findOne({featureName: typefunc})
       // Create a new feature if not found
       if (!feature) {
-        const role = await models.roles.findOne({name:"Admin"})
-        feature = await models.features.create({featureName: typefunc, roles:[role._id]})
+        const role = await models.roles.findOne({name:"Admin"});
+        feature = await models.features.create({featureName: typefunc, roles:[role._id]});
       }
       feature?.roles?.forEach(featureRole => {
         userIsLogged.roles?.forEach(userRole => {
