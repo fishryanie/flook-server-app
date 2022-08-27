@@ -215,7 +215,7 @@ module.exports = {
       
       const result = await models.users.findByIdAndUpdate(userUpdate, update, {new:true})
       if(!result){
-       return res.status(200).send({success:false, message:messages.UpdateFail})
+       return res.status(400).send({success:false, message:messages.UpdateFail})
       }
       
       return res.status(200).send({data: result, success:true, message:messages.UpdateSuccessfully })
@@ -319,7 +319,7 @@ module.exports = {
       // }
       const result = await models.users.findByIdAndUpdate(userUpdate._id, update, {new:true})
       if(!result){
-       return res.status(200).send({success:false, message:messages.UpdateFail})
+       return res.status(400).send({success:false, message:messages.UpdateFail})
       }
       
       return res.status(200).send({data: result, success:true, message:messages.UpdateSuccessfully })
