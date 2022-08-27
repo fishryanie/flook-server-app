@@ -103,7 +103,7 @@ module.exports = {
       const USER = new models.users({
         email: email,
         displayName: email.slice(0,email.indexOf('@')),
-        username: email,
+        username: email.slice(0,email.indexOf('@')),
         password: newPassword
       })
       const rolesName = await models.roles.find({ name: 'User' });
