@@ -21,7 +21,7 @@ const SendMail = async (req, res, toMail, subject, newPassword, userId) => {
   .readFileSync(process.cwd() + '/views/email.hbs', 'utf8')
   .replace('TEXT_API', apiForgotPassword)
   .replace('TEXT_SUBJECT', subject)
-  .replace('TEXT_BUTTON', 'Update new password')
+  .replace('TEXT_BUTTON', 'New Password')
   .replace('TEXT_DESCRIPTION', '')
 
   const options = {
