@@ -135,6 +135,7 @@ const apiString = {
   removeManyComment: `${comment}/remove-many-comment`,
   searchComment: `${comment}/search-one-comment`,
   likeComment: `${comment}/like-comment`,
+  searchCommentChapter: `${comment}/search-comment-chapter`,
 
   // feature
   findOneFeature: `${feature}/find-one-feature`,

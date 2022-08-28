@@ -27,6 +27,8 @@ module.exports = app => {
   
   app.put(apiString.likeComment, middlewares.auth.accessPermission(subStr(apiString.likeComment)), Controller.comment.likeComment);
   
+  app.get(apiString.searchCommentChapter , Controller.comment.searchCommentChapter);
+  
 }
 
 

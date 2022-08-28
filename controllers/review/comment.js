@@ -351,4 +351,20 @@ module.exports = {
       handleError.ServerError(error, res);
     }
   },
+
+  searchCommentChapter: async (req, res) =>{
+    try {
+      const chapterId = req.query.chapterId
+      const result =  await models.comments.find({chapterId}).populate('userId').sort({createAt:-1})
+      if(!result){
+       return res.status(400).send({success: false, message:messages.GetDataNotSuccessfully});
+      }
+       return res.status(200).send({success: true, countReview: result.length, data: result, message:messages.GetDataSuccessfully});
+    } catch (error) {
+      return handleError.ServerError(error, res)
+    }
+   
+
+  },
+
 };
