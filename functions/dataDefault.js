@@ -142,6 +142,7 @@ async function insert_many_author(arrayUsers){
 async function insert_many_ebooks(arrayGenres, arrayAuthors){
   dataDefaults.ebooks.forEach(ebook => {
     ebook.views = randomInteger(123,456)
+    ebook.status = ['Đang cập nhật', 'Đã hoàn tất'][Math.floor(Math.random()*['Đang cập nhật', 'Đã hoàn tất'].length)]
 
     for (const x in arrayGenres) { 
       for (const y in ebook.genres) {
